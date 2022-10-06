@@ -13,6 +13,8 @@ requires-python = ">=3.10"
 dependencies = [
     "aiohttp>=3.8.3,<4",
     "httptools>=0.5.0,<0.6",
+    # TODO: Should this have platform conditionals (eg for PyPy)?
+    "orjson>=3.8.0,<4",
     "starlette>=0.21.0,<0.22",
     "uvicorn>=0.18.3,<0.19",
     "uvloop>=0.17.0,<0.18; (sys_platform != 'win32' and sys_platform != 'cygwin') and platform_python_implementation != 'PyPy'",

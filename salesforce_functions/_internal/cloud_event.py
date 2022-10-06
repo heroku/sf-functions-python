@@ -1,9 +1,8 @@
-import base64
 import binascii
-import json
 from dataclasses import dataclass
 from typing import Any, Optional
 
+import orjson
 from starlette.datastructures import Headers
 
 
@@ -29,7 +28,7 @@ class SalesforceContext:
             data = parseBase64Json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
             raise CloudEventError(f"sfcontext is not correctly encoded: {e}")
-        except json.JSONDecodeError as e:
+        except orjson.JSONDecodeError as e:
             raise CloudEventError(f"sfcontext is not valid JSON: {e}")
 
         try:
@@ -69,7 +68,7 @@ class SalesforceFunctionContext:
             data = parseBase64Json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
             raise CloudEventError(f"sffncontext is not correctly encoded: {e}")
-        except json.JSONDecodeError as e:
+        except orjson.JSONDecodeError as e:
             raise CloudEventError(f"sffncontext is not valid JSON: {e}")
 
         try:
@@ -110,8 +109,8 @@ class SalesforceFunctionsCloudEvent:
             raise CloudEventError("Content-Type must be 'application/json'")
 
         try:
-            data = json.loads(body) if body else None
-        except json.JSONDecodeError as e:
+            data = orjson.loads(body) if body else None
+        except orjson.JSONDecodeError as e:
             raise CloudEventError(f"Data payload is not valid JSON: {e}")
 
         try:
@@ -135,7 +134,7 @@ class SalesforceFunctionsCloudEvent:
 
 
 def parseBase64Json(base64_json: str) -> Any:
-    return json.loads(base64.b64decode(base64_json))
+    return orjson.loads(binascii.a2b_base64(base64_json))
 
 
 class CloudEventError(Exception):

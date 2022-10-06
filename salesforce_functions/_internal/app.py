@@ -1,6 +1,7 @@
 import contextlib
 import functools
 from pathlib import Path
+from typing import Any
 
 from aiohttp import ClientSession, DummyCookieJar
 from starlette.applications import Starlette
@@ -8,6 +9,7 @@ from starlette.config import Config
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+import orjson
 
 from ..context import Context, Org, User
 from ..data_api import DataAPI
@@ -16,20 +18,23 @@ from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
 from .user_function import UserFunction, load_user_function
 
 
+class OrjsonResponse(JSONResponse):
+    def render(self, content: Any) -> bytes:
+        return orjson.dumps(content)
+
+
 # TODO: Figure out logging situation.
 # TODO: `x-extra-info` headers for response.
-async def invoke(function: UserFunction, request: Request) -> JSONResponse:
-    headers = request.headers
-
-    if headers.get("x-health-check", "").lower() == "true":
-        return JSONResponse("OK")
+async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
+    if request.headers.get("x-health-check", "").lower() == "true":
+        return OrjsonResponse("OK")
 
     body = await request.body()
 
     try:
-        cloudevent = SalesforceFunctionsCloudEvent.from_http(headers, body)
+        cloudevent = SalesforceFunctionsCloudEvent.from_http(request.headers, body)
     except CloudEventError as e:
-        return JSONResponse(f"Could not parse CloudEvent: {e}", status_code=400)
+        return OrjsonResponse(f"Could not parse CloudEvent: {e}", status_code=400)
 
     event = InvocationEvent(
         id=cloudevent.id,
@@ -69,7 +74,7 @@ async def invoke(function: UserFunction, request: Request) -> JSONResponse:
         function_result = await function(event, context)
     except Exception as e:
         # TODO: Should this include the traceback, or should that only be in x-extra-info's `stack`?
-        return JSONResponse(
+        return OrjsonResponse(
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}",
             status_code=500,
         )
@@ -80,18 +85,18 @@ async def invoke(function: UserFunction, request: Request) -> JSONResponse:
 
     try:
         # TODO: Decide if we need to support the user serialising themselves?
-        return JSONResponse(function_result)
+        return OrjsonResponse(function_result)
     # TODO: Switch to more specific exception types
     except Exception as e:
         # TODO: Should this include the traceback, or should that only be in x-extra-info's `stack`?
-        return JSONResponse(
+        return OrjsonResponse(
             f"Function return value cannot be serialized: {e.__class__.__name__}: {e}",
             status_code=500,
         )
 
 
-async def handle_error(request: Request, e: Exception) -> JSONResponse:
-    return JSONResponse(f"Internal error: {e}", status_code=503)
+async def handle_error(request: Request, e: Exception) -> OrjsonResponse:
+    return OrjsonResponse(f"Internal error: {e}", status_code=503)
 
 
 @contextlib.asynccontextmanager
