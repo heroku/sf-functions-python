@@ -1,14 +1,12 @@
-# import logging
-
-from salesforce_functions import Context, InvocationEvent
+from salesforce_functions import Context, InvocationEvent, get_logger
 
 EventPayloadType = dict[str, str]
-# logger = logging.getLogger(__name__)
+logger = get_logger()
 
 
 async def function(event: InvocationEvent[EventPayloadType], context: Context):
-    # logging.warning(__name__)
+    logger.info("Hello!")
     # if context.org is not None:
     #     result = await context.org.data_api.query("SELECT Name FROM User")
-    #     print(f"Result: {result}")
+    #     logger.info(f"Result: {result}")
     return {"foo": "bar"}

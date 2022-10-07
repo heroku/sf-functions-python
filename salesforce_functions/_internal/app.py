@@ -10,11 +10,13 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 import orjson
+import structlog
 
 from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
+from .logging import configure_logging
 from .user_function import UserFunction, load_user_function
 
 
@@ -23,8 +25,9 @@ class OrjsonResponse(JSONResponse):
         return orjson.dumps(content)
 
 
-# TODO: Figure out logging situation.
 async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
+    structlog.contextvars.clear_contextvars()
+
     if request.headers.get("x-health-check", "").lower() == "true":
         return OrjsonResponse("OK")
 
@@ -34,6 +37,8 @@ async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
         cloudevent = SalesforceFunctionsCloudEvent.from_http(request.headers, body)
     except CloudEventError as e:
         return OrjsonResponse(f"Could not parse CloudEvent: {e}", status_code=400)
+
+    structlog.contextvars.bind_contextvars(invocationId=cloudevent.id)
 
     event = InvocationEvent(
         id=cloudevent.id,
@@ -100,6 +105,8 @@ async def handle_error(request: Request, e: Exception) -> OrjsonResponse:
 
 @contextlib.asynccontextmanager
 async def lifespan(app: Starlette):
+    configure_logging()
+
     # Disable cookie storage using DummyCookieJar, given:
     # - The same session will be used by multiple invocation events.
     # - We don't need cookie support.
