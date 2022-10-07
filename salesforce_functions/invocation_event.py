@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -25,12 +25,12 @@ class InvocationEvent(Generic[T]):
     """The payload of the event."""
     # TODO: Why is this optional if we reject empty content type?
     # TODO: Why do we even leak this to the user anyway?
-    data_content_type: Optional[str]
+    data_content_type: str | None
     """The media type of the event `data` payload."""
-    data_schema: Optional[str]
+    data_schema: str | None
     """The schema to which the event `data` payload adheres."""
-    # TODO: Switch this to `Optional[datetime]`?
-    time: Optional[str]
+    # TODO: Switch this to `datetime`?
+    time: str | None
     """
     The timestamp of when the occurrence happened.
 

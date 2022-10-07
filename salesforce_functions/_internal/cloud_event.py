@@ -1,6 +1,6 @@
 import binascii
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import orjson
 from starlette.datastructures import Headers
@@ -10,7 +10,7 @@ from starlette.datastructures import Headers
 class SalesforceUserContext:
     org_id: str
     user_id: str
-    on_behalf_of_user_id: Optional[str]
+    on_behalf_of_user_id: str | None
     username: str
     salesforce_base_url: str
     org_domain_url: str
@@ -55,12 +55,12 @@ class SalesforceContext:
 class SalesforceFunctionContext:
     access_token: str
     request_id: str
-    function_invocation_id: Optional[str]
-    function_name: Optional[str]
+    function_invocation_id: str | None
+    function_name: str | None
     # TODO: Should these be "apex*" or "apexClass*"?
-    apex_id: Optional[str]
-    apex_fqn: Optional[str]
-    resource: Optional[str]
+    apex_id: str | None
+    apex_fqn: str | None
+    resource: str | None
 
     @classmethod
     def from_base64_json(cls, base64_json: str):
@@ -93,11 +93,11 @@ class SalesforceFunctionsCloudEvent:
     source: str
     spec_version: str
     type: str
-    data: Optional[Any]
+    data: Any | None
     data_content_type: str
-    data_schema: Optional[str]
-    subject: Optional[str]
-    time: Optional[str]
+    data_schema: str | None
+    subject: str | None
+    time: str | None
     sf_context: SalesforceContext
     sf_function_context: SalesforceFunctionContext
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Literal, Mapping, Optional
+from typing import Any, Literal, Mapping
 
 from aiohttp import ClientSession
 
@@ -40,7 +40,7 @@ class RecordQueryResult:
     Use `done` to determine whether there are additional records to be
     queried with `queryMore`.
     """
-    next_records_url: Optional[str]
+    next_records_url: str | None
     """The URL for the next set of records, if any."""
 
 
@@ -83,8 +83,8 @@ class DataAPI:
         self,
         method: Literal["GET", "POST", "PATCH", "DELETE"],
         url: str,
-        params: Optional[Mapping[str, str]] = None,
-        json: Optional[Any] = None,
+        params: Mapping[str, str] | None = None,
+        json: Any | None = None,
     ):
         # TODO: Set `timeout=N` here? (Default is 5 mins)
         # TODO: Handle failure modes:

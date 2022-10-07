@@ -2,13 +2,12 @@ import os
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Optional
 
 from ..__version__ import __version__
 from .exceptions import SalesforceFunctionError
 
 
-def main(command_name: Optional[str] = None):
+def main(command_name: str | None = None):
     parser = ArgumentParser(
         prog=command_name,
         description="Salesforce Functions Python Runtime",

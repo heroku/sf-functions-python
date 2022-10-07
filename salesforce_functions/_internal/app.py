@@ -24,7 +24,6 @@ class OrjsonResponse(JSONResponse):
 
 
 # TODO: Figure out logging situation.
-# TODO: `x-extra-info` headers for response.
 async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
     if request.headers.get("x-health-check", "").lower() == "true":
         return OrjsonResponse("OK")
@@ -60,7 +59,7 @@ async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
                 salesforce_base_url,
                 api_version,
                 cloudevent.sf_function_context.access_token,
-                app.state.aiohttp_session,
+                request.app.state.aiohttp_session,
             ),
             user=User(
                 id=cloudevent.sf_context.user_context.user_id,
@@ -101,7 +100,7 @@ async def handle_error(request: Request, e: Exception) -> OrjsonResponse:
 
 @contextlib.asynccontextmanager
 async def lifespan(app: Starlette):
-    # Disable cookie storage given:
+    # Disable cookie storage using DummyCookieJar, given:
     # - The same session will be used by multiple invocation events.
     # - We don't need cookie support.
     async with ClientSession(cookie_jar=DummyCookieJar()) as aiohttp_session:
@@ -111,6 +110,7 @@ async def lifespan(app: Starlette):
 
 config = Config()
 
+# TODO: Should this be moved into lifespan and passed via `app.state` instead?
 # `FUNCTION_PROJECT_PATH` is set by the CLI.
 PROJECT_PATH = config("FUNCTION_PROJECT_PATH", cast=Path)
 user_function = load_user_function(PROJECT_PATH)

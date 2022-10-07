@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from .data_api import DataAPI
 
@@ -12,7 +11,7 @@ class User:
     """The user's ID."""
     username: str
     """The name of the user."""
-    on_behalf_of_user_id: Optional[str]
+    on_behalf_of_user_id: str | None
     """The ID of the user on whose behalf this user is operating."""
 
 
@@ -40,5 +39,5 @@ class Org:
 class Context:
     """Information relating to the function and the Salesforce org with which it is associated."""
 
-    org: Optional[Org]
+    org: Org | None
     """Information about the invoking Salesforce organization and user."""
