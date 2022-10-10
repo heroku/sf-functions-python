@@ -16,8 +16,10 @@ from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
-from .logging import configure_logging
+from .logging import configure_logging, get_logger
 from .user_function import UserFunction, load_user_function
+
+logger = get_logger()
 
 
 class OrjsonResponse(JSONResponse):
@@ -36,7 +38,10 @@ async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
     try:
         cloudevent = SalesforceFunctionsCloudEvent.from_http(request.headers, body)
     except CloudEventError as e:
-        return OrjsonResponse(f"Could not parse CloudEvent: {e}", status_code=400)
+        # TODO: Should the invocation ID be extracted manually for this error message?
+        message = f"Could not parse CloudEvent: {e}"
+        logger.error(message)
+        return OrjsonResponse(message, status_code=400)
 
     structlog.contextvars.bind_contextvars(invocationId=cloudevent.id)
 
@@ -77,30 +82,26 @@ async def invoke(function: UserFunction, request: Request) -> OrjsonResponse:
     try:
         function_result = await function(event, context)
     except Exception as e:
-        # TODO: Should this include the traceback, or should that only be in x-extra-info's `stack`?
-        return OrjsonResponse(
-            f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}",
-            status_code=500,
+        message = (
+            f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
         )
-
-    # TODO: What should the response be if the function returns None? Currently a body of `null`.
-    # if function_result is None:
-    #     return Response(content=None, media_type="application/json")
+        logger.exception(message)
+        return OrjsonResponse(message, status_code=500)
 
     try:
-        # TODO: Decide if we need to support the user serialising themselves?
         return OrjsonResponse(function_result)
-    # TODO: Switch to more specific exception types
-    except Exception as e:
-        # TODO: Should this include the traceback, or should that only be in x-extra-info's `stack`?
-        return OrjsonResponse(
-            f"Function return value cannot be serialized: {e.__class__.__name__}: {e}",
-            status_code=500,
+    except orjson.JSONEncodeError as e:
+        message = (
+            f"Function return value cannot be serialized: {e.__class__.__name__}: {e}"
         )
+        logger.error(message)
+        return OrjsonResponse(message, status_code=500)
 
 
 async def handle_error(request: Request, e: Exception) -> OrjsonResponse:
-    return OrjsonResponse(f"Internal error: {e}", status_code=503)
+    message = f"Internal error: {e.__class__.__name__}: {e}"
+    logger.error(message)
+    return OrjsonResponse(message, status_code=500)
 
 
 @contextlib.asynccontextmanager
@@ -122,9 +123,7 @@ config = Config()
 PROJECT_PATH = config("FUNCTION_PROJECT_PATH", cast=Path)
 user_function = load_user_function(PROJECT_PATH)
 
-# TODO: Remove debug=True
 app = Starlette(
-    debug=True,
     exception_handlers={Exception: handle_error},
     lifespan=lifespan,
     routes=[

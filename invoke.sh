@@ -8,6 +8,8 @@ function base64_encode() {
   python3 -c "import base64, sys; print(base64.b64encode(sys.stdin.buffer.read()).decode('ascii'))"
 }
 
+invocation_id="00Dxx0000006IYJEA2-4Y4W3Lw_LkoskcHdEaZze--MyFunction-$(openssl rand -hex 12)"
+
 sfcontext=$(base64_encode <<'EOF'
 {
   "apiVersion": "55.0",
@@ -24,14 +26,14 @@ sfcontext=$(base64_encode <<'EOF'
 EOF
 )
 
-sffncontext=$(base64_encode <<'EOF'
+sffncontext=$(base64_encode <<EOF
 {
   "accessToken": "00D8d000005zeJv!ARQAQCLjHe.WiHQ1VxcZS2qUi.Hgez8PHzjhq0icJY8wzYeCDAUJIOBQ1DjFu05wuD.tgJoUV2hIq2aLpf9oYUyk_AoEI0cb",
   "functionInvocationId": null,
   "functionName": "MyFunction",
   "apexClassId": null,
   "apexClassFQN": null,
-  "requestId": "00Dxx0000006IYJEA2-4Y4W3Lw_LkoskcHdEaZze--MyFunction-2020-09-03T20:56:27.608444Z",
+  "requestId": "${invocation_id}",
   "resource": "http://dhagberg-wsl1:8080"
 }
 EOF
@@ -42,7 +44,7 @@ curl "${1:?Provide function runtime url as the first argument to this script!}" 
   -d "${2:?Provide the payload as the second argument to this script!}" \
   -H "Content-Type: application/json" \
   -H "ce-specversion: 1.0" \
-  -H "ce-id: 00Dxx0000006IYJEA2-4Y4W3Lw_LkoskcHdEaZze--MyFunction-$(openssl rand -hex 12)" \
+  -H "ce-id: ${invocation_id}" \
   -H "ce-source: urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7" \
   -H "ce-type: com.salesforce.function.invoke.sync" \
   -H "ce-time: 2020-09-03T20:56:28.297915Z" \
