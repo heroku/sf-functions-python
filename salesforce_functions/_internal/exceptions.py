@@ -2,5 +2,5 @@ class SalesforceFunctionError(Exception):
     pass
 
 
-# class FunctionNotFoundError(SalesforceFunctionError):
-#     pass
+class LoadFunctionError(SalesforceFunctionError):
+    pass

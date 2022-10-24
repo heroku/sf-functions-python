@@ -1,10 +1,14 @@
 import os
 import sys
+import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
+import uvicorn
+
 from ..__version__ import __version__
-from .exceptions import SalesforceFunctionError
+from .exceptions import LoadFunctionError, SalesforceFunctionError
+from .user_function import load_user_function
 
 
 def main(command_name: str | None = None):
@@ -81,21 +85,23 @@ def main(command_name: str | None = None):
 
 
 def check_function(project_path: Path):
-    from .user_function import load_user_function
-
     try:
+        print("Checking function...")
         load_user_function(project_path)
-        # TODO: Clean this up
         print("Function is valid")
-    except SalesforceFunctionError as e:
-        # TODO: Clean up wording + decide whether to switch to a more specific exception type.
-        print(f"Unable to load function: {e}", file=sys.stderr)
+    except LoadFunctionError as e:
+        # Print the original exception if we've chosen to propagate it, since in those cases it's
+        # essential for debugging (such as SyntaxErrors, which show the invalid source line).
+        if e.__cause__:
+            print()
+            traceback.print_exception(e.__cause__)
+            print()
+
+        print(f"Function failed to load! {e}", file=sys.stderr)
         sys.exit(1)
 
 
 def start_server(project_path: Path, host: str, port: int, workers: int):
-    import uvicorn  # pyright: ignore [reportMissingTypeStubs]
-
     # Propagate CLI args to the ASGI app using env vars (there sadly isn't a better way to do this).
     os.environ["FUNCTION_PROJECT_PATH"] = str(project_path)
 

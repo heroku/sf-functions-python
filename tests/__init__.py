@@ -20,17 +20,15 @@
 # - Differentiating between user and SF cause of invalid payload?
 
 # Invalid functions (build time):
-# - missing module (default module name)
-# - missing module (specified module name)
-# - missing function definition (default function name)
-# - missing function definition (specified function name)
+# - missing module
 # - module fails to import (SyntaxError)
 # - module fails to import (NameError)
 # - module fails to import (ModuleNotFoundError)
 # - module fails to import (ImportError)
+# - missing function definition
+# - function invalid type (not a function)
 # - function invalid type (sync not async)
 # - function invalid type (wrong number of args)
-# - function invalid type (args have wrong type)
 
 # Functions that fail at runtime:
 # - raises

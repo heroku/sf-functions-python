@@ -41,6 +41,7 @@ EOF
 
 curl "${1:?Provide function runtime url as the first argument to this script!}" \
   -i \
+  --connect-timeout 3 \
   -d "${2:?Provide the payload as the second argument to this script!}" \
   -H "Content-Type: application/json" \
   -H "ce-specversion: 1.0" \

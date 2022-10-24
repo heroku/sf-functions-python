@@ -27,9 +27,9 @@ class SalesforceContext:
         try:
             data = parseBase64Json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise CloudEventError(f"sfcontext is not correctly encoded: {e}")
+            raise CloudEventError(f"sfcontext is not correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"sfcontext is not valid JSON: {e}")
+            raise CloudEventError(f"sfcontext is not valid JSON: {e}") from e
 
         try:
             user_context = data["userContext"]
@@ -46,9 +46,11 @@ class SalesforceContext:
                 ),
             )
         except TypeError as e:
-            raise CloudEventError(f"sfcontext contains unexpected data type: {e}")
+            raise CloudEventError(
+                f"sfcontext contains unexpected data type: {e}"
+            ) from e
         except KeyError as e:
-            raise CloudEventError(f"sfcontext missing required key {e}")
+            raise CloudEventError(f"sfcontext missing required key {e}") from e
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,9 +69,9 @@ class SalesforceFunctionContext:
         try:
             data = parseBase64Json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise CloudEventError(f"sffncontext is not correctly encoded: {e}")
+            raise CloudEventError(f"sffncontext is not correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"sffncontext is not valid JSON: {e}")
+            raise CloudEventError(f"sffncontext is not valid JSON: {e}") from e
 
         try:
             return cls(
@@ -82,9 +84,11 @@ class SalesforceFunctionContext:
                 resource=data.get("resource"),
             )
         except TypeError as e:
-            raise CloudEventError(f"sffncontext contains unexpected data type: {e}")
+            raise CloudEventError(
+                f"sffncontext contains unexpected data type: {e}"
+            ) from e
         except KeyError as e:
-            raise CloudEventError(f"sffncontext missing required key {e}")
+            raise CloudEventError(f"sffncontext missing required key {e}") from e
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,7 +115,7 @@ class SalesforceFunctionsCloudEvent:
         try:
             data = orjson.loads(body) if body else None
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"Data payload is not valid JSON: {e}")
+            raise CloudEventError(f"Data payload is not valid JSON: {e}") from e
 
         try:
             return cls(
@@ -130,7 +134,7 @@ class SalesforceFunctionsCloudEvent:
                 ),
             )
         except KeyError as e:
-            raise CloudEventError(f"Missing required header {e}")
+            raise CloudEventError(f"Missing required header {e}") from e
 
 
 def parseBase64Json(base64_json: str) -> Any:

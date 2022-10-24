@@ -1,63 +1,76 @@
 import importlib.util
+import inspect
 import sys
+import typing
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from .exceptions import SalesforceFunctionError
+from .exceptions import LoadFunctionError
 from ..context import Context
 from ..invocation_event import InvocationEvent
 
+FUNCTION_MODULE_NAME = "main"
+FUNCTION_NAME = "function"
+
 UserFunction = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
 
-
-# Load the user function using the approach documented here:
+# Loads the user function using the approach documented here:
 # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
 def load_user_function(project_path: Path) -> UserFunction:
     # Convert `project_path` to a normalised absolute path, so that:
     # - it's clearer in any error messages where we were attempting to look for the function
     # - we don't end up putting a relative path onto `sys.path`.
     project_path = project_path.resolve()
-
-    # TODO: Should these be user configurable? If so, how? What should the default values be?
-    module_name = "main"
-    function_name = "function"
-    module_path = project_path.joinpath(f"{module_name}.py")
+    module_filename = f"{FUNCTION_MODULE_NAME}.py"
+    module_path = project_path.joinpath(module_filename)
 
     if not module_path.exists():
-        # TODO: Decide how to structure exception types.
-        # TODO: Include explanation of where the module name came from?
-        raise SalesforceFunctionError(f"Function file not found: {module_path}")
+        raise LoadFunctionError(f"File not found: {module_path}")
 
-    # `submodule_search_locations` is set to ensure relative imports work from the function.
+    # `submodule_search_locations` is set to ensure relative imports work within the imported module.
     spec = importlib.util.spec_from_file_location(
-        module_name, module_path, submodule_search_locations=[str(project_path)]
+        FUNCTION_MODULE_NAME,
+        module_path,
+        submodule_search_locations=[str(project_path)],
     )
 
-    # TODO: Figure out when this can even occur and adjust message accordingly
-    # (without it the type checker is not happy)
-    if spec is None or spec.loader is None:
-        raise SalesforceFunctionError("Unknown error whilst loading function")
+    # These can only be None if our implementation is incorrect (eg: trying to load a file that
+    # doesn't have a .py extension, so has no known loader). The assertions are to prove this
+    # to the type checker.
+    assert spec is not None
+    assert spec.loader is not None
 
     module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
+    sys.modules[FUNCTION_MODULE_NAME] = module
 
-    # Allow the function to use absolute imports for modules within the package's directory.
+    # Allow the imported module to use absolute imports for modules within it's own directory.
     sys.path.insert(0, str(project_path))
 
     try:
         spec.loader.exec_module(module)
     except Exception as e:
-        # TODO: Fix this since it loses the useful part of SyntaxErrors etc
-        raise SalesforceFunctionError(f"Error importing function: {e}")
+        raise LoadFunctionError(
+            f"Exception during import: {e.__class__.__name__}: {e}"
+        ) from e
 
-    try:
-        function = getattr(module, function_name)
-    except AttributeError:
-        # TODO: Clean this up
-        raise SalesforceFunctionError(
-            f"Function with name '{function_name}' does not exist in '{module_path}'!"
+    function = getattr(module, FUNCTION_NAME, None)
+
+    if function is None or not inspect.isfunction(function):
+        raise LoadFunctionError(
+            f"A function named '{FUNCTION_NAME}' was not found in '{module_path}'."
         )
 
-    # TODO: Check shape of function is correct, eg:
-    # https://github.com/GoogleCloudPlatform/functions-framework-python/blob/master/src/functions_framework/_function_registry.py#L37-L60
+    if not inspect.iscoroutinefunction(function):
+        raise LoadFunctionError(
+            f"The function named '{FUNCTION_NAME}' must be an async function. Change the function definition from 'def {FUNCTION_NAME}' to 'async def {FUNCTION_NAME}'."
+        )
+
+    parameter_count = len(inspect.signature(function).parameters)
+    expected_parameter_count = len(typing.get_args(UserFunction)[0])
+
+    if parameter_count != expected_parameter_count:
+        raise LoadFunctionError(
+            f"The function named '{FUNCTION_NAME}' has the wrong number of parameters (expected {expected_parameter_count} but found {parameter_count})."
+        )
+
     return function
