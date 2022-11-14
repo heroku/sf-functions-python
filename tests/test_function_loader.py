@@ -1,4 +1,5 @@
 import inspect
+import re
 from pathlib import Path
 
 import pytest
@@ -36,8 +37,8 @@ def test_function_without_type_annotations():
 
 def test_invalid_function_nonexistent_directory():
     fixture = Path("this_directory_does_not_exist")
-    absolute_fixture_path = fixture.resolve()
-    expected_message = rf"File not found: {absolute_fixture_path}/main\.py$"
+    absolute_function_path = fixture.resolve().joinpath("main.py")
+    expected_message = rf"File not found: {re.escape(str(absolute_function_path))}$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -45,8 +46,8 @@ def test_invalid_function_nonexistent_directory():
 
 def test_invalid_function_missing_module():
     fixture = Path("tests/fixtures/invalid_missing_main_py")
-    absolute_fixture_path = fixture.resolve()
-    expected_message = rf"File not found: {absolute_fixture_path}/main\.py$"
+    absolute_function_path = fixture.resolve().joinpath("main.py")
+    expected_message = rf"File not found: {re.escape(str(absolute_function_path))}$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -67,8 +68,8 @@ $"""
 
 def test_invalid_function_missing_function():
     fixture = Path("tests/fixtures/invalid_missing_function")
-    absolute_fixture_path = fixture.resolve()
-    expected_message = rf"A function named 'function' was not found in: {absolute_fixture_path}/main\.py$"
+    absolute_function_path = fixture.resolve().joinpath("main.py")
+    expected_message = rf"A function named 'function' was not found in: {re.escape(str(absolute_function_path))}$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -76,8 +77,8 @@ def test_invalid_function_missing_function():
 
 def test_invalid_function_not_a_function():
     fixture = Path("tests/fixtures/invalid_not_a_function")
-    absolute_fixture_path = fixture.resolve()
-    expected_message = rf"A function named 'function' was not found in: {absolute_fixture_path}/main\.py$"
+    absolute_function_path = fixture.resolve().joinpath("main.py")
+    expected_message = rf"A function named 'function' was not found in: {re.escape(str(absolute_function_path))}$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)

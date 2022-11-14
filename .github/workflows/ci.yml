@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    # TODO: Uncomment once a PR is open for the initial implementation.
+    # Avoid duplicate builds on PRs.
+    # branches:
+    #   - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check --progress-bar off --editable .[test]
+      - name: Run pytest
+        run: pytest --verbosity 2

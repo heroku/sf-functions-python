@@ -182,8 +182,6 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]):
     output = capsys.readouterr()
     assert output.out.endswith(
         rf"""
-    return 1 / 0
-           ~~^~~
 ZeroDivisionError: division by zero
 invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="{expected_message}"
 """

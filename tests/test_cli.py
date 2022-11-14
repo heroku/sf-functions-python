@@ -79,7 +79,7 @@ def test_check_subcommand_valid_function(capsys: CaptureFixture[str]):
 
 def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]):
     fixture = "tests/fixtures/invalid_function_missing_module"
-    absolute_fixture_path = Path(fixture).resolve()
+    absolute_function_path = Path(fixture).resolve().joinpath("main.py")
 
     exit_code = main(args=["check", fixture])
     assert exit_code == 1
@@ -88,7 +88,7 @@ def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]):
     assert output.out == "Checking function...\n\n"
     assert (
         output.err
-        == f"Error: Function failed validation! File not found: {absolute_fixture_path}/main.py\n"
+        == f"Error: Function failed validation! File not found: {absolute_function_path}\n"
     )
 
 
@@ -175,7 +175,7 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]):
 
 def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]):
     fixture = "tests/fixtures/invalid_function_missing_module"
-    absolute_fixture_path = Path(fixture).resolve()
+    absolute_function_path = Path(fixture).resolve().joinpath("main.py")
 
     with pytest.raises(SystemExit) as exc_info:
         main(args=["serve", fixture])
@@ -192,7 +192,7 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]):
     assert output.err.endswith(
         rf"""
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Function failed to load! File not found: {absolute_fixture_path}/main.py
+ERROR:    RuntimeError: Function failed to load! File not found: {absolute_function_path}
 
 ERROR:    Application startup failed. Exiting.
 """
