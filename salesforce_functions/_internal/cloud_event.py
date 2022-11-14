@@ -13,6 +13,7 @@ class SalesforceUserContext:
     on_behalf_of_user_id: str | None
     username: str
     salesforce_base_url: str
+    # TODO: Figure out discrepancy with schema: https://github.com/forcedotcom/sf-fx-schema/issues/7
     org_domain_url: str
 
 
@@ -55,11 +56,11 @@ class SalesforceContext:
 
 @dataclass(frozen=True, slots=True)
 class SalesforceFunctionContext:
+    # TODO: Figure out discrepancy with schema: https://github.com/forcedotcom/sf-fx-schema/issues/8
     access_token: str
     request_id: str
     function_invocation_id: str | None
     function_name: str | None
-    # TODO: Should these be "apex*" or "apexClass*"?
     apex_id: str | None
     apex_fqn: str | None
     resource: str | None
@@ -110,7 +111,9 @@ class SalesforceFunctionsCloudEvent:
         content_type = headers.get("Content-Type", "")
 
         if not content_type.startswith("application/json"):
-            raise CloudEventError("Content-Type must be 'application/json'")
+            raise CloudEventError(
+                f"Content-Type must be 'application/json' not '{content_type}'"
+            )
 
         try:
             data = orjson.loads(body) if body else None

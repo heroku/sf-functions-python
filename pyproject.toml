@@ -13,16 +13,22 @@ requires-python = ">=3.10"
 dependencies = [
     "aiohttp>=3.8.3,<4",
     "httptools>=0.5.0,<0.6",
-    # TODO: Should this have platform conditionals (eg for PyPy)?
-    "orjson>=3.8.0,<4",
+    "orjson>=3.8.1,<4",
     "starlette>=0.21.0,<0.22",
     "structlog>=22.1.0,<23",
     "uvicorn>=0.19.0,<0.20",
-    "uvloop>=0.17.0,<0.18; (sys_platform != 'win32' and sys_platform != 'cygwin') and platform_python_implementation != 'PyPy'",
+    "uvloop>=0.17.0,<0.18; sys_platform != 'win32' and sys_platform != 'cygwin'",
 ]
 
 [project.optional-dependencies]
-test = []
+lint = [
+    "black==22.10.0",
+]
+test = [
+    # httpx is required for starlette's `TestClient`.
+    "httpx==0.23.0",
+    "pytest==7.2.0",
+]
 
 [project.scripts]
 sf-functions-python = "salesforce_functions._internal.cli:main"
@@ -35,8 +41,22 @@ packages = ["salesforce_functions"]
 
 [tool.hatch.envs.default]
 features = [
+    "lint",
     "test",
 ]
 
 [tool.hatch.version]
 path = "salesforce_functions/__version__.py"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+filterwarnings = [
+    "error",
+    # This filter can be removed once httpx has a release that includes this change:
+    # https://github.com/encode/httpx/pull/2309
+    "ignore:'cgi' is deprecated:DeprecationWarning:httpx",
+]
+testpaths = ["tests"]
+xfail_strict = true

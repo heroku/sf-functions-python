@@ -1,6 +1,6 @@
 import contextlib
+import os
 import sys
-import traceback
 from pathlib import Path
 from typing import Any
 
@@ -8,20 +8,17 @@ import orjson
 import structlog
 from aiohttp import ClientSession, DummyCookieJar
 from starlette.applications import Starlette
-from starlette.config import Config
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+from structlog.stdlib import BoundLogger
 
 from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
-from .exceptions import LoadFunctionError
+from .function_loader import load_function, LoadFunctionError
 from .logging import configure_logging, get_logger
-from .user_function import load_user_function
-
-logger = get_logger()
 
 
 class OrjsonResponse(JSONResponse):
@@ -31,6 +28,7 @@ class OrjsonResponse(JSONResponse):
 
 async def invoke(request: Request) -> OrjsonResponse:
     structlog.contextvars.clear_contextvars()
+    logger: BoundLogger = request.app.state.logger
 
     if request.headers.get("x-health-check", "").lower() == "true":
         return OrjsonResponse("OK")
@@ -100,37 +98,33 @@ async def invoke(request: Request) -> OrjsonResponse:
         return OrjsonResponse(message, status_code=500)
 
 
-async def handle_error(request: Request, e: Exception) -> OrjsonResponse:
+async def handle_internal_error(request: Request, e: Exception) -> OrjsonResponse:
     message = f"Internal error: {e.__class__.__name__}: {e}"
-    logger.error(message)
+    request.app.state.logger.error(message)
     return OrjsonResponse(message, status_code=500)
 
 
 @contextlib.asynccontextmanager
 async def lifespan(app: Starlette):
     configure_logging()
+    # `get_logger()` returns a proxy that only instantiates the logger on first usage.
+    # Calling `bind()` here ensures that this instantiation doesn't have to occur each
+    # time the function is invoked.
+    app.state.logger = get_logger().bind()
 
-    config = Config()
-    # `FUNCTION_PROJECT_PATH` is set by the CLI.
-    PROJECT_PATH = config("FUNCTION_PROJECT_PATH", cast=Path)
+    # Config passed down from the CLI.
+    PROJECT_PATH = Path(os.environ["FUNCTION_PROJECT_PATH"])
 
     try:
-        app.state.user_function = load_user_function(PROJECT_PATH)
+        app.state.user_function = load_function(PROJECT_PATH)
     except LoadFunctionError as e:
-        # Print the original exception separately if we've chosen to propagate it, since we
-        # want the full traceback for it to be shown, unlike for the exception raised below.
-        if e.__cause__:
-            print()
-            traceback.print_exception(e.__cause__)
-            print()
-
-        # We cannot just log a crafted error message and `sys.exit(1)` like in the CLI's check_function(),
-        # since we're running inside a coroutine managed by uvicorn. So instead we raise an exception and
-        # suppress the unhelpful/unwanted traceback using `tracebacklimit`.
+        # We cannot just log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
+        # since we're running inside a coroutine managed by uvicorn. So instead we raise an exception
+        # and suppress the unwanted traceback using `tracebacklimit`.
         sys.tracebacklimit = 0
         raise RuntimeError(f"Function failed to load! {e}") from None
 
-    # Disable cookie storage using DummyCookieJar, given:
+    # Disable cookie storage using `DummyCookieJar`, given that:
     # - The same session will be used by multiple invocation events.
     # - We don't need cookie support.
     async with ClientSession(cookie_jar=DummyCookieJar()) as aiohttp_session:
@@ -139,7 +133,7 @@ async def lifespan(app: Starlette):
 
 
 app = Starlette(
-    exception_handlers={Exception: handle_error},
+    exception_handlers={Exception: handle_internal_error},
     lifespan=lifespan,
     routes=[
         Route("/", invoke, methods=["POST"]),

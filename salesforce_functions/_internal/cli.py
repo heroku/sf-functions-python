@@ -1,17 +1,17 @@
 import os
 import sys
-import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
 import uvicorn
 
 from ..__version__ import __version__
-from .exceptions import LoadFunctionError, SalesforceFunctionError
-from .user_function import load_user_function
+from .function_loader import load_function, LoadFunctionError
 
 
-def main(command_name: str | None = None):
+def main(
+    command_name: str = "sf-functions-python", args: list[str] | None = None
+) -> int:
     parser = ArgumentParser(
         prog=command_name,
         description="Salesforce Functions Python Runtime",
@@ -21,7 +21,6 @@ def main(command_name: str | None = None):
         required=True,
         dest="subcommand",
         title="subcommands",
-        help="Available subcommands",
     )
 
     # Subcommand `check`
@@ -70,50 +69,51 @@ def main(command_name: str | None = None):
         "version", help="Prints the version of the Python Functions Runtime"
     )
 
-    args = parser.parse_args()
-    match args.subcommand:
+    parsed_args = parser.parse_args(args=args)
+
+    match parsed_args.subcommand:
         case "check":
-            check_function(args.project_path)
+            return check_function(parsed_args.project_path)
         case "serve":
-            start_server(args.project_path, args.host, args.port, args.workers)
+            return start_server(
+                parsed_args.project_path,
+                parsed_args.host,
+                parsed_args.port,
+                parsed_args.workers,
+            )
         case "version":
             print(__version__)
+            return 0
         case other:
-            # This is only reached in the case of the parser config being out of sync,
+            # This is only reachable in the case of the parser config being out of sync,
             # since argparse handles the user providing invalid subcommands for us.
             raise NotImplementedError(f"Unhandled subcommand '{other}'")
 
 
-def check_function(project_path: Path):
+def check_function(project_path: Path) -> int:
+    print("Checking function...\n")
+
     try:
-        print("Checking function...")
-        load_user_function(project_path)
-        print("Function is valid")
+        load_function(project_path)
     except LoadFunctionError as e:
-        # Print the original exception if we've chosen to propagate it, since in those cases it's
-        # essential for debugging (such as SyntaxErrors, which show the invalid source line).
-        if e.__cause__:
-            print()
-            traceback.print_exception(e.__cause__)
-            print()
+        print(f"Error: Function failed validation! {e}", file=sys.stderr)
+        return 1
 
-        print(f"Function failed to load! {e}", file=sys.stderr)
-        sys.exit(1)
+    print("Function passed validation")
+    return 0
 
 
-def start_server(project_path: Path, host: str, port: int, workers: int):
+def start_server(project_path: Path, host: str, port: int, workers: int) -> int:
     # Propagate CLI args to the ASGI app using env vars (there sadly isn't a better way to do this).
     os.environ["FUNCTION_PROJECT_PATH"] = str(project_path)
 
-    try:
-        uvicorn.run(  # pyright: ignore [reportUnknownMemberType]
-            "salesforce_functions._internal.app:app",
-            host=host,
-            port=port,
-            workers=workers,
-            access_log=False,
-        )
-    except SalesforceFunctionError as e:
-        # TODO: Clean up wording + decide whether to switch to a more specific exception type.
-        print(f"Unable to serve function: {e}", file=sys.stderr)
-        sys.exit(1)
+    # This only ever returns in the case of a successful shutdown (from a SIGINT/SIGTERM).
+    # If errors occur, uvicorn will catch/log them and call `sys.exit()` itself.
+    uvicorn.run(  # pyright: ignore [reportUnknownMemberType]
+        "salesforce_functions._internal.app:app",
+        host=host,
+        port=port,
+        workers=workers,
+        access_log=False,
+    )
+    return 0

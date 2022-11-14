@@ -1,11 +1,11 @@
 import importlib.util
 import inspect
 import sys
+import traceback
 import typing
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from .exceptions import LoadFunctionError
 from ..context import Context
 from ..invocation_event import InvocationEvent
 
@@ -16,7 +16,7 @@ UserFunction = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
 
 # Loads the user function using the approach documented here:
 # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
-def load_user_function(project_path: Path) -> UserFunction:
+def load_function(project_path: Path) -> UserFunction:
     # Convert `project_path` to a normalised absolute path, so that:
     # - it's clearer in any error messages where we were attempting to look for the function
     # - we don't end up putting a relative path onto `sys.path`.
@@ -50,14 +50,14 @@ def load_user_function(project_path: Path) -> UserFunction:
         spec.loader.exec_module(module)
     except Exception as e:
         raise LoadFunctionError(
-            f"Exception during import: {e.__class__.__name__}: {e}"
+            f"Exception during import:\n\n{traceback.format_exc()}"
         ) from e
 
     function = getattr(module, FUNCTION_NAME, None)
 
     if function is None or not inspect.isfunction(function):
         raise LoadFunctionError(
-            f"A function named '{FUNCTION_NAME}' was not found in '{module_path}'."
+            f"A function named '{FUNCTION_NAME}' was not found in: {module_path}"
         )
 
     if not inspect.iscoroutinefunction(function):
@@ -74,3 +74,7 @@ def load_user_function(project_path: Path) -> UserFunction:
         )
 
     return function
+
+
+class LoadFunctionError(Exception):
+    pass
