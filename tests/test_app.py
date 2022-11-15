@@ -7,6 +7,7 @@ from pytest import CaptureFixture
 from starlette.testclient import TestClient
 
 from salesforce_functions._internal.app import app
+
 from .utils import generate_cloud_event_headers, invoke_function
 
 

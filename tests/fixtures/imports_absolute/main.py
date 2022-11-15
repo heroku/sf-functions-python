@@ -1,4 +1,4 @@
-from salesforce_functions import Context, InvocationEvent
+from salesforce_functions import Context, InvocationEvent  # isort:skip
 
 # An absolute path import for a package in the function's root directory.
 # pylint: disable-next=import-error,wrong-import-order

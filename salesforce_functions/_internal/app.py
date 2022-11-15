@@ -17,7 +17,7 @@ from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
-from .function_loader import load_function, LoadFunctionError
+from .function_loader import LoadFunctionError, load_function
 from .logging import configure_logging, get_logger
 
 

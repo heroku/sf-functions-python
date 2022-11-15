@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 
 from salesforce_functions._internal.function_loader import (
-    load_function,
     LoadFunctionError,
+    load_function,
 )
 
 

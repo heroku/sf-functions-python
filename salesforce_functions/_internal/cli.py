@@ -6,7 +6,7 @@ from pathlib import Path
 import uvicorn
 
 from ..__version__ import __version__
-from .function_loader import load_function, LoadFunctionError
+from .function_loader import LoadFunctionError, load_function
 
 
 def main(

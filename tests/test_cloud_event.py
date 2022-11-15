@@ -11,6 +11,7 @@ from salesforce_functions._internal.cloud_event import (
     SalesforceFunctionsCloudEvent,
     SalesforceUserContext,
 )
+
 from .utils import (
     encode_cloud_event_extension,
     generate_cloud_event_headers,
