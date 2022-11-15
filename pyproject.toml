@@ -23,6 +23,7 @@ dependencies = [
 [project.optional-dependencies]
 lint = [
     "black==22.10.0",
+    "flake8==5.0.4",
 ]
 test = [
     # httpx is required for starlette's `TestClient`.
@@ -47,6 +48,10 @@ features = [
 
 [tool.hatch.version]
 path = "salesforce_functions/__version__.py"
+
+[tool.black]
+target-version = ['py310', 'py311']
+extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
 
 [tool.pytest.ini_options]
 addopts = [

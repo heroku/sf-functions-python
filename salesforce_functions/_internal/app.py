@@ -118,9 +118,9 @@ async def lifespan(app: Starlette):
     try:
         app.state.user_function = load_function(PROJECT_PATH)
     except LoadFunctionError as e:
-        # We cannot just log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
-        # since we're running inside a coroutine managed by uvicorn. So instead we raise an exception
-        # and suppress the unwanted traceback using `tracebacklimit`.
+        # We cannot log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
+        # since we're running inside a uvicorn-managed coroutine. So instead, we raise an
+        # exception and suppress the unwanted traceback using `tracebacklimit`.
         sys.tracebacklimit = 0
         raise RuntimeError(f"Function failed to load! {e}") from None
 

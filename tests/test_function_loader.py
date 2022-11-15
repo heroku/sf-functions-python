@@ -86,7 +86,10 @@ def test_invalid_function_not_a_function():
 
 def test_invalid_function_not_async():
     fixture = Path("tests/fixtures/invalid_not_async")
-    expected_message = rf"The function named 'function' must be an async function\. Change the function definition from 'def function' to 'async def function'\.$"
+    expected_message = (
+        r"The function named 'function' must be an async function\."
+        r" Change the function definition from 'def function' to 'async def function'\.$"
+    )
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -94,7 +97,7 @@ def test_invalid_function_not_async():
 
 def test_invalid_function_number_of_args():
     fixture = Path("tests/fixtures/invalid_number_of_args")
-    expected_message = rf"The function named 'function' has the wrong number of parameters \(expected 2 but found 3\)\.$"
+    expected_message = r"The function named 'function' has the wrong number of parameters \(expected 2 but found 3\)\.$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)

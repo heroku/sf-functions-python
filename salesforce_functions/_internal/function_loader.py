@@ -14,6 +14,7 @@ FUNCTION_NAME = "function"
 
 UserFunction = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
 
+
 # Loads the user function using the approach documented here:
 # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
 def load_function(project_path: Path) -> UserFunction:
@@ -62,7 +63,8 @@ def load_function(project_path: Path) -> UserFunction:
 
     if not inspect.iscoroutinefunction(function):
         raise LoadFunctionError(
-            f"The function named '{FUNCTION_NAME}' must be an async function. Change the function definition from 'def {FUNCTION_NAME}' to 'async def {FUNCTION_NAME}'."
+            f"The function named '{FUNCTION_NAME}' must be an async function. Change the function"
+            f" definition from 'def {FUNCTION_NAME}' to 'async def {FUNCTION_NAME}'."
         )
 
     parameter_count = len(inspect.signature(function).parameters)
@@ -70,7 +72,8 @@ def load_function(project_path: Path) -> UserFunction:
 
     if parameter_count != expected_parameter_count:
         raise LoadFunctionError(
-            f"The function named '{FUNCTION_NAME}' has the wrong number of parameters (expected {expected_parameter_count} but found {parameter_count})."
+            f"The function named '{FUNCTION_NAME}' has the wrong number of parameters"
+            f" (expected {expected_parameter_count} but found {parameter_count})."
         )
 
     return function

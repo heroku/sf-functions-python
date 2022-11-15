@@ -2,16 +2,33 @@ name: CI
 
 on:
   push:
-    # TODO: Uncomment once a PR is open for the initial implementation.
     # Avoid duplicate builds on PRs.
-    # branches:
-    #   - main
+    branches:
+      - main
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check --progress-bar off --editable .[lint]
+      - name: Run flake8
+        run: flake8 --show-source --color always
+      - name: Run Black
+        run: black --check --diff --color .
+
   unit-test:
     strategy:
       fail-fast: false
@@ -31,4 +48,4 @@ jobs:
       - name: Install dependencies
         run: pip install --disable-pip-version-check --progress-bar off --editable .[test]
       - name: Run pytest
-        run: pytest --verbosity 2
+        run: pytest --verbosity 2 --color yes

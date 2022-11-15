@@ -161,7 +161,10 @@ def test_cloud_event_headers_missing(capsys: CaptureFixture[str]):
 def test_cloud_event_body_not_json(capsys: CaptureFixture[str]):
     response = invoke_function("tests/fixtures/basic", content="Not json")
 
-    expected_message = "Could not parse CloudEvent: Data payload is not valid JSON: unexpected character: line 1 column 1 (char 0)"
+    expected_message = (
+        "Could not parse CloudEvent: Data payload is not valid JSON:"
+        " unexpected character: line 1 column 1 (char 0)"
+    )
     assert response.status_code == 400
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
@@ -214,7 +217,7 @@ def test_internal_error(capsys: CaptureFixture[str]):
             "tests/fixtures/basic", raise_server_exceptions=False
         )
 
-    expected_message = f"Internal error: ValueError: Some internal error"
+    expected_message = "Internal error: ValueError: Some internal error"
     assert response.status_code == 500
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
