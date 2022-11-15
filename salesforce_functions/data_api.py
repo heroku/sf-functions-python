@@ -72,6 +72,9 @@ class DataAPI:
 
     async def query(self, soql: str) -> RecordQueryResult:
         """Queries for records with the given SOQL string."""
+        raise NotImplementedError
+
+        # pylint: disable-next=unreachable
         result = await self._request(
             "GET",
             f"{self.salesforce_base_url}/services/data/v{self.api_version}/query/",
@@ -110,45 +113,25 @@ class DataAPI:
             json=json,
         )
         # response.raise_for_status()
-        result = await response.text()
+        result = await response.json()
         return result
 
-    # async def queryMore(
-    #     self, record_query_result: RecordQueryResult
-    # ) -> RecordQueryResult:
-    #     """Queries for more records, based on the given `RecordQueryResult`."""
-    #     pass
+    async def query_more(
+        self, record_query_result: RecordQueryResult
+    ) -> RecordQueryResult:
+        """Queries for more records, based on the given `RecordQueryResult`."""
+        raise NotImplementedError
 
-    # async def create(self, record: Record) -> RecordModificationResult:
-    #     """Creates a new record described by the given `Record`."""
-    #     pass
+    async def create(self, record: Record) -> RecordModificationResult:
+        """Creates a new record described by the given `Record`."""
+        raise NotImplementedError
 
-    # async def update(self, record: Record) -> RecordModificationResult:
-    #     """Updates an existing record described by the given `Record`."""
-    #     pass
+    async def update(self, record: Record) -> RecordModificationResult:
+        """Updates an existing record described by the given `Record`."""
+        raise NotImplementedError
 
-    # async def delete(self, type: str, id: str) -> RecordModificationResult:
-    #     """Deletes a record, based on the given type and id."""
-    #     pass
-
-
-# {
-#   "totalSize": 7,
-#   "done": true,
-#   "records": [
-#     {
-#       "attributes": {
-#         "type": "User",
-#         "url": "/services/data/v55.0/sobjects/User/0058d000003ZO8yAAG"
-#       },
-#       "Name": "Ed Morley"
-#     },
-#     {
-#       "attributes": {
-#         "type": "User",
-#         "url": "/services/data/v55.0/sobjects/User/0058d0000048TBKAA2"
-#       },
-#       "Name": "Chatter Expert"
-#     }
-#   ]
-# }
+    async def delete(
+        self, record_type: str, record_id: str
+    ) -> RecordModificationResult:
+        """Deletes a record, based on the given type and id."""
+        raise NotImplementedError

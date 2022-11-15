@@ -81,7 +81,7 @@ async def invoke(request: Request) -> OrjsonResponse:
 
     try:
         function_result = await app.state.user_function(event, context)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         message = (
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
         )
@@ -113,10 +113,10 @@ async def lifespan(app: Starlette):
     app.state.logger = get_logger().bind()
 
     # Config passed down from the CLI.
-    PROJECT_PATH = Path(os.environ["FUNCTION_PROJECT_PATH"])
+    project_path = Path(os.environ["FUNCTION_PROJECT_PATH"])
 
     try:
-        app.state.user_function = load_function(PROJECT_PATH)
+        app.state.user_function = load_function(project_path)
     except LoadFunctionError as e:
         # We cannot log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
         # since we're running inside a uvicorn-managed coroutine. So instead, we raise an

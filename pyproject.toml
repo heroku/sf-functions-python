@@ -21,13 +21,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-lint = [
+development = [
     "black==22.10.0",
     "flake8==5.0.4",
-]
-test = [
     # httpx is required for starlette's `TestClient`.
     "httpx==0.23.0",
+    "pylint==2.15.5",
     "pytest==7.2.0",
 ]
 
@@ -42,8 +41,7 @@ packages = ["salesforce_functions"]
 
 [tool.hatch.envs.default]
 features = [
-    "lint",
-    "test",
+    "development",
 ]
 
 [tool.hatch.version]
@@ -52,6 +50,32 @@ path = "salesforce_functions/__version__.py"
 [tool.black]
 target-version = ['py310', 'py311']
 extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
+
+[tool.pylint.main]
+ignore-paths = ["^tests/fixtures/invalid_syntax_error/main.py"]
+
+[tool.pylint.basic]
+# Variable names that should always be accepted, regardless of the `invalid-name` rule's regex.
+good-names = ["_", "e", "id"]
+include-naming-hint = true
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint."messages control"]
+disable = [
+    "fixme",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    # `no-member` has false positives with orjson
+    "no-member",
+    "redefined-outer-name",
+    "too-many-instance-attributes",
+]
+
+[tool.pylint.reports]
+output-format = "colorized"
 
 [tool.pytest.ini_options]
 addopts = [

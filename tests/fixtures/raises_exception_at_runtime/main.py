@@ -1,5 +1,5 @@
 from salesforce_functions import Context, InvocationEvent
 
 
-async def function(event: InvocationEvent[None], context: Context) -> float:
+async def function(_event: InvocationEvent[None], _context: Context) -> float:
     return 1 / 0

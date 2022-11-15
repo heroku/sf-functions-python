@@ -26,7 +26,7 @@ class SalesforceContext:
     @classmethod
     def from_base64_json(cls, base64_json: str):
         try:
-            data = parseBase64Json(base64_json)
+            data = parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
             raise CloudEventError(f"sfcontext is not correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
@@ -68,7 +68,7 @@ class SalesforceFunctionContext:
     @classmethod
     def from_base64_json(cls, base64_json: str):
         try:
-            data = parseBase64Json(base64_json)
+            data = parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
             raise CloudEventError(f"sffncontext is not correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
@@ -140,7 +140,7 @@ class SalesforceFunctionsCloudEvent:
             raise CloudEventError(f"Missing required header {e}") from e
 
 
-def parseBase64Json(base64_json: str) -> Any:
+def parse_base64_json(base64_json: str) -> Any:
     return orjson.loads(binascii.a2b_base64(base64_json))
 
 

@@ -1,1 +1,1 @@
-function = True
+function = True  # pylint: disable=invalid-name

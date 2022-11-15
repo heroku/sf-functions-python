@@ -95,11 +95,14 @@ def encode_cloud_event_extension(data: Any) -> str:
 
 def invoke_function(
     fixture_path: str,
-    headers: dict[str, str] = generate_cloud_event_headers(),
+    headers: dict[str, str] | None = None,
     json: Any = None,
     content: Any = None,
     raise_server_exceptions: bool = True,
 ):
+    if headers is None:
+        headers = generate_cloud_event_headers()
+
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": fixture_path}):
         with TestClient(app, raise_server_exceptions=raise_server_exceptions) as client:
             response = client.post(  # pyright: ignore [reportUnknownMemberType]

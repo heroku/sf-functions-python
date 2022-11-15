@@ -4,6 +4,6 @@ from salesforce_functions import Context, InvocationEvent
 
 
 async def function(
-    event: InvocationEvent[Any], context: Context, unexpected_argument: Any
+    _event: InvocationEvent[Any], _context: Context, _unexpected_argument: Any
 ):
     return None

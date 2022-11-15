@@ -4,18 +4,18 @@ import orjson
 import pytest
 from starlette.datastructures import Headers
 
-from .utils import (
-    encode_cloud_event_extension,
-    generate_cloud_event_headers,
-    generate_sf_context,
-    generate_sf_function_context,
-)
 from salesforce_functions._internal.cloud_event import (
     CloudEventError,
     SalesforceContext,
     SalesforceFunctionContext,
     SalesforceFunctionsCloudEvent,
     SalesforceUserContext,
+)
+from .utils import (
+    encode_cloud_event_extension,
+    generate_cloud_event_headers,
+    generate_sf_context,
+    generate_sf_function_context,
 )
 
 

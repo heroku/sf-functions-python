@@ -23,9 +23,11 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install dependencies
-        run: pip install --disable-pip-version-check --progress-bar off --editable .[lint]
+        run: pip install --disable-pip-version-check --progress-bar off --editable .[development]
       - name: Run flake8
         run: flake8 --show-source --color always
+      - name: Run pylint
+        run: pylint salesforce_functions/ tests/
       - name: Run Black
         run: black --check --diff --color .
 
@@ -46,6 +48,6 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install dependencies
-        run: pip install --disable-pip-version-check --progress-bar off --editable .[test]
+        run: pip install --disable-pip-version-check --progress-bar off --editable .[development]
       - name: Run pytest
         run: pytest --verbosity 2 --color yes

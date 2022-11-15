@@ -1,2 +1,2 @@
-async def function(event, context):
+async def function(_event, _context):
     return None

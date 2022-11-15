@@ -6,8 +6,8 @@ import pytest
 from pytest import CaptureFixture
 from starlette.testclient import TestClient
 
-from .utils import generate_cloud_event_headers, invoke_function
 from salesforce_functions._internal.app import app
+from .utils import generate_cloud_event_headers, invoke_function
 
 
 def test_health_check(capsys: CaptureFixture[str]):

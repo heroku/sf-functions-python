@@ -4,7 +4,7 @@ EventPayloadType = int
 logger = get_logger()
 
 
-async def function(event: InvocationEvent[EventPayloadType], context: Context):
+async def function(_event: InvocationEvent[EventPayloadType], _context: Context):
     print("Print works but output isn't structured")
 
     # The debug message won't be under the default log level of INFO.
