@@ -1,0 +1,44 @@
+{
+  "id": "1a29d823-5272-4e2b-9774-d7ac4a3a07bb",
+  "name": "services_data_v510_sobjects_movie__c_a00b000000fsjvuib1",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/Movie__c/a00B000000FSjVUIB1",
+    "method": "PATCH",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"Color__c\": \"Red\"\n}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": "[{\"message\":\"No such column 'Color__c' on sobject of type Movie__c\",\"errorCode\":\"INVALID_FIELD\"}]",
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 15:09:12 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=XpBzV50zEeus9UFn2XQEsg; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:09:12 GMT; Max-Age=31536000",
+        "BrowserId_sec=XpBzV50zEeus9UFn2XQEsg; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:09:12 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=74/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "1a29d823-5272-4e2b-9774-d7ac4a3a07bb",
+  "persistent": true,
+  "insertionIndex": 17
+}

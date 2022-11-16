@@ -1,0 +1,43 @@
+{
+  "id": "99084872-e36e-4e71-b7d0-f916f39ae8f1",
+  "name": "services_data_v510_query",
+  "request": {
+    "urlPath": "/services/data/v53.0/query",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "SELECT Name FROM Account"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"totalSize\":5,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001LntWlIAJ\"},\"Name\":\"An awesome test account\"},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001LwihtIAB\"},\"Name\":\"Global Media\"},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001LwihuIAB\"},\"Name\":\"Acme\"},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001LwihvIAB\"},\"Name\":\"salesforce.com\"},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001LnobCIAR\"},\"Name\":\"Sample Account for Entitlements\"}]}",
+    "headers": {
+      "Date": "Tue, 13 Apr 2021 11:33:05 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=A2CSeZxMEeu0AYlXSkrHVQ; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 11:33:05 GMT; Max-Age=31536000",
+        "BrowserId_sec=A2CSeZxMEeu0AYlXSkrHVQ; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 11:33:05 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=16/100000",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Vary": "Accept-Encoding"
+    }
+  },
+  "uuid": "99084872-e36e-4e71-b7d0-f916f39ae8f1",
+  "persistent": true,
+  "insertionIndex": 1
+}

@@ -1,0 +1,43 @@
+{
+  "id": "c36a415e-e27b-4f7e-b908-f7ffd3b2d464",
+  "name": "services_data_v510_composite_graph",
+  "request": {
+    "url": "/services/data/v53.0/composite/graph",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"graphs\": [\n        {\n            \"graphId\": \"graph0\",\n            \"compositeRequest\": [\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Movie__c\",\n                    \"method\": \"POST\",\n                    \"referenceId\": \"referenceId0\",\n                    \"body\": {\n                        \"Name\": \"Star Wars Episode IV - A New Hope\",\n                        \"Rating__c\": \"Amazing\"\n                    }\n                }\n            ]\n        }\n    ]\n}"
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"graphs\":[{\"graphId\":\"graph0\",\"graphResponse\":{\"compositeResponse\":[{\"body\":[{\"message\":\"Rating: bad value for restricted picklist field: Amazing\",\"errorCode\":\"INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST\",\"fields\":[\"Rating__c\"]}],\"httpHeaders\":{},\"httpStatusCode\":400,\"referenceId\":\"referenceId0\"}]},\"isSuccessful\":false}]}",
+    "headers": {
+      "Date": "Mon, 17 May 2021 10:15:20 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=ySzoK7b4EeuqYGlEcAviWQ; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 10:15:20 GMT; Max-Age=31536000",
+        "BrowserId_sec=ySzoK7b4EeuqYGlEcAviWQ; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 10:15:20 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=50/101000",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Vary": "Accept-Encoding"
+    }
+  },
+  "uuid": "c36a415e-e27b-4f7e-b908-f7ffd3b2d464",
+  "persistent": true,
+  "insertionIndex": 1
+}

@@ -1,0 +1,42 @@
+{
+  "id": "f34e6704-1da1-4b5c-9793-db3bc13b5fe2",
+  "name": "services_data_v510_query",
+  "request": {
+    "urlPath": "/services/data/v53.0/query",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "SELEKT Name FROM Account"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": "[{\"message\":\"unexpected token: SELEKT\",\"errorCode\":\"MALFORMED_QUERY\"}]",
+    "headers": {
+      "Date": "Tue, 13 Apr 2021 12:54:25 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=YCFhGpxXEeusdp17qoCg0Q; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 12:54:25 GMT; Max-Age=31536000",
+        "BrowserId_sec=YCFhGpxXEeusdp17qoCg0Q; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 12:54:25 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=24/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "f34e6704-1da1-4b5c-9793-db3bc13b5fe2",
+  "persistent": true,
+  "insertionIndex": 1
+}

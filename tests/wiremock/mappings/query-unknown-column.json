@@ -1,0 +1,42 @@
+{
+  "id": "59596d7e-5e1b-4e59-8efb-1ab79618f294",
+  "name": "services_data_v510_query",
+  "request": {
+    "urlPath": "/services/data/v53.0/query",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "SELECT Bacon__c FROM Account LIMIT 2"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": "[{\"message\":\"\\nSELECT Bacon__c FROM Account LIMIT 2\\n       ^\\nERROR at Row:1:Column:8\\nNo such column 'Bacon__c' on entity 'Account'. If you are attempting to use a custom field, be sure to append the '__c' after the custom field name. Please reference your WSDL or the describe call for the appropriate names.\",\"errorCode\":\"INVALID_FIELD\"}]",
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 10:13:06 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=AbVhOZ0KEeuv75lJ0dWQaA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 10:13:06 GMT; Max-Age=31536000",
+        "BrowserId_sec=AbVhOZ0KEeuv75lJ0dWQaA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 10:13:06 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=45/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "59596d7e-5e1b-4e59-8efb-1ab79618f294",
+  "persistent": true,
+  "insertionIndex": 6
+}

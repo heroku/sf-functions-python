@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 dist/
 .DS_Store
+.idea/
+tests/wiremock/__files
