@@ -59,13 +59,13 @@ class RestAPIException(Exception):
 class DataAPI:
     def __init__(
         self,
-        salesforce_base_url: str,
+        org_domain_url: str,
         api_version: str,
         access_token: str,
         # TODO: Should we try and prevent this type from leaking into public API?
         session: ClientSession,
     ):
-        self.salesforce_base_url = salesforce_base_url
+        self.org_domain_url = org_domain_url
         self.api_version = api_version
         self.access_token = access_token
         self._session = session
@@ -77,7 +77,7 @@ class DataAPI:
         # pylint: disable-next=unreachable
         result = await self._request(
             "GET",
-            f"{self.salesforce_base_url}/services/data/v{self.api_version}/query/",
+            f"{self.org_domain_url}/services/data/v{self.api_version}/query/",
             params={"q": soql},
         )
         return result

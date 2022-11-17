@@ -55,18 +55,17 @@ async def invoke(request: Request) -> OrjsonResponse:
         time=cloudevent.time,
     )
 
-    salesforce_base_url = cloudevent.sf_context.user_context.salesforce_base_url
     # TODO: This should be the API version in project.toml instead
     api_version = cloudevent.sf_context.api_version
 
     context = Context(
         org=Org(
             id=cloudevent.sf_context.user_context.org_id,
-            base_url=salesforce_base_url,
+            base_url=cloudevent.sf_context.user_context.salesforce_base_url,
             domain_url=cloudevent.sf_context.user_context.org_domain_url,
             api_version=api_version,
             data_api=DataAPI(
-                salesforce_base_url,
+                cloudevent.sf_context.user_context.org_domain_url,
                 api_version,
                 cloudevent.sf_function_context.access_token,
                 request.app.state.aiohttp_session,
