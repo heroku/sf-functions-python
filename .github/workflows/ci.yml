@@ -13,6 +13,9 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    env:
+      # Required due to: https://github.com/python/mypy/issues/7771
+      FORCE_COLOR: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v3
