@@ -28,10 +28,12 @@ jobs:
         run: flake8 --show-source --color always
       - name: Run pylint
         run: pylint salesforce_functions/ tests/
-      - name: Run isort
-        run: isort --check-only --diff --color .
+      - name: Run mypy
+        run: mypy
       - name: Run Black
         run: black --check --diff --color .
+      - name: Run isort
+        run: isort --check-only --diff --color .
 
   unit-test:
     strategy:

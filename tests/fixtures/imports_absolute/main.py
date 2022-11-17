@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from salesforce_functions import Context, InvocationEvent  # isort:skip
 
 # An absolute path import for a package in the function's root directory.
@@ -5,6 +6,6 @@ from salesforce_functions import Context, InvocationEvent  # isort:skip
 from example_module import example_function
 
 
-async def function(_event: InvocationEvent[None], _context: Context):
+async def function(_event: InvocationEvent[None], _context: Context) -> None:
     example_function()
     return None

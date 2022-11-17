@@ -4,6 +4,7 @@ from typing import Any
 from unittest.mock import patch
 
 import orjson
+from httpx import Response
 from starlette.testclient import TestClient
 
 from salesforce_functions._internal.app import app
@@ -99,7 +100,7 @@ def invoke_function(
     json: Any = None,
     content: Any = None,
     raise_server_exceptions: bool = True,
-):
+) -> Response:
     if headers is None:
         headers = generate_cloud_event_headers()
 

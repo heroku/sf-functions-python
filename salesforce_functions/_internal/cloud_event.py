@@ -24,7 +24,7 @@ class SalesforceContext:
     user_context: SalesforceUserContext
 
     @classmethod
-    def from_base64_json(cls, base64_json: str):
+    def from_base64_json(cls, base64_json: str) -> "SalesforceContext":
         try:
             data = parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
@@ -66,7 +66,7 @@ class SalesforceFunctionContext:
     resource: str | None
 
     @classmethod
-    def from_base64_json(cls, base64_json: str):
+    def from_base64_json(cls, base64_json: str) -> "SalesforceFunctionContext":
         try:
             data = parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
@@ -107,7 +107,9 @@ class SalesforceFunctionsCloudEvent:
     sf_function_context: SalesforceFunctionContext
 
     @classmethod
-    def from_http(cls, headers: Headers, body: bytes):
+    def from_http(
+        cls, headers: Headers, body: bytes
+    ) -> "SalesforceFunctionsCloudEvent":
         content_type = headers.get("Content-Type", "")
 
         if not content_type.startswith("application/json"):

@@ -27,6 +27,7 @@ development = [
     "isort[colors]==5.10.1",
     # httpx is required for starlette's `TestClient`.
     "httpx==0.23.0",
+    "mypy==0.991",
     "pylint==2.15.5",
     "pytest==7.2.0",
 ]
@@ -52,11 +53,17 @@ path = "salesforce_functions/__version__.py"
 target-version = ['py310', 'py311']
 extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
 
+[tool.mypy]
+exclude = ["^tests/fixtures/invalid_syntax_error/main.py$"]
+packages = ["salesforce_functions", "tests"]
+pretty = true
+strict = true
+
 [tool.isort]
 profile = "black"
 
 [tool.pylint.main]
-ignore-paths = ["^tests/fixtures/invalid_syntax_error/main.py"]
+ignore-paths = ["^tests/fixtures/invalid_syntax_error/main.py$"]
 
 [tool.pylint.basic]
 # Variable names that should always be accepted, regardless of the `invalid-name` rule's regex.

@@ -2,7 +2,7 @@ import contextlib
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, AsyncGenerator
 
 import orjson
 import structlog
@@ -105,7 +105,7 @@ async def handle_internal_error(request: Request, e: Exception) -> OrjsonRespons
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: Starlette):
+async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     configure_logging()
     # `get_logger()` returns a proxy that only instantiates the logger on first usage.
     # Calling `bind()` here ensures that this instantiation doesn't have to occur each

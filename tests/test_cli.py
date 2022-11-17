@@ -8,7 +8,7 @@ from salesforce_functions.__version__ import __version__
 from salesforce_functions._internal.cli import main
 
 
-def test_base_help(capsys: CaptureFixture[str]):
+def test_base_help(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(args=["--help"])
 
@@ -34,7 +34,7 @@ subcommands:
     )
 
 
-def test_missing_subcommand(capsys: CaptureFixture[str]):
+def test_missing_subcommand(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(args=[])
 
@@ -45,7 +45,7 @@ def test_missing_subcommand(capsys: CaptureFixture[str]):
     assert "error: the following arguments are required: subcommand" in output.err
 
 
-def test_check_subcommand_help(capsys: CaptureFixture[str]):
+def test_check_subcommand_help(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(args=["check", "--help"])
 
@@ -66,7 +66,7 @@ options:
     )
 
 
-def test_check_subcommand_valid_function(capsys: CaptureFixture[str]):
+def test_check_subcommand_valid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/basic"
 
     exit_code = main(args=["check", fixture])
@@ -77,7 +77,7 @@ def test_check_subcommand_valid_function(capsys: CaptureFixture[str]):
     assert output.out == "Checking function...\n\nFunction passed validation\n"
 
 
-def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]):
+def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/invalid_function_missing_module"
     absolute_function_path = Path(fixture).resolve().joinpath("main.py")
 
@@ -92,7 +92,7 @@ def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]):
     )
 
 
-def test_serve_subcommand_help(capsys: CaptureFixture[str]):
+def test_serve_subcommand_help(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(args=["serve", "--help"])
 
@@ -120,7 +120,7 @@ options:
     )
 
 
-def test_serve_subcommand_default_options(capsys: CaptureFixture[str]):
+def test_serve_subcommand_default_options(capsys: CaptureFixture[str]) -> None:
     # We have to use an invalid function fixture, otherwise the server would not exit.
     fixture = "tests/fixtures/invalid_function_missing_module"
 
@@ -143,7 +143,7 @@ def test_serve_subcommand_default_options(capsys: CaptureFixture[str]):
 @pytest.mark.skip(
     reason="uvicorn never fully shuts down when using multiple workers, so the test will hang"
 )
-def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]):
+def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
     # We have to use an invalid function fixture, otherwise the server would not exit.
     fixture = "tests/fixtures/invalid_function_missing_module"
 
@@ -173,7 +173,7 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]):
     assert number_of_workers == 5
 
 
-def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]):
+def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/invalid_function_missing_module"
     absolute_function_path = Path(fixture).resolve().joinpath("main.py")
 
@@ -199,7 +199,7 @@ ERROR:    Application startup failed. Exiting.
     )
 
 
-def test_version_subcommand(capsys: CaptureFixture[str]):
+def test_version_subcommand(capsys: CaptureFixture[str]) -> None:
     exit_code = main(args=["version"])
     assert exit_code == 0
 

@@ -20,7 +20,7 @@ from .utils import (
 )
 
 
-def test_cloud_event():
+def test_cloud_event() -> None:
     headers = generate_cloud_event_headers()
     body = orjson.dumps({"record_id": 123})
     cloud_event = SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
@@ -59,7 +59,7 @@ def test_cloud_event():
     )
 
 
-def test_minimal_cloud_event():
+def test_minimal_cloud_event() -> None:
     headers = generate_cloud_event_headers(include_optional_attributes=False)
     body = b""
     cloud_event = SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
@@ -98,15 +98,15 @@ def test_minimal_cloud_event():
     )
 
 
-def test_invalid_content_type_missing():
-    headers = {}
+def test_invalid_content_type_missing() -> None:
+    headers: dict[str, str] = {}
     expected_message = r"Content-Type must be 'application/json' not ''$"
 
     with pytest.raises(CloudEventError, match=expected_message):
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")
 
 
-def test_invalid_content_type_unsupported():
+def test_invalid_content_type_unsupported() -> None:
     headers = {"Content-Type": "text/plain"}
     expected_message = r"Content-Type must be 'application/json' not 'text/plain'$"
 
@@ -114,7 +114,7 @@ def test_invalid_content_type_unsupported():
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")
 
 
-def test_invalid_body_not_json():
+def test_invalid_body_not_json() -> None:
     headers = generate_cloud_event_headers()
     body = b"Not json"
     expected_message = r"Data payload is not valid JSON: unexpected character: .+"
@@ -134,7 +134,7 @@ def test_invalid_body_not_json():
         "ce-type",
     ],
 )
-def test_invalid_cloud_event_header_missing(header_name: str):
+def test_invalid_cloud_event_header_missing(header_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers.pop(header_name)
     expected_message = rf"Missing required header '{header_name}'$"
@@ -144,7 +144,7 @@ def test_invalid_cloud_event_header_missing(header_name: str):
 
 
 @pytest.mark.parametrize("extension_name", ["sfcontext", "sffncontext"])
-def test_invalid_cloud_event_extension_not_base64(extension_name: str):
+def test_invalid_cloud_event_extension_not_base64(extension_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers[f"ce-{extension_name}"] = "Not base64"
     expected_message = (
@@ -156,7 +156,7 @@ def test_invalid_cloud_event_extension_not_base64(extension_name: str):
 
 
 @pytest.mark.parametrize("extension_name", ["sfcontext", "sffncontext"])
-def test_invalid_cloud_event_extension_not_json(extension_name: str):
+def test_invalid_cloud_event_extension_not_json(extension_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers[f"ce-{extension_name}"] = binascii.b2a_base64(b"Not json").decode("ascii")
     expected_message = rf"{extension_name} is not valid JSON: unexpected character: .+"
@@ -166,7 +166,7 @@ def test_invalid_cloud_event_extension_not_json(extension_name: str):
 
 
 @pytest.mark.parametrize("extension_name", ["sfcontext", "sffncontext"])
-def test_invalid_cloud_event_extension_not_dict(extension_name: str):
+def test_invalid_cloud_event_extension_not_dict(extension_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers[f"ce-{extension_name}"] = encode_cloud_event_extension("Not a dict")
     expected_message = rf"{extension_name} contains unexpected data type: .+"
@@ -175,7 +175,7 @@ def test_invalid_cloud_event_extension_not_dict(extension_name: str):
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")
 
 
-def test_invalid_sfcontext_extension_field_missing():
+def test_invalid_sfcontext_extension_field_missing() -> None:
     headers = generate_cloud_event_headers()
     sf_context = generate_sf_context()
     sf_context.pop("userContext")
@@ -186,7 +186,7 @@ def test_invalid_sfcontext_extension_field_missing():
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")
 
 
-def test_invalid_sffncontext_extension_field_missing():
+def test_invalid_sffncontext_extension_field_missing() -> None:
     headers = generate_cloud_event_headers()
     sf_function_context = generate_sf_function_context(invocation_id=headers["ce-id"])
     sf_function_context.pop("accessToken")

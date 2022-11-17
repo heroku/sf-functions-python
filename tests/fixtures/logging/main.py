@@ -1,10 +1,9 @@
 from salesforce_functions import Context, InvocationEvent, get_logger
 
-EventPayloadType = int
 logger = get_logger()
 
 
-async def function(_event: InvocationEvent[EventPayloadType], _context: Context):
+async def function(_event: InvocationEvent[None], _context: Context) -> None:
     print("Print works but output isn't structured")
 
     # The debug message won't be under the default log level of INFO.

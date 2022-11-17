@@ -88,7 +88,7 @@ class DataAPI:
         url: str,
         params: Mapping[str, str] | None = None,
         json: Any | None = None,
-    ):
+    ) -> Any:
         # TODO: Set `timeout=N` here? (Default is 5 mins)
         # TODO: Handle failure modes:
         # cannot connect / timeout

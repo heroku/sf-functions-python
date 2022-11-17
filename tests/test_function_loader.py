@@ -10,7 +10,7 @@ from salesforce_functions._internal.function_loader import (
 )
 
 
-def test_basic_function():
+def test_basic_function() -> None:
     fixture = Path("tests/fixtures/basic")
     function = load_function(fixture)
     assert inspect.iscoroutinefunction(function)
@@ -18,24 +18,24 @@ def test_basic_function():
     assert function.__name__ == "function"
 
 
-def test_function_with_relative_imports():
+def test_function_with_relative_imports() -> None:
     """Test using imports that are relative to the function's root directory."""
     fixture = Path("tests/fixtures/imports_relative")
     load_function(fixture)
 
 
-def test_function_with_absolute_imports():
+def test_function_with_absolute_imports() -> None:
     """Test using absolute path imports for packages in the function's root directory."""
     fixture = Path("tests/fixtures/imports_absolute")
     load_function(fixture)
 
 
-def test_function_without_type_annotations():
+def test_function_without_type_annotations() -> None:
     fixture = Path("tests/fixtures/without_type_annotations")
     load_function(fixture)
 
 
-def test_invalid_function_nonexistent_directory():
+def test_invalid_function_nonexistent_directory() -> None:
     fixture = Path("this_directory_does_not_exist")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = rf"File not found: {re.escape(str(absolute_function_path))}$"
@@ -44,7 +44,7 @@ def test_invalid_function_nonexistent_directory():
         load_function(fixture)
 
 
-def test_invalid_function_missing_module():
+def test_invalid_function_missing_module() -> None:
     fixture = Path("tests/fixtures/invalid_missing_main_py")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = rf"File not found: {re.escape(str(absolute_function_path))}$"
@@ -53,7 +53,7 @@ def test_invalid_function_missing_module():
         load_function(fixture)
 
 
-def test_invalid_function_syntax_error():
+def test_invalid_function_syntax_error() -> None:
     fixture = Path("tests/fixtures/invalid_syntax_error")
     expected_message = r"""Exception during import:
 
@@ -66,7 +66,7 @@ $"""
         load_function(fixture)
 
 
-def test_invalid_function_missing_function():
+def test_invalid_function_missing_function() -> None:
     fixture = Path("tests/fixtures/invalid_missing_function")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = rf"A function named 'function' was not found in: {re.escape(str(absolute_function_path))}$"
@@ -75,7 +75,7 @@ def test_invalid_function_missing_function():
         load_function(fixture)
 
 
-def test_invalid_function_not_a_function():
+def test_invalid_function_not_a_function() -> None:
     fixture = Path("tests/fixtures/invalid_not_a_function")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = rf"A function named 'function' was not found in: {re.escape(str(absolute_function_path))}$"
@@ -84,7 +84,7 @@ def test_invalid_function_not_a_function():
         load_function(fixture)
 
 
-def test_invalid_function_not_async():
+def test_invalid_function_not_async() -> None:
     fixture = Path("tests/fixtures/invalid_not_async")
     expected_message = (
         r"The function named 'function' must be an async function\."
@@ -95,7 +95,7 @@ def test_invalid_function_not_async():
         load_function(fixture)
 
 
-def test_invalid_function_number_of_args():
+def test_invalid_function_number_of_args() -> None:
     fixture = Path("tests/fixtures/invalid_number_of_args")
     expected_message = r"The function named 'function' has the wrong number of parameters \(expected 2 but found 3\)\.$"
 

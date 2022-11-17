@@ -11,7 +11,7 @@ from salesforce_functions._internal.app import app
 from .utils import generate_cloud_event_headers, invoke_function
 
 
-def test_health_check(capsys: CaptureFixture[str]):
+def test_health_check(capsys: CaptureFixture[str]) -> None:
     response = invoke_function(
         "tests/fixtures/basic", headers={"x-health-check": "true"}
     )
@@ -24,7 +24,7 @@ def test_health_check(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_empty_payload_and_response(capsys: CaptureFixture[str]):
+def test_empty_payload_and_response(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/basic")
     assert response.status_code == 200
     assert response.headers.get("Content-Type") == "application/json"
@@ -35,7 +35,7 @@ def test_empty_payload_and_response(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_event_attributes():
+def test_event_attributes() -> None:
     payload = {"record_id": 12345}
     response = invoke_function("tests/fixtures/returns_event", json=payload)
     assert response.status_code == 200
@@ -51,7 +51,7 @@ def test_event_attributes():
     }
 
 
-def test_minimal_event_attributes():
+def test_minimal_event_attributes() -> None:
     response = invoke_function(
         "tests/fixtures/returns_event",
         headers=generate_cloud_event_headers(include_optional_attributes=False),
@@ -69,7 +69,7 @@ def test_minimal_event_attributes():
     }
 
 
-def test_context_attributes():
+def test_context_attributes() -> None:
     payload = {"record_id": 12345}
     response = invoke_function("tests/fixtures/returns_context", json=payload)
     assert response.status_code == 200
@@ -90,7 +90,7 @@ def test_context_attributes():
     }
 
 
-def test_minimal_context_attributes():
+def test_minimal_context_attributes() -> None:
     response = invoke_function(
         "tests/fixtures/returns_context",
         headers=generate_cloud_event_headers(include_optional_attributes=False),
@@ -113,7 +113,7 @@ def test_minimal_context_attributes():
     }
 
 
-def test_logging(capsys: CaptureFixture[str]):
+def test_logging(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/logging")
     assert response.status_code == 200
 
@@ -133,7 +133,7 @@ record_id=12345 invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=info msg
     assert output.err == ""
 
 
-def test_invalid_function():
+def test_invalid_function() -> None:
     expected_message = r"Function failed to load! File not found: .+$"
 
     with pytest.raises(RuntimeError, match=expected_message):
@@ -144,7 +144,7 @@ def test_invalid_function():
     del sys.tracebacklimit
 
 
-def test_cloud_event_headers_missing(capsys: CaptureFixture[str]):
+def test_cloud_event_headers_missing(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/basic", headers={})
 
     expected_message = (
@@ -159,7 +159,7 @@ def test_cloud_event_headers_missing(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_cloud_event_body_not_json(capsys: CaptureFixture[str]):
+def test_cloud_event_body_not_json(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/basic", content="Not json")
 
     expected_message = (
@@ -175,7 +175,7 @@ def test_cloud_event_body_not_json(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]):
+def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/raises_exception_at_runtime")
 
     expected_message = "Exception occurred whilst executing function: ZeroDivisionError: division by zero"
@@ -193,7 +193,7 @@ invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="{expected_mes
     assert output.err == ""
 
 
-def test_return_value_not_serializable(capsys: CaptureFixture[str]):
+def test_return_value_not_serializable(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/return_value_not_serializable")
 
     expected_message = "Function return value cannot be serialized: TypeError: Type is not JSON serializable: set"
@@ -209,7 +209,7 @@ def test_return_value_not_serializable(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_internal_error(capsys: CaptureFixture[str]):
+def test_internal_error(capsys: CaptureFixture[str]) -> None:
     with patch(
         "salesforce_functions._internal.app.SalesforceFunctionsCloudEvent.from_http",
         side_effect=ValueError("Some internal error"),
@@ -228,7 +228,7 @@ def test_internal_error(capsys: CaptureFixture[str]):
     assert output.err == ""
 
 
-def test_nonexistent_path():
+def test_nonexistent_path() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.post(  # pyright: ignore [reportUnknownMemberType]
@@ -238,7 +238,7 @@ def test_nonexistent_path():
     assert response.status_code == 404
 
 
-def test_unsupported_http_method_get():
+def test_unsupported_http_method_get() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.get("/")  # pyright: ignore [reportUnknownMemberType]
@@ -246,7 +246,7 @@ def test_unsupported_http_method_get():
     assert response.status_code == 405
 
 
-def test_unsupported_http_method_delete():
+def test_unsupported_http_method_delete() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.delete("/")  # pyright: ignore [reportUnknownMemberType]
