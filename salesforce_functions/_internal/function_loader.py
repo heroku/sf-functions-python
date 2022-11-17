@@ -15,9 +15,13 @@ FUNCTION_NAME = "function"
 UserFunction = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
 
 
-# Loads the user function using the approach documented here:
-# https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
 def load_function(project_path: Path) -> UserFunction:
+    """
+    Load and validate the function inside `main.py` in the specified directory.
+
+    Uses the approach documented here:
+    https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
+    """
     # Convert `project_path` to a normalised absolute path, so that:
     # - it's clearer in any error messages where we were attempting to look for the function
     # - we don't end up putting a relative path onto `sys.path`.
@@ -80,4 +84,4 @@ def load_function(project_path: Path) -> UserFunction:
 
 
 class LoadFunctionError(Exception):
-    pass
+    """There was an error loading the function or it failed validation."""

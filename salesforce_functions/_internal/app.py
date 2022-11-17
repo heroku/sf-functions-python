@@ -22,11 +22,19 @@ from .logging import configure_logging, get_logger
 
 
 class OrjsonResponse(JSONResponse):
+    """
+    Wrapper around Starlette's `JSONResponse` to use an alternative library for JSON serialisation.
+
+    Used since `orjson` has much better performance than the Python stdlib's `json` module:
+    https://github.com/ijl/orjson#performance
+    """
+
     def render(self, content: Any) -> bytes:
         return orjson.dumps(content)
 
 
 async def invoke(request: Request) -> OrjsonResponse:
+    """Handle an incoming function invocation request."""
     structlog.contextvars.clear_contextvars()
     logger: BoundLogger = request.app.state.logger
 
@@ -105,6 +113,12 @@ async def handle_internal_error(request: Request, e: Exception) -> OrjsonRespons
 
 @contextlib.asynccontextmanager
 async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
+    """
+    Asynchronous context manager for handling app setup/teardown.
+
+    Anything before the `yield` will be run before the app starts serving
+    requests, and anything after will be run when the server shuts down.
+    """
     configure_logging()
     # `get_logger()` returns a proxy that only instantiates the logger on first usage.
     # Calling `bind()` here ensures that this instantiation doesn't have to occur each
@@ -131,6 +145,7 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
         yield
 
 
+# The ASGI app that will be run by uvicorn.
 app = Starlette(
     exception_handlers={Exception: handle_internal_error},
     lifespan=lifespan,

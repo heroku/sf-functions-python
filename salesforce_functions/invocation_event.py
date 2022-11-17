@@ -6,9 +6,7 @@ T = TypeVar("T")
 
 @dataclass(frozen=True, slots=True)
 class InvocationEvent(Generic[T]):
-    """
-    The metadata and data payload of the event that caused the function to be invoked.
-    """
+    """The metadata and data payload of the event that caused the function to be invoked."""
 
     id: str
     """The unique identifier for this execution of the function."""
