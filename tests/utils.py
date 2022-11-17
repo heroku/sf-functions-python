@@ -106,8 +106,6 @@ def invoke_function(
 
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": fixture_path}):
         with TestClient(app, raise_server_exceptions=raise_server_exceptions) as client:
-            response = client.post(  # pyright: ignore [reportUnknownMemberType]
-                "/", headers=headers, json=json, content=content
-            )
+            response = client.post("/", headers=headers, json=json, content=content)
 
     return response

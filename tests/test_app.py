@@ -231,9 +231,7 @@ def test_internal_error(capsys: CaptureFixture[str]) -> None:
 def test_nonexistent_path() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
-            response = client.post(  # pyright: ignore [reportUnknownMemberType]
-                "/nonexistent"
-            )
+            response = client.post("/nonexistent")
 
     assert response.status_code == 404
 
@@ -241,7 +239,7 @@ def test_nonexistent_path() -> None:
 def test_unsupported_http_method_get() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
-            response = client.get("/")  # pyright: ignore [reportUnknownMemberType]
+            response = client.get("/")
 
     assert response.status_code == 405
 
@@ -249,6 +247,6 @@ def test_unsupported_http_method_get() -> None:
 def test_unsupported_http_method_delete() -> None:
     with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
         with TestClient(app) as client:
-            response = client.delete("/")  # pyright: ignore [reportUnknownMemberType]
+            response = client.delete("/")
 
     assert response.status_code == 405
