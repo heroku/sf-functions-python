@@ -26,7 +26,7 @@ development = [
     "flake8==5.0.4",
     "isort[colors]==5.10.1",
     # httpx is required for starlette's `TestClient`.
-    "httpx==0.23.0",
+    "httpx==0.23.1",
     "mypy==0.991",
     "pylint==2.15.5",
     "pytest==7.2.0",
@@ -94,9 +94,6 @@ addopts = [
 ]
 filterwarnings = [
     "error",
-    # This filter can be removed once httpx has a release that includes this change:
-    # https://github.com/encode/httpx/pull/2309
-    "ignore:'cgi' is deprecated:DeprecationWarning:httpx",
 ]
 testpaths = ["tests"]
 xfail_strict = true
