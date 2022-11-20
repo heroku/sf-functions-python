@@ -140,8 +140,10 @@ def test_invalid_function() -> None:
     with pytest.raises(RuntimeError, match=expected_message):
         invoke_function("tests/fixtures/invalid_function_missing_module")
 
-    # Remove the custom `tracebacklimit` set by the app `lifespan`'s error handling,
-    # otherwise traceback output for later tests will be affected too.
+    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+    # improve readability of the error message. This must be cleaned up otherwise
+    # traceback output for later tests will be affected too.
+    assert getattr(sys, "tracebacklimit") == 0
     del sys.tracebacklimit
 
 

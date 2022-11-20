@@ -127,8 +127,10 @@ def test_serve_subcommand_default_options(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit):
         main(args=["serve", fixture])
 
-    # Remove the custom `tracebacklimit` set by the app `lifespan`'s error handling,
-    # otherwise traceback output for later tests will be affected too.
+    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+    # improve readability of the error message. This must be cleaned up otherwise
+    # traceback output for later tests will be affected too.
+    assert getattr(sys, "tracebacklimit") == 0
     del sys.tracebacklimit
 
     output = capsys.readouterr()
@@ -161,8 +163,10 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
             ]
         )
 
-    # Remove the custom `tracebacklimit` set by the app `lifespan`'s error handling,
-    # otherwise traceback output for later tests will be affected too.
+    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+    # improve readability of the error message. This must be cleaned up otherwise
+    # traceback output for later tests will be affected too.
+    assert getattr(sys, "tracebacklimit") == 0
     del sys.tracebacklimit
 
     output = capsys.readouterr()
@@ -180,8 +184,10 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(args=["serve", fixture])
 
-    # Remove the custom `tracebacklimit` set by the app `lifespan`'s error handling,
-    # otherwise traceback output for later tests will be affected too.
+    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+    # improve readability of the error message. This must be cleaned up otherwise
+    # traceback output for later tests will be affected too.
+    assert getattr(sys, "tracebacklimit") == 0
     del sys.tracebacklimit
 
     exit_code = exc_info.value.code

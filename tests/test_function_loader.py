@@ -1,5 +1,6 @@
 import inspect
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -54,6 +55,11 @@ def test_invalid_function_missing_module() -> None:
 
 
 def test_invalid_function_syntax_error() -> None:
+    assert not hasattr(sys, "tracebacklimit"), (
+        "A custom `sys.tracebacklimit` is still defined but should not be, otherwise it"
+        " will affect this test. Check earlier tests aren't missing a cleanup step."
+    )
+
     fixture = Path("tests/fixtures/invalid_syntax_error")
     expected_message = r"""Exception during import:
 
