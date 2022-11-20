@@ -1,7 +1,5 @@
 import contextlib
-import os
 import sys
-from pathlib import Path
 from typing import Any, AsyncGenerator
 
 import orjson
@@ -16,6 +14,7 @@ from structlog.stdlib import BoundLogger
 from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
+from . import config
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
 from .function_loader import LoadFunctionError, load_function
 from .logging import configure_logging, get_logger
@@ -125,11 +124,8 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     # time the function is invoked.
     app.state.logger = get_logger().bind()
 
-    # Config passed down from the CLI.
-    project_path = Path(os.environ["FUNCTION_PROJECT_PATH"])
-
     try:
-        app.state.user_function = load_function(project_path)
+        app.state.user_function = load_function(config.project_path())
     except LoadFunctionError as e:
         # We cannot log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
         # since we're running inside a uvicorn-managed coroutine. So instead, we raise an

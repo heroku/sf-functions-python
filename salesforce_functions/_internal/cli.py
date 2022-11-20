@@ -6,6 +6,7 @@ from pathlib import Path
 import uvicorn
 
 from ..__version__ import __version__
+from .config import PROJECT_PATH_ENV_VAR
 from .function_loader import LoadFunctionError, load_function
 
 
@@ -104,16 +105,21 @@ def check_function(project_path: Path) -> int:
 
 
 def start_server(project_path: Path, host: str, port: int, workers: int) -> int:
-    # Propagate CLI args to the ASGI app using env vars (there sadly isn't a better way to do this).
-    os.environ["FUNCTION_PROJECT_PATH"] = str(project_path)
+    # Propagate CLI args to the ASGI app (uvicorn doesn't support passing custom config directly).
+    os.environ[PROJECT_PATH_ENV_VAR] = str(project_path)
 
-    # This only ever returns in the case of a successful shutdown (from a SIGINT/SIGTERM).
-    # If errors occur, uvicorn will catch/log them and call `sys.exit()` itself.
-    uvicorn.run(  # pyright: ignore [reportUnknownMemberType]
-        "salesforce_functions._internal.app:app",
-        host=host,
-        port=port,
-        workers=workers,
-        access_log=False,
-    )
+    try:
+        # This only ever returns in the case of a successful shutdown (from a SIGINT/SIGTERM).
+        # If errors occur, uvicorn will catch/log them and call `sys.exit()` itself.
+        uvicorn.run(  # pyright: ignore [reportUnknownMemberType]
+            "salesforce_functions._internal.app:app",
+            host=host,
+            port=port,
+            workers=workers,
+            access_log=False,
+        )
+    finally:
+        # Prevent the env var from leaking into the caller, for example during tests.
+        del os.environ[PROJECT_PATH_ENV_VAR]
+
     return 0

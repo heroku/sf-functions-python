@@ -7,6 +7,7 @@ from pytest import CaptureFixture
 from starlette.testclient import TestClient
 
 from salesforce_functions._internal.app import app
+from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
 from .utils import generate_cloud_event_headers, invoke_function
 
@@ -229,7 +230,7 @@ def test_internal_error(capsys: CaptureFixture[str]) -> None:
 
 
 def test_nonexistent_path() -> None:
-    with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
+    with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.post("/nonexistent")
 
@@ -237,7 +238,7 @@ def test_nonexistent_path() -> None:
 
 
 def test_unsupported_http_method_get() -> None:
-    with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
+    with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.get("/")
 
@@ -245,7 +246,7 @@ def test_unsupported_http_method_get() -> None:
 
 
 def test_unsupported_http_method_delete() -> None:
-    with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": "tests/fixtures/basic"}):
+    with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
         with TestClient(app) as client:
             response = client.delete("/")
 

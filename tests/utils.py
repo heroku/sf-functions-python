@@ -8,6 +8,7 @@ from httpx import Response
 from starlette.testclient import TestClient
 
 from salesforce_functions._internal.app import app
+from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
 
 def generate_cloud_event_headers(
@@ -104,7 +105,7 @@ def invoke_function(
     if headers is None:
         headers = generate_cloud_event_headers()
 
-    with patch.dict(os.environ, {"FUNCTION_PROJECT_PATH": fixture_path}):
+    with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: fixture_path}):
         with TestClient(app, raise_server_exceptions=raise_server_exceptions) as client:
             response = client.post("/", headers=headers, json=json, content=content)
 
