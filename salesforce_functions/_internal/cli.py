@@ -9,12 +9,12 @@ from ..__version__ import __version__
 from .config import PROJECT_PATH_ENV_VAR
 from .function_loader import LoadFunctionError, load_function
 
+PROGRAM_NAME = "sf-functions-python"
 
-def main(
-    command_name: str = "sf-functions-python", args: list[str] | None = None
-) -> int:
+
+def main(args: list[str] | None = None) -> int:
     parser = ArgumentParser(
-        prog=command_name,
+        prog=PROGRAM_NAME,
         description="Salesforce Functions Python Runtime",
         allow_abbrev=False,
     )
