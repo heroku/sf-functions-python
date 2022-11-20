@@ -1,4 +1,5 @@
 import logging
+from typing import Callable
 
 import structlog
 
@@ -22,4 +23,4 @@ def configure_logging() -> None:
     )
 
 
-get_logger = structlog.stdlib.get_logger
+get_logger: Callable[..., structlog.stdlib.BoundLogger] = structlog.stdlib.get_logger
