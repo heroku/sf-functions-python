@@ -1,11 +1,15 @@
+import os
 import sys
 from pathlib import Path
+from typing import Any
+from unittest.mock import patch
 
 import pytest
 from pytest import CaptureFixture
 
 from salesforce_functions.__version__ import __version__
 from salesforce_functions._internal.cli import main
+from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
 
 def test_base_help(capsys: CaptureFixture[str]) -> None:
@@ -120,36 +124,37 @@ options:
     )
 
 
-def test_serve_subcommand_default_options(capsys: CaptureFixture[str]) -> None:
-    # We have to use an invalid function fixture, otherwise the server would not exit.
-    fixture = "tests/fixtures/invalid_function_missing_module"
+def test_serve_subcommand_default_options() -> None:
+    project_path = "path/to/function"
 
-    with pytest.raises(SystemExit):
-        main(args=["serve", fixture])
+    def check_project_path_env_var(*_args: Any, **_kwargs: Any) -> None:
+        assert os.environ.get(PROJECT_PATH_ENV_VAR) == project_path
 
-    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
-    # improve readability of the error message. This must be cleaned up otherwise
-    # traceback output for later tests will be affected too.
-    assert getattr(sys, "tracebacklimit") == 0
-    del sys.tracebacklimit
+    with patch(
+        "uvicorn.run", side_effect=check_project_path_env_var
+    ) as mock_uvicorn_run:
+        main(args=["serve", project_path])
 
-    output = capsys.readouterr()
-    # Uvicorn's startup logs are different when only using one worker, and as such the
-    # "Uvicorn running on http://localhost:8080" message isn't in the output at this point,
-    # so we can't check the default host/port, only the other options.
-    number_of_workers = output.err.count("Started server process")
-    assert number_of_workers == 1
+        mock_uvicorn_run.assert_called_once_with(
+            "salesforce_functions._internal.app:app",
+            host="localhost",
+            port=8080,
+            workers=1,
+            access_log=False,
+        )
+
+    assert PROJECT_PATH_ENV_VAR not in os.environ
 
 
-# TODO: Fix upstream: https://github.com/encode/uvicorn/issues/1115 (W-12034429)
-@pytest.mark.skip(
-    reason="uvicorn never fully shuts down when using multiple workers, so the test will hang"
-)
-def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
-    # We have to use an invalid function fixture, otherwise the server would not exit.
-    fixture = "tests/fixtures/invalid_function_missing_module"
+def test_serve_subcommand_custom_options() -> None:
+    project_path = "path/to/function"
 
-    with pytest.raises(SystemExit):
+    def check_project_path_env_var(*_args: Any, **_kwargs: Any) -> None:
+        assert os.environ.get(PROJECT_PATH_ENV_VAR) == project_path
+
+    with patch(
+        "uvicorn.run", side_effect=check_project_path_env_var
+    ) as mock_uvicorn_run:
         main(
             args=[
                 "serve",
@@ -159,22 +164,19 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
                 "12345",
                 "--workers",
                 "5",
-                fixture,
+                project_path,
             ]
         )
 
-    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
-    # improve readability of the error message. This must be cleaned up otherwise
-    # traceback output for later tests will be affected too.
-    assert getattr(sys, "tracebacklimit") == 0
-    del sys.tracebacklimit
+        mock_uvicorn_run.assert_called_once_with(
+            "salesforce_functions._internal.app:app",
+            host="0.0.0.0",
+            port=12345,
+            workers=5,
+            access_log=False,
+        )
 
-    output = capsys.readouterr()
-    # The host/port is only logged by uvicorn when running multiple workers,
-    # so it's easier to test all options in the same test.
-    assert "Uvicorn running on http://0.0.0.0:12345" in output.err
-    number_of_workers = output.err.count("Started server process")
-    assert number_of_workers == 5
+    assert PROJECT_PATH_ENV_VAR not in os.environ
 
 
 def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
