@@ -1,4 +1,4 @@
-from typing import Any, Generic, Literal, TypeVar
+from typing import Any, Generic, Literal, TypeVar, cast
 from urllib.parse import urlencode
 
 from multidict import CIMultiDictProxy
@@ -169,7 +169,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         return "POST"
 
     def request_body(self) -> Json | None:
-        json_sub_requests = []
+        json_sub_requests: list[dict[str, Any]] = []
 
         for reference_id, sub_request in self._sub_requests.items():
             json_sub_request: dict[str, Any] = {
@@ -201,8 +201,8 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
             composite_responses = json_body["graphs"][0]["graphResponse"][
                 "compositeResponse"
             ]
-            result = {}
-            errors = []
+            result: dict[ReferenceId, str] = {}
+            errors: list[InnerSalesforceRestApiError] = []
 
             for composite_response in composite_responses:
                 reference_id = ReferenceId(composite_response["referenceId"])
@@ -236,7 +236,7 @@ def _process_records_response(
         total_size: int = json_body["totalSize"]
         next_records_url: str | None = json_body.get("nextRecordsUrl")
 
-        records = []
+        records: list[QueriedRecord] = []
         for record_json in json_body["records"]:
             salesforce_object_type = record_json["attributes"]["type"]
 
@@ -248,7 +248,7 @@ def _process_records_response(
 
                 if isinstance(value, dict):
                     sub_query_results[key] = _process_records_response(
-                        status_code, headers, value
+                        status_code, headers, cast(dict[str, Any], value)
                     )
                 else:
                     fields[key] = value
@@ -263,7 +263,7 @@ def _process_records_response(
 
 
 def _normalize_record_fields(fields: dict[str, Any]) -> dict[str, Any]:
-    normalized = {}
+    normalized: dict[str, Any] = {}
     for key, value in fields.items():
         if isinstance(value, ReferenceId):
             value = f"@{{{value.id}.id}}"
