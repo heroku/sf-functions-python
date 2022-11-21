@@ -25,10 +25,6 @@ class Org:
     """The base URL of the Salesforce organization."""
     domain_url: str
     """The domain URL of the Salesforce organization."""
-    # TODO: This version is the version from pyproject.toml, not the cloud event.
-    # Should it have a clearer name/be omitted? Should we surface the version from the cloudevent?
-    api_version: str
-    """The API version the Salesforce organization is currently using."""
     data_api: DataAPI
     """An initialized data API client instance for interacting with data in the org."""
     user: User

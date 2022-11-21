@@ -73,7 +73,6 @@ def test_context_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "org": {
-            "api_version": "56.0",
             "base_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
             "data_api": None,
             "domain_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
@@ -96,7 +95,6 @@ def test_minimal_context_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "org": {
-            "api_version": "56.0",
             "base_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
             "data_api": None,
             "domain_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
