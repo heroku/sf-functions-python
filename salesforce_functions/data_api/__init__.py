@@ -77,9 +77,8 @@ class DataAPI:
         `UnitOfWork`).
         """
         return await self._execute(
-            # pylint:disable=protected-access
             CompositeGraphRestApiRequest(
-                self._org_domain_url, self._api_version, unit_of_work._sub_requests
+                self._org_domain_url, self._api_version, unit_of_work.sub_requests
             )
         )
 
