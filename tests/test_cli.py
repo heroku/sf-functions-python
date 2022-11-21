@@ -126,9 +126,11 @@ options:
 
 def test_serve_subcommand_default_options() -> None:
     project_path = "path/to/function"
+    # Still a relative path, but with the path separators adjusted for the current OS.
+    normalised_path = str(Path(project_path))
 
     def check_project_path_env_var(*_args: Any, **_kwargs: Any) -> None:
-        assert os.environ.get(PROJECT_PATH_ENV_VAR) == project_path
+        assert os.environ.get(PROJECT_PATH_ENV_VAR) == normalised_path
 
     with patch(
         "uvicorn.run", side_effect=check_project_path_env_var
@@ -148,9 +150,11 @@ def test_serve_subcommand_default_options() -> None:
 
 def test_serve_subcommand_custom_options() -> None:
     project_path = "path/to/function"
+    # Still a relative path, but with the path separators adjusted for the current OS.
+    normalised_path = str(Path(project_path))
 
     def check_project_path_env_var(*_args: Any, **_kwargs: Any) -> None:
-        assert os.environ.get(PROJECT_PATH_ENV_VAR) == project_path
+        assert os.environ.get(PROJECT_PATH_ENV_VAR) == normalised_path
 
     with patch(
         "uvicorn.run", side_effect=check_project_path_env_var
