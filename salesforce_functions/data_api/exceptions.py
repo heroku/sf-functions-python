@@ -1,0 +1,2 @@
+class DataApiError(Exception):
+    pass
