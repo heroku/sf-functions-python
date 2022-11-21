@@ -43,8 +43,6 @@ def test_event_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "data": payload,
-        "data_content_type": "application/json",
-        "data_schema": "dataschema TODO",
         "id": "56ff961b-61b9-4310-a159-1f997221ccfb",
         "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
         "time": "2022-11-01T12:00:00.000000Z",
@@ -61,8 +59,6 @@ def test_minimal_event_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "data": None,
-        "data_content_type": "application/json",
-        "data_schema": None,
         "id": "56ff961b-61b9-4310-a159-1f997221ccfb",
         "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
         "time": None,

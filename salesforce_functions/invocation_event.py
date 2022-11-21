@@ -21,12 +21,6 @@ class InvocationEvent(Generic[T]):
     """
     data: T
     """The payload of the event."""
-    # TODO: Why is this optional if we reject empty content type?
-    # TODO: Why do we even leak this to the user anyway?
-    data_content_type: str | None
-    """The media type of the event `data` payload."""
-    data_schema: str | None
-    """The schema to which the event `data` payload adheres."""
     # TODO: Switch this to `datetime`?
     time: str | None
     """

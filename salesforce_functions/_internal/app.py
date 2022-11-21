@@ -57,8 +57,6 @@ async def invoke(request: Request) -> OrjsonResponse:
         type=cloudevent.type,
         source=cloudevent.source,
         data=cloudevent.data,
-        data_content_type=cloudevent.data_content_type,
-        data_schema=cloudevent.data_schema,
         time=cloudevent.time,
     )
 
