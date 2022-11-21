@@ -8,7 +8,6 @@ class Record:
 
     type: str
     """The Salesforce Object type."""
-
     fields: dict[str, Any]
     """The fields belonging to the record."""
 

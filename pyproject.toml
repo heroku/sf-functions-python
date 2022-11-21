@@ -92,14 +92,15 @@ output-format = "colorized"
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
-    "-m not requires_wiremock"
+    "--strict-markers",
+    "-m not requires_wiremock",
 ]
+asyncio_mode = "auto"
 filterwarnings = [
     "error",
 ]
-testpaths = ["tests"]
-xfail_strict = true
-asyncio_mode = "auto"
 markers = [
     "requires_wiremock: marks tests that require a running wiremock process (deselect with '-m \"not requires_wiremock\"')",
 ]
+testpaths = ["tests"]
+xfail_strict = true

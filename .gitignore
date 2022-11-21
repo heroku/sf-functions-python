@@ -1,8 +1,8 @@
 __pycache__/
+.idea/
 .mypy_cache/
 .pytest_cache/
 .venv/
 dist/
+tests/wiremock/__files/
 .DS_Store
-.idea/
-tests/wiremock/__files

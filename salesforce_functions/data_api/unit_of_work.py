@@ -21,7 +21,7 @@ class UnitOfWork:
 
     def register_create(self, record: Record) -> ReferenceId:
         """
-        Registers a record creation for the UnitOfWork.
+        Register a record creation for the UnitOfWork.
 
         Returns a ReferenceId that can be used to refer to the created record in subsequent operations in this
         UnitOfWork.
@@ -30,7 +30,7 @@ class UnitOfWork:
 
     def register_update(self, record: Record) -> ReferenceId:
         """
-        Registers a record update for the UnitOfWork.
+        Register a record update for the UnitOfWork.
 
         Returns a ReferenceId that can be used to refer to the updated record in subsequent operations in this
         UnitOfWork.
@@ -39,7 +39,7 @@ class UnitOfWork:
 
     def register_delete(self, object_type: str, record_id: str) -> ReferenceId:
         """
-        Registers a deletion of an existing record of the given type and id.
+        Register a deletion of an existing record of the given type and id.
         """
         return self._register(DeleteRecordRestApiRequest(object_type, record_id))
 

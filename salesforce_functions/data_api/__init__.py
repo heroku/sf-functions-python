@@ -38,11 +38,11 @@ class DataAPI:
         self.access_token = access_token
 
     async def query(self, soql: str) -> RecordQueryResult:
-        """Queries for records using the given SOQL string."""
+        """Query for records using the given SOQL string."""
         return await self._execute(QueryRecordsRestApiRequest(soql))
 
     async def query_more(self, result: RecordQueryResult) -> RecordQueryResult:
-        """Queries for more records, based on the given `RecordQueryResult`."""
+        """Query for more records, based on the given `RecordQueryResult`."""
         if result.next_records_url is None:
             return RecordQueryResult(True, result.total_size, [], None)
 
@@ -56,7 +56,7 @@ class DataAPI:
 
     async def update(self, record: Record) -> str:
         """
-        Updates an existing record based on the given `Record` object.
+        Update an existing record based on the given `Record` object.
 
         The given `Record` must contain an `Id` field.
         """
@@ -70,7 +70,7 @@ class DataAPI:
         self, unit_of_work: UnitOfWork
     ) -> dict[ReferenceId, str]:
         """
-        Commits a `UnitOfWork`, executing all operations registered with it.
+        Commit a `UnitOfWork`, executing all operations registered with it.
 
         If any of these operations fail, the whole unit is rolled back. To examine results for a single operation,
         inspect the returned dict (which is keyed with `ReferenceId` objects returned from the `register*` functions on
@@ -87,7 +87,6 @@ class DataAPI:
         url: str = rest_api_request.url(self._org_domain_url, self._api_version)
         method: str = rest_api_request.http_method()
         body = rest_api_request.request_body()
-
         headers = {
             "Authorization": f"Bearer {self.access_token}",
             "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",

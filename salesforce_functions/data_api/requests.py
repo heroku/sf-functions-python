@@ -1,4 +1,4 @@
-from typing import Any, Generic, Literal, TypeVar, Union
+from typing import Any, Generic, Literal, TypeVar
 from urllib.parse import urlencode
 
 from multidict import CIMultiDictProxy
@@ -12,9 +12,7 @@ from .exceptions import (
 from .record import QueriedRecord, Record, RecordQueryResult
 from .reference_id import ReferenceId
 
-# Using Union here since mypy complains about the pipe syntax
-HttpMethod = Union[Literal["GET"], Literal["POST"], Literal["PATCH"], Literal["DELETE"]]
-
+HttpMethod = Literal["GET", "POST", "PATCH", "DELETE"]
 Json = dict[str, Any] | list[Any]
 
 T = TypeVar("T")
