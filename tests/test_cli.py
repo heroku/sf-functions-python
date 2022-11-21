@@ -1,5 +1,6 @@
 import os
 import sys
+from importlib.metadata import distribution
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -8,8 +9,17 @@ import pytest
 from pytest import CaptureFixture
 
 from salesforce_functions.__version__ import __version__
-from salesforce_functions._internal.cli import main
+from salesforce_functions._internal.cli import PROGRAM_NAME, main
 from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
+
+
+def test_program_name_matches_package_entry_points() -> None:
+    package_script_names = (
+        distribution("salesforce_functions")
+        .entry_points.select(group="console_scripts")
+        .names
+    )
+    assert PROGRAM_NAME in package_script_names
 
 
 def test_base_help(capsys: CaptureFixture[str]) -> None:
@@ -70,6 +80,17 @@ options:
     )
 
 
+def test_check_subcommand_missing_project_path(capsys: CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exc_info:
+        main(args=["check"])
+
+    exit_code = exc_info.value.code
+    assert exit_code == 2
+
+    output = capsys.readouterr()
+    assert "error: the following arguments are required: <project-path>" in output.err
+
+
 def test_check_subcommand_valid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/basic"
 
@@ -122,6 +143,17 @@ options:
                         The number of worker processes (default: 1)
 """
     )
+
+
+def test_serve_subcommand_missing_project_path(capsys: CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exc_info:
+        main(args=["serve"])
+
+    exit_code = exc_info.value.code
+    assert exit_code == 2
+
+    output = capsys.readouterr()
+    assert "error: the following arguments are required: <project-path>" in output.err
 
 
 def test_serve_subcommand_default_options() -> None:
