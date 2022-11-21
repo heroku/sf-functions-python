@@ -70,6 +70,7 @@ async def invoke(request: Request) -> OrjsonResponse:
                 # TODO: This should be the API version in project.toml instead
                 cloudevent.sf_context.api_version,
                 cloudevent.sf_function_context.access_token,
+                request.app.state.aiohttp_session,
             ),
             user=User(
                 id=cloudevent.sf_context.user_context.user_id,
