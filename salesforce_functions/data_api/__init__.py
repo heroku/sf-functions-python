@@ -78,7 +78,9 @@ class DataAPI:
         """
         return await self._execute(
             CompositeGraphRestApiRequest(
-                self._org_domain_url, self._api_version, unit_of_work.sub_requests
+                self._org_domain_url,
+                self._api_version,
+                unit_of_work._sub_requests,  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
             )
         )
 

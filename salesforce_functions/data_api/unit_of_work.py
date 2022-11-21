@@ -43,11 +43,6 @@ class UnitOfWork:
         """
         return self._register(DeleteRecordRestApiRequest(object_type, record_id))
 
-    @property
-    def sub_requests(self) -> dict[ReferenceId, RestApiRequest[str]]:
-        """All previously registered operations within this UnitOfWork."""
-        return self._sub_requests
-
     def _register(self, request: RestApiRequest[str]) -> ReferenceId:
         reference_id = ReferenceId("referenceId" + str(self._next_reference_id))
         self._next_reference_id += 1
