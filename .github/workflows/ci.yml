@@ -66,7 +66,7 @@ jobs:
           java-version: 11
       - name: Download WireMock
         if: matrix.os != 'windows-latest'
-        run: curl -fo wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-jre8-standalone/2.35.0/wiremock-jre8-standalone-2.35.0.jar
+        run: curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 60 -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-jre8-standalone/2.35.0/wiremock-jre8-standalone-2.35.0.jar
       - name: Start WireMock
         if: matrix.os != 'windows-latest'
         run: java -jar wiremock.jar --root-dir tests/wiremock --port 12345 &
