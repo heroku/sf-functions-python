@@ -1,3 +1,5 @@
+from hashlib import md5
+
 import pytest
 
 from salesforce_functions import (
@@ -226,6 +228,18 @@ async def test_with_sub_query_results() -> None:
 
 
 @pytest.mark.requires_wiremock
+async def test_query_with_binary_data() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.query("SELECT Id, VersionData FROM ContentVersion")
+
+    version_data = result.records[0].fields.get("VersionData")
+
+    assert isinstance(version_data, bytes)
+    assert md5(version_data).hexdigest() == "6ea614e1d238a5fee4e7ab39277874fe"
+
+
+@pytest.mark.requires_wiremock
 async def test_create() -> None:
     data_api = new_data_api()
 
@@ -242,6 +256,42 @@ async def test_create() -> None:
     )
 
     assert result == "a00B000000FSkcvIAD"
+
+
+@pytest.mark.requires_wiremock
+async def test_create_with_binary_data() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.create(
+        Record(
+            "ContentVersion",
+            fields={
+                "Title": "File for testing",
+                "PathOnClient": "file.bin",
+                "VersionData": b"\x04\x08\x15\x16\x23\x42",
+            },
+        )
+    )
+
+    assert result == "0687S00000AX5WVQA1"
+
+
+@pytest.mark.requires_wiremock
+async def test_create_with_binary_data_from_bytearray() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.create(
+        Record(
+            "ContentVersion",
+            fields={
+                "Title": "File for testing",
+                "PathOnClient": "file.bin",
+                "VersionData": bytearray(b"\x04\x08\x15\x16\x23\x42"),
+            },
+        )
+    )
+
+    assert result == "0687S00000AX5WVQA1"
 
 
 @pytest.mark.requires_wiremock
@@ -357,6 +407,40 @@ async def test_update() -> None:
     )
 
     assert result == "a00B000000FSjVUIA1"
+
+
+@pytest.mark.requires_wiremock
+async def test_update_with_binary_data() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.update(
+        Record(
+            "ContentVersion",
+            fields={
+                "Id": "0687S00000AX5kgQAD",
+                "VersionData": b"\x04\x08\x15\x16\x23\x42",
+            },
+        )
+    )
+
+    assert result == "0687S00000AX5kgQAD"
+
+
+@pytest.mark.requires_wiremock
+async def test_update_with_binary_data_from_bytearray() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.update(
+        Record(
+            "ContentVersion",
+            fields={
+                "Id": "0687S00000AX5kgQAD",
+                "VersionData": bytearray(b"\x04\x08\x15\x16\x23\x42"),
+            },
+        )
+    )
+
+    assert result == "0687S00000AX5kgQAD"
 
 
 @pytest.mark.requires_wiremock

@@ -41,7 +41,9 @@ class DataAPI:
 
     async def query(self, soql: str) -> RecordQueryResult:
         """Query for records using the given SOQL string."""
-        return await self._execute(QueryRecordsRestApiRequest(soql))
+        return await self._execute(
+            QueryRecordsRestApiRequest(soql, self._download_file)
+        )
 
     async def query_more(self, result: RecordQueryResult) -> RecordQueryResult:
         """Query for more records, based on the given `RecordQueryResult`."""
@@ -49,7 +51,7 @@ class DataAPI:
             return RecordQueryResult(True, result.total_size, [], None)
 
         return await self._execute(
-            QueryNextRecordsRestApiRequest(result.next_records_url)
+            QueryNextRecordsRestApiRequest(result.next_records_url, self._download_file)
         )
 
     async def create(self, record: Record) -> str:
@@ -90,15 +92,13 @@ class DataAPI:
         url: str = rest_api_request.url(self._org_domain_url, self._api_version)
         method: str = rest_api_request.http_method()
         body = rest_api_request.request_body()
-        headers = {
-            "Authorization": f"Bearer {self.access_token}",
-            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
-        }
 
         session = self._shared_session or ClientSession()
 
         try:
-            response = await session.request(method, url, headers=headers, json=body)
+            response = await session.request(
+                method, url, headers=self._default_headers(), json=body
+            )
 
             # Disable content type validation:
             # https://docs.aiohttp.org/en/stable/client_advanced.html#disabling-content-type-validation-for-json-responses
@@ -112,4 +112,23 @@ class DataAPI:
             if not self._shared_session:
                 await session.close()
 
-        return rest_api_request.process_response(response.status, json_body)
+        return await rest_api_request.process_response(response.status, json_body)
+
+    async def _download_file(self, url: str) -> bytes:
+        session = self._shared_session or ClientSession()
+
+        try:
+            response = await session.request(
+                "GET", f"{self._org_domain_url}{url}", headers=self._default_headers()
+            )
+
+            return await response.read()
+        finally:
+            if not self._shared_session:
+                await session.close()
+
+    def _default_headers(self) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {self.access_token}",
+            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
+        }
