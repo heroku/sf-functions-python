@@ -1,4 +1,5 @@
-from typing import Any, Generic, Literal, TypeVar, cast
+from base64 import standard_b64encode
+from typing import Any, Awaitable, Callable, Generic, Literal, TypeVar, cast
 from urllib.parse import urlencode
 
 from .exceptions import (
@@ -12,6 +13,7 @@ from .reference_id import ReferenceId
 
 HttpMethod = Literal["GET", "POST", "PATCH", "DELETE"]
 Json = dict[str, Any] | list[Any]
+DownloadFileFunction = Callable[[str], Awaitable[bytes]]
 
 T = TypeVar("T")
 
@@ -26,13 +28,14 @@ class RestApiRequest(Generic[T]):
     def request_body(self) -> Json | None:
         raise NotImplementedError
 
-    def process_response(self, status_code: int, json_body: Json) -> T:
+    async def process_response(self, status_code: int, json_body: Json) -> T:
         raise NotImplementedError
 
 
 class QueryRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
-    def __init__(self, soql: str):
+    def __init__(self, soql: str, download_file_fn: DownloadFileFunction):
         self._soql = soql
+        self._download_file_fn = download_file_fn
 
     def url(self, org_domain_url: str, api_version: str) -> str:
         return f"{org_domain_url}/services/data/v{api_version}/query?{urlencode({'q': self._soql})}"
@@ -43,13 +46,18 @@ class QueryRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(self, status_code: int, json_body: Json) -> RecordQueryResult:
-        return _process_records_response(status_code, json_body)
+    async def process_response(
+        self, status_code: int, json_body: Json
+    ) -> RecordQueryResult:
+        return await _process_records_response(
+            status_code, json_body, self._download_file_fn
+        )
 
 
 class QueryNextRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
-    def __init__(self, next_records_path: str):
+    def __init__(self, next_records_path: str, download_file_fn: DownloadFileFunction):
         self._next_records_path = next_records_path
+        self._download_file_fn = download_file_fn
 
     def url(self, org_domain_url: str, api_version: str) -> str:
         return f"{org_domain_url}{self._next_records_path}"
@@ -60,8 +68,12 @@ class QueryNextRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(self, status_code: int, json_body: Json) -> RecordQueryResult:
-        return _process_records_response(status_code, json_body)
+    async def process_response(
+        self, status_code: int, json_body: Json
+    ) -> RecordQueryResult:
+        return await _process_records_response(
+            status_code, json_body, self._download_file_fn
+        )
 
 
 class CreateRecordRestApiRequest(RestApiRequest[str]):
@@ -77,7 +89,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return _normalize_record_fields(self._record.fields)
 
-    def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 201:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -109,7 +121,7 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
             }
         )
 
-    def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -130,7 +142,7 @@ class DeleteRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -175,7 +187,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
             "graphs": [{"graphId": "graph0", "compositeRequest": json_sub_requests}]
         }
 
-    def process_response(
+    async def process_response(
         self, status_code: int, json_body: Json
     ) -> dict[ReferenceId, str]:
         # This is the case when the composite request itself has errors. Errors of the sub-requests are handled
@@ -196,7 +208,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
                 body = composite_response.get("body")
 
                 try:
-                    result[reference_id] = self._sub_requests[
+                    result[reference_id] = await self._sub_requests[
                         reference_id
                     ].process_response(sub_status_code, body)
                 except SalesforceRestApiError as rest_api_error:
@@ -210,7 +222,9 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         raise UnexpectedRestApiResponsePayload()
 
 
-def _process_records_response(status_code: int, json_body: Json) -> RecordQueryResult:
+async def _process_records_response(
+    status_code: int, json_body: Json, download_file_fn: DownloadFileFunction
+) -> RecordQueryResult:
     if status_code != 200:
         raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -230,9 +244,11 @@ def _process_records_response(status_code: int, json_body: Json) -> RecordQueryR
                     continue
 
                 if isinstance(value, dict):
-                    sub_query_results[key] = _process_records_response(
-                        status_code, cast(dict[str, Any], value)
+                    sub_query_results[key] = await _process_records_response(
+                        status_code, cast(dict[str, Any], value), download_file_fn
                     )
+                elif _is_binary_field(salesforce_object_type, key):
+                    fields[key] = await download_file_fn(value)
                 else:
                     fields[key] = value
 
@@ -245,12 +261,22 @@ def _process_records_response(status_code: int, json_body: Json) -> RecordQueryR
     raise UnexpectedRestApiResponsePayload()
 
 
+def _is_binary_field(salesforce_object_type: str, field_name: str) -> bool:
+    return salesforce_object_type == "ContentVersion" and field_name == "VersionData"
+
+
 def _normalize_record_fields(fields: dict[str, Any]) -> dict[str, Any]:
     return {key: _normalize_field_value(value) for (key, value) in fields.items()}
 
 
 def _normalize_field_value(value: Any) -> Any:
-    return f"@{{{value.id}.id}}" if isinstance(value, ReferenceId) else value
+    if isinstance(value, ReferenceId):
+        return f"@{{{value.id}.id}}"
+
+    if isinstance(value, (bytes, bytearray)):
+        return standard_b64encode(value).decode("ASCII")
+
+    return value
 
 
 def _parse_errors(json_errors: Json) -> list[InnerSalesforceRestApiError]:

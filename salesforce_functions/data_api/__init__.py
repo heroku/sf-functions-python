@@ -41,7 +41,9 @@ class DataAPI:
 
     async def query(self, soql: str) -> RecordQueryResult:
         """Query for records using the given SOQL string."""
-        return await self._execute(QueryRecordsRestApiRequest(soql))
+        return await self._execute(
+            QueryRecordsRestApiRequest(soql, self._download_file)
+        )
 
     async def query_more(self, result: RecordQueryResult) -> RecordQueryResult:
         """Query for more records, based on the given `RecordQueryResult`."""
@@ -49,7 +51,7 @@ class DataAPI:
             return RecordQueryResult(True, result.total_size, [], None)
 
         return await self._execute(
-            QueryNextRecordsRestApiRequest(result.next_records_url)
+            QueryNextRecordsRestApiRequest(result.next_records_url, self._download_file)
         )
 
     async def create(self, record: Record) -> str:
@@ -112,4 +114,22 @@ class DataAPI:
             if not self._shared_session:
                 await session.close()
 
-        return rest_api_request.process_response(response.status, json_body)
+        return await rest_api_request.process_response(response.status, json_body)
+
+    async def _download_file(self, url: str) -> bytes:
+        session = self._shared_session or ClientSession()
+
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
+        }
+
+        try:
+            response = await session.request(
+                "GET", f"{self._org_domain_url}{url}", headers=headers
+            )
+
+            return await response.read()
+        finally:
+            if not self._shared_session:
+                await session.close()
