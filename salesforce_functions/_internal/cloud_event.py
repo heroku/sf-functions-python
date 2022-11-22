@@ -1,9 +1,14 @@
 import binascii
+import sys
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 import orjson
 from starlette.datastructures import Headers
+
+if sys.version_info < (3, 11):
+    import dateutil.parser
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,7 +107,7 @@ class SalesforceFunctionsCloudEvent:
     data_content_type: str
     data_schema: str | None
     subject: str | None
-    time: str | None
+    time: datetime | None
     sf_context: SalesforceContext
     sf_function_context: SalesforceFunctionContext
 
@@ -132,7 +137,7 @@ class SalesforceFunctionsCloudEvent:
                 data_content_type=content_type,
                 data_schema=headers.get("ce-dataschema"),
                 subject=headers.get("ce-subject"),
-                time=headers.get("ce-time"),
+                time=_parse_event_time(headers.get("ce-time")),
                 sf_context=SalesforceContext.from_base64_json(headers["ce-sfcontext"]),
                 sf_function_context=SalesforceFunctionContext.from_base64_json(
                     headers["ce-sffncontext"]
@@ -144,6 +149,22 @@ class SalesforceFunctionsCloudEvent:
 
 def parse_base64_json(base64_json: str) -> Any:
     return orjson.loads(binascii.a2b_base64(base64_json))
+
+
+def _parse_event_time(time_string: str | None) -> datetime | None:
+    if time_string is None:
+        return None
+
+    try:
+        # Prior to Python 3.11, the stdlib's `datetime.fromisoformat()` didn't fully support
+        # RFC 3339 format dates, so an external library has to be used instead. This library
+        # is not used on newer Pythons to keep dependencies to a minimum.
+        if sys.version_info < (3, 11):
+            return dateutil.parser.isoparse(time_string)
+
+        return datetime.fromisoformat(time_string)
+    except (TypeError, ValueError) as e:
+        raise CloudEventError(f"Unable to parse event time: {e}") from e
 
 
 class CloudEventError(Exception):

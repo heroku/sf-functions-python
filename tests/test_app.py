@@ -51,7 +51,7 @@ def test_event_attributes() -> None:
         "data": payload,
         "id": "56ff961b-61b9-4310-a159-1f997221ccfb",
         "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
-        "time": "2022-11-01T12:00:00.000000Z",
+        "time": "2022-11-01T12:30:10.123456+00:00",
         "type": "com.salesforce.function.invoke.sync",
     }
 
