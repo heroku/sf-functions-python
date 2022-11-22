@@ -1,5 +1,12 @@
 from dataclasses import dataclass
 
+__all__ = [
+    "InnerSalesforceRestApiError",
+    "DataApiError",
+    "MissingIdFieldError",
+    "UnexpectedRestApiResponsePayload",
+]
+
 
 @dataclass(frozen=True, slots=True)
 class InnerSalesforceRestApiError:

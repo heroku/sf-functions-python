@@ -1,5 +1,12 @@
 import pytest
 
+from salesforce_functions import (
+    QueriedRecord,
+    Record,
+    RecordQueryResult,
+    ReferenceId,
+    UnitOfWork,
+)
 from salesforce_functions.data_api import DataAPI
 from salesforce_functions.data_api.exceptions import (
     InnerSalesforceRestApiError,
@@ -7,13 +14,6 @@ from salesforce_functions.data_api.exceptions import (
     SalesforceRestApiError,
     UnexpectedRestApiResponsePayload,
 )
-from salesforce_functions.data_api.record import (
-    QueriedRecord,
-    Record,
-    RecordQueryResult,
-)
-from salesforce_functions.data_api.reference_id import ReferenceId
-from salesforce_functions.data_api.unit_of_work import UnitOfWork
 
 
 def new_data_api() -> DataAPI:

@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+__all__ = ["Record", "QueriedRecord", "RecordQueryResult"]
+
 
 @dataclass(frozen=True, slots=True)
 class Record:

@@ -18,6 +18,8 @@ from .record import Record, RecordQueryResult
 from .reference_id import ReferenceId
 from .unit_of_work import UnitOfWork
 
+__all__ = ["DataAPI"]
+
 T = TypeVar("T")
 
 
