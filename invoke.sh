@@ -12,14 +12,14 @@ invocation_id="00Dxx0000006IYJEA2-4Y4W3Lw_LkoskcHdEaZze--MyFunction-$(openssl ra
 
 sfcontext=$(base64_encode <<'EOF'
 {
-  "apiVersion": "56.0",
+  "apiVersion": "53.0",
   "payloadVersion": "0.1",
   "userContext": {
     "orgId": "00Dxx0000006IYJ",
     "userId": "005xx000001X8Uz",
     "username": "user@example.tld",
-    "salesforceBaseUrl": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
-    "orgDomainUrl": "https://d8d000005zejveai-dev-ed.my.salesforce.com"
+    "salesforceBaseUrl": "https://example-base-url.my.salesforce-sites.com",
+    "orgDomainUrl": "https://example-domain-url.my.salesforce.com"
   }
 }
 EOF

@@ -15,9 +15,11 @@ from salesforce_functions.data_api.exceptions import (
     UnexpectedRestApiResponsePayload,
 )
 
+from .utils import WIREMOCK_SERVER_URL
+
 
 def new_data_api() -> DataAPI:
-    return DataAPI("http://localhost:12345", "53.0", "EXAMPLE-TOKEN")
+    return DataAPI(WIREMOCK_SERVER_URL, "53.0", "EXAMPLE-TOKEN")
 
 
 @pytest.mark.requires_wiremock
@@ -228,6 +230,8 @@ async def test_create() -> None:
     data_api = new_data_api()
 
     result = await data_api.create(
+        # This example is also used by `tests/fixtures/data_api`.
+        # pylint: disable-next=duplicate-code
         Record(
             "Movie__c",
             fields={

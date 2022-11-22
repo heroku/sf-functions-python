@@ -10,6 +10,8 @@ from starlette.testclient import TestClient
 from salesforce_functions._internal.app import app
 from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
+WIREMOCK_SERVER_URL = "http://localhost:12345"
+
 
 def generate_cloud_event_headers(
     include_optional_attributes: bool = True,
@@ -47,9 +49,9 @@ def generate_sf_context(
     include_optional_attributes: bool = True,
 ) -> dict[str, str | dict[str, str]]:
     user_context = {
-        "orgDomainUrl": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
+        "orgDomainUrl": "https://example-domain-url.my.salesforce.com",
         "orgId": "00Dxx0000006IYJ",
-        "salesforceBaseUrl": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
+        "salesforceBaseUrl": "https://example-base-url.my.salesforce-sites.com",
         "userId": "005xx000001X8Uz",
         "username": "user@example.tld",
     }
@@ -62,7 +64,7 @@ def generate_sf_context(
         )
 
     return {
-        "apiVersion": "56.0",
+        "apiVersion": "53.0",
         "payloadVersion": "0.1",
         "userContext": user_context,
     }
