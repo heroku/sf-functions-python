@@ -92,15 +92,13 @@ class DataAPI:
         url: str = rest_api_request.url(self._org_domain_url, self._api_version)
         method: str = rest_api_request.http_method()
         body = rest_api_request.request_body()
-        headers = {
-            "Authorization": f"Bearer {self.access_token}",
-            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
-        }
 
         session = self._shared_session or ClientSession()
 
         try:
-            response = await session.request(method, url, headers=headers, json=body)
+            response = await session.request(
+                method, url, headers=self._default_headers(), json=body
+            )
 
             # Disable content type validation:
             # https://docs.aiohttp.org/en/stable/client_advanced.html#disabling-content-type-validation-for-json-responses
@@ -119,17 +117,18 @@ class DataAPI:
     async def _download_file(self, url: str) -> bytes:
         session = self._shared_session or ClientSession()
 
-        headers = {
-            "Authorization": f"Bearer {self.access_token}",
-            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
-        }
-
         try:
             response = await session.request(
-                "GET", f"{self._org_domain_url}{url}", headers=headers
+                "GET", f"{self._org_domain_url}{url}", headers=self._default_headers()
             )
 
             return await response.read()
         finally:
             if not self._shared_session:
                 await session.close()
+
+    def _default_headers(self) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {self.access_token}",
+            "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
+        }
