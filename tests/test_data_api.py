@@ -17,12 +17,7 @@ from salesforce_functions.data_api.unit_of_work import UnitOfWork
 
 
 def new_data_api() -> DataAPI:
-    return DataAPI(
-        "http://localhost:12345",
-        "53.0",
-        "00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY"
-        ".JSAd0mfgRRz22vS",
-    )
+    return DataAPI("http://localhost:12345", "53.0", "EXAMPLE-TOKEN")
 
 
 @pytest.mark.requires_wiremock
@@ -397,11 +392,7 @@ async def test_delete_with_already_deleted() -> None:
 async def test_access_token() -> None:
     data_api = new_data_api()
 
-    assert (
-        data_api.access_token == "00DB0000000UIn2"
-        "!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwj"
-        "xIVa4gY.JSAd0mfgRRz22vS"
-    )
+    assert data_api.access_token == "EXAMPLE-TOKEN"
 
 
 @pytest.mark.requires_wiremock

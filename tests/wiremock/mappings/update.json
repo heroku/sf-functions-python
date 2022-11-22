@@ -13,7 +13,7 @@
     ],
     "headers": {
       "Authorization": {
-        "equalTo": "Bearer 00DB0000000UIn2!AQMAQKXBvR03lDdfMiD6Pdpo_wiMs6LGp6dVkrwOuqiiTEmwdPb8MvSZwdPLe009qHlwjxIVa4gY.JSAd0mfgRRz22vS"
+        "equalTo": "Bearer EXAMPLE-TOKEN"
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"
