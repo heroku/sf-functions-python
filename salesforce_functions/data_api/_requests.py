@@ -274,7 +274,7 @@ def _normalize_field_value(value: Any) -> Any:
         return f"@{{{value.id}.id}}"
 
     if isinstance(value, (bytes, bytearray)):
-        return standard_b64encode(value).decode("ASCII")
+        return standard_b64encode(value).decode("ascii")
 
     return value
 
