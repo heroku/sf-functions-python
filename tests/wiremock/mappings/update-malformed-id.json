@@ -1,0 +1,44 @@
+{
+  "id": "b78f181e-8308-4fd7-8fd2-4b3cfb4cdcef",
+  "name": "services_data_v510_sobjects_movie__c_a00b000000fsjvuib1",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/Movie__c/a00B000000FSjVUIB1",
+    "method": "PATCH",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"ReleaseDate__c\": \"1980-05-21\"\n}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": "[{\"message\":\"Record ID: id value of incorrect type: a00B000000FSjVUIB1\",\"errorCode\":\"MALFORMED_ID\",\"fields\":[\"Id\"]}]",
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 15:06:13 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=894AB50yEeuWMeeWLri-UA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:06:13 GMT; Max-Age=31536000",
+        "BrowserId_sec=894AB50yEeuWMeeWLri-UA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:06:13 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=72/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "b78f181e-8308-4fd7-8fd2-4b3cfb4cdcef",
+  "persistent": true,
+  "insertionIndex": 15
+}

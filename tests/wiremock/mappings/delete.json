@@ -1,0 +1,36 @@
+{
+  "id": "38eb30ec-e4de-4aab-bbb4-7764a48f65bf",
+  "name": "services_data_v510_sobjects_account_001b000001lp1fxiaj",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/Account/001B000001Lp1FxIAJ",
+    "method": "DELETE",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "Date": "Mon, 26 Apr 2021 14:09:10 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Content-Security-Policy": "upgrade-insecure-requests",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=-Nh_8qaYEeurzGfnXQ1IXQ; domain=.salesforce.com; path=/; expires=Tue, 26-Apr-2022 14:09:10 GMT; Max-Age=31536000",
+        "BrowserId_sec=-Nh_8qaYEeurzGfnXQ1IXQ; domain=.salesforce.com; path=/; expires=Tue, 26-Apr-2022 14:09:10 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=17/100000"
+    }
+  },
+  "uuid": "38eb30ec-e4de-4aab-bbb4-7764a48f65bf",
+  "persistent": true,
+  "insertionIndex": 1
+}

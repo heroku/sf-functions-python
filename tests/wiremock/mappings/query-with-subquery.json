@@ -1,0 +1,43 @@
+{
+  "id": "ecf16e4b-f058-4802-b44d-2c77b1e49aa1",
+  "name": "services_data_v510_query",
+  "request": {
+    "urlPath": "/services/data/v53.0/query",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "SELECT Account.Name, (SELECT Contact.FirstName, Contact.LastName FROM Account.Contacts) FROM Account LIMIT 5"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"totalSize\":5,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/0017Q00000EZlbyQAD\"},\"Name\":\"GenePoint\",\"Contacts\":{\"totalSize\":1,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjpQAE\"},\"FirstName\":\"Edna\",\"LastName\":\"Frank\"}]}},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/0017Q00000EZlbwQAD\"},\"Name\":\"United Oil & Gas, UK\",\"Contacts\":{\"totalSize\":1,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjmQAE\"},\"FirstName\":\"Ashley\",\"LastName\":\"James\"}]}},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/0017Q00000EZlbxQAD\"},\"Name\":\"United Oil & Gas, Singapore\",\"Contacts\":{\"totalSize\":2,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjnQAE\"},\"FirstName\":\"Tom\",\"LastName\":\"Ripley\"},{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjoQAE\"},\"FirstName\":\"Liz\",\"LastName\":\"D'Cruz\"}]}},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/0017Q00000EZlboQAD\"},\"Name\":\"Edge Communications\",\"Contacts\":{\"totalSize\":2,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjZQAU\"},\"FirstName\":\"Rose\",\"LastName\":\"Gonzalez\"},{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjaQAE\"},\"FirstName\":\"Sean\",\"LastName\":\"Forbes\"}]}},{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/0017Q00000EZlbpQAD\"},\"Name\":\"Burlington Textiles Corp of America\",\"Contacts\":{\"totalSize\":1,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Contact\",\"url\":\"/services/data/v53.0/sobjects/Contact/0037Q000007vKjbQAE\"},\"FirstName\":\"Jack\",\"LastName\":\"Rogers\"}]}}]}",
+    "headers": {
+      "Date": "Tue, 13 Apr 2021 11:33:05 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=A2CSeZxMEeu0AYlXSkrHVQ; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 11:33:05 GMT; Max-Age=31536000",
+        "BrowserId_sec=A2CSeZxMEeu0AYlXSkrHVQ; domain=.salesforce.com; path=/; expires=Wed, 13-Apr-2022 11:33:05 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=16/100000",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Vary": "Accept-Encoding"
+    }
+  },
+  "uuid": "ecf16e4b-f058-4802-b44d-2c77b1e49aa1",
+  "persistent": true,
+  "insertionIndex": 1
+}

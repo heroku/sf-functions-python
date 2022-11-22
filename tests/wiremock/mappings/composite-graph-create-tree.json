@@ -1,0 +1,43 @@
+{
+  "id": "6bfe2a0a-78d9-445a-a7a2-55b2b62c32ad",
+  "name": "services_data_v510_composite_graph",
+  "request": {
+    "url": "/services/data/v53.0/composite/graph",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"graphs\": [\n        {\n            \"graphId\": \"graph0\",\n            \"compositeRequest\": [\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Franchise__c\",\n                    \"method\": \"POST\",\n                    \"referenceId\": \"referenceId0\",\n                    \"body\": {\n                        \"Name\": \"Star Wars\"\n                    }\n                },\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Movie__c\",\n                    \"method\": \"POST\",\n                    \"referenceId\": \"referenceId1\",\n                    \"body\": {\n                        \"Name\": \"Star Wars Episode I - A Phantom Menace\",\n                        \"Franchise__c\": \"@{referenceId0.id}\"\n                    }\n                },\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Movie__c\",\n                    \"method\": \"POST\",\n                    \"referenceId\": \"referenceId2\",\n                    \"body\": {\n                        \"Name\": \"Star Wars Episode II - Attack Of The Clones\",\n                        \"Franchise__c\": \"@{referenceId0.id}\"\n                    }\n                },\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Movie__c\",\n                    \"method\": \"POST\",\n                    \"referenceId\": \"referenceId3\",\n                    \"body\": {\n                        \"Name\": \"Star Wars Episode III - Revenge Of The Sith\",\n                        \"Franchise__c\": \"@{referenceId0.id}\"\n                    }\n                }\n            ]\n        }\n    ]\n}"
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"graphs\":[{\"graphId\":\"graph0\",\"graphResponse\":{\"compositeResponse\":[{\"body\":{\"id\":\"a03B0000007BhQQIA0\",\"success\":true,\"errors\":[]},\"httpHeaders\":{\"Location\":\"/services/data/v53.0/sobjects/Franchise__c/a03B0000007BhQQIA0\"},\"httpStatusCode\":201,\"referenceId\":\"referenceId0\"},{\"body\":{\"id\":\"a00B000000FSkioIAD\",\"success\":true,\"errors\":[]},\"httpHeaders\":{\"Location\":\"/services/data/v53.0/sobjects/Movie__c/a00B000000FSkioIAD\"},\"httpStatusCode\":201,\"referenceId\":\"referenceId1\"},{\"body\":{\"id\":\"a00B000000FSkipIAD\",\"success\":true,\"errors\":[]},\"httpHeaders\":{\"Location\":\"/services/data/v53.0/sobjects/Movie__c/a00B000000FSkipIAD\"},\"httpStatusCode\":201,\"referenceId\":\"referenceId2\"},{\"body\":{\"id\":\"a00B000000FSkiqIAD\",\"success\":true,\"errors\":[]},\"httpHeaders\":{\"Location\":\"/services/data/v53.0/sobjects/Movie__c/a00B000000FSkiqIAD\"},\"httpStatusCode\":201,\"referenceId\":\"referenceId3\"}]},\"isSuccessful\":true}]}",
+    "headers": {
+      "Date": "Mon, 17 May 2021 09:27:54 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=KKnOs7byEeutwrt-detuIw; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 09:27:54 GMT; Max-Age=31536000",
+        "BrowserId_sec=KKnOs7byEeutwrt-detuIw; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 09:27:54 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=20/101000",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Vary": "Accept-Encoding"
+    }
+  },
+  "uuid": "6bfe2a0a-78d9-445a-a7a2-55b2b62c32ad",
+  "persistent": true,
+  "insertionIndex": 3
+}

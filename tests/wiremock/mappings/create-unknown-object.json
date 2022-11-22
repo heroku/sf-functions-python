@@ -1,0 +1,44 @@
+{
+  "id": "31a0631a-8930-44b6-b990-89a3cc1c6f75",
+  "name": "services_data_v510_sobjects_playingcard__c",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/PlayingCard__c",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"Name\": \"Ace of Spades\"\n}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "body": "[{\"errorCode\":\"NOT_FOUND\",\"message\":\"The requested resource does not exist\"}]",
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 14:12:58 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=g_r6aZ0rEeuXIYcIj-H-nA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 14:12:58 GMT; Max-Age=31536000",
+        "BrowserId_sec=g_r6aZ0rEeuXIYcIj-H-nA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 14:12:58 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=59/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "31a0631a-8930-44b6-b990-89a3cc1c6f75",
+  "persistent": true,
+  "insertionIndex": 1
+}

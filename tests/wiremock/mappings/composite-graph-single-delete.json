@@ -1,0 +1,43 @@
+{
+  "id": "13241a7e-0c23-4da3-bb9f-1a68a19a759f",
+  "name": "services_data_v510_composite_graph",
+  "request": {
+    "url": "/services/data/v53.0/composite/graph",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"graphs\": [\n        {\n            \"graphId\": \"graph0\",\n            \"compositeRequest\": [\n                {\n                    \"url\": \"/services/data/v53.0/sobjects/Movie__c/a01B0000009gSr9IAE\",\n                    \"method\": \"DELETE\",\n                    \"referenceId\": \"referenceId0\"\n                }\n            ]\n        }\n    ]\n}"
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"graphs\":[{\"graphId\":\"graph0\",\"graphResponse\":{\"compositeResponse\":[{\"body\":null,\"httpHeaders\":{},\"httpStatusCode\":204,\"referenceId\":\"referenceId0\"}]},\"isSuccessful\":true}]}",
+    "headers": {
+      "Date": "Mon, 17 May 2021 10:18:30 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=Okmpzbb5EeuzE1-nL-9eBg; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 10:18:30 GMT; Max-Age=31536000",
+        "BrowserId_sec=Okmpzbb5EeuzE1-nL-9eBg; domain=.salesforce.com; path=/; expires=Tue, 17-May-2022 10:18:30 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=54/101000",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Vary": "Accept-Encoding"
+    }
+  },
+  "uuid": "13241a7e-0c23-4da3-bb9f-1a68a19a759f",
+  "persistent": true,
+  "insertionIndex": 3
+}

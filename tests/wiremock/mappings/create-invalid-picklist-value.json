@@ -1,0 +1,44 @@
+{
+  "id": "789ffdd0-0697-4805-adb4-6df04d0f9fcb",
+  "name": "services_data_v510_sobjects_movie__c",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/Movie__c",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"Name\": \"Star Wars Episode VIII: The Last Jedi\",\n    \"Rating__c\": \"Terrible\"\n}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": "[{\"message\":\"Rating: bad value for restricted picklist field: Terrible\",\"errorCode\":\"INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST\",\"fields\":[\"Rating__c\"]}]",
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 13:59:24 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=nrZ3CJ0pEeuSsu_WRTJspA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 13:59:24 GMT; Max-Age=31536000",
+        "BrowserId_sec=nrZ3CJ0pEeuSsu_WRTJspA; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 13:59:24 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=56/100000",
+      "Content-Type": "application/json;charset=UTF-8"
+    }
+  },
+  "uuid": "789ffdd0-0697-4805-adb4-6df04d0f9fcb",
+  "persistent": true,
+  "insertionIndex": 6
+}

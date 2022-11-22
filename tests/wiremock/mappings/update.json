@@ -1,0 +1,44 @@
+{
+  "id": "d8405304-0f8e-43db-bc9a-25bcaf7632da",
+  "name": "services_data_v510_sobjects_movie__c_a00b000000fsjvuia1",
+  "request": {
+    "url": "/services/data/v53.0/sobjects/Movie__c/a00B000000FSjVUIA1",
+    "method": "PATCH",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\n    \"ReleaseDate__c\": \"1980-05-21\"\n}",
+        "ignoreArrayOrder": true,
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
+    }
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "Date": "Wed, 14 Apr 2021 15:03:08 GMT",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "Content-Security-Policy-Report-Only": "default-src https:; script-src https: 'unsafe-inline' 'unsafe-eval'; style-src https: 'unsafe-inline'; img-src https: data: blob: file:; frame-ancestors 'self' *.salesforce.com *.force.com *.visualforce.com *.documentforce.com; font-src https: data: blob: file:; connect-src 'self' https:; report-uri https://csp-report.force.com/_/ContentDomainCSPNoAuth?type=mydomain",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Content-Security-Policy": "upgrade-insecure-requests",
+      "X-Robots-Tag": "none",
+      "Cache-Control": "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Set-Cookie": [
+        "BrowserId=ha_5050yEeucTLOGbgUKaw; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:03:08 GMT; Max-Age=31536000",
+        "BrowserId_sec=ha_5050yEeucTLOGbgUKaw; domain=.salesforce.com; path=/; expires=Thu, 14-Apr-2022 15:03:08 GMT; Max-Age=31536000; secure; SameSite=None"
+      ],
+      "Sforce-Limit-Info": "api-usage=68/100000"
+    }
+  },
+  "uuid": "d8405304-0f8e-43db-bc9a-25bcaf7632da",
+  "persistent": true,
+  "insertionIndex": 9
+}

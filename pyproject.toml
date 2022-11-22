@@ -30,6 +30,7 @@ development = [
     "mypy==0.991",
     "pylint==2.15.6",
     "pytest==7.2.0",
+    "pytest-asyncio==0.20.2",
 ]
 
 [project.scripts]
@@ -91,9 +92,15 @@ output-format = "colorized"
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
+    "--strict-markers",
+    "-m not requires_wiremock",
 ]
+asyncio_mode = "auto"
 filterwarnings = [
     "error",
+]
+markers = [
+    "requires_wiremock: marks tests that require a running wiremock process (deselect with '-m \"not requires_wiremock\"')",
 ]
 testpaths = ["tests"]
 xfail_strict = true
