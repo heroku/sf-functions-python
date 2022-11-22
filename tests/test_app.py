@@ -9,7 +9,13 @@ from starlette.testclient import TestClient
 from salesforce_functions._internal.app import app
 from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
-from .utils import generate_cloud_event_headers, invoke_function
+from .utils import (
+    WIREMOCK_SERVER_URL,
+    encode_cloud_event_extension,
+    generate_cloud_event_headers,
+    generate_sf_context,
+    invoke_function,
+)
 
 
 def test_health_check(capsys: CaptureFixture[str]) -> None:
@@ -73,9 +79,9 @@ def test_context_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "org": {
-            "base_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
-            "data_api": None,
-            "domain_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
+            "base_url": "https://example-base-url.my.salesforce-sites.com",
+            "data_api": "REMOVED",
+            "domain_url": "https://example-domain-url.my.salesforce.com",
             "id": "00Dxx0000006IYJ",
             "user": {
                 "id": "005xx000001X8Uz",
@@ -95,9 +101,9 @@ def test_minimal_context_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "org": {
-            "base_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
-            "data_api": None,
-            "domain_url": "https://d8d000005zejveai-dev-ed.my.salesforce.com",
+            "base_url": "https://example-base-url.my.salesforce-sites.com",
+            "data_api": "REMOVED",
+            "domain_url": "https://example-domain-url.my.salesforce.com",
             "id": "00Dxx0000006IYJ",
             "user": {
                 "id": "005xx000001X8Uz",
@@ -106,6 +112,21 @@ def test_minimal_context_attributes() -> None:
             },
         },
     }
+
+
+@pytest.mark.requires_wiremock
+def test_data_api() -> None:
+    sf_context = generate_sf_context()
+    assert isinstance(sf_context["userContext"], dict)
+    sf_context["userContext"]["orgDomainUrl"] = WIREMOCK_SERVER_URL
+
+    headers = generate_cloud_event_headers()
+    headers["ce-sfcontext"] = encode_cloud_event_extension(sf_context)
+    response = invoke_function("tests/fixtures/data_api", headers=headers)
+
+    assert response.status_code == 200
+    assert response.headers.get("Content-Type") == "application/json"
+    assert response.json() == "a00B000000FSkcvIAD"
 
 
 def test_logging(capsys: CaptureFixture[str]) -> None:

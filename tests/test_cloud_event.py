@@ -36,15 +36,15 @@ def test_cloud_event() -> None:
         subject="subject TODO",
         time="2022-11-01T12:00:00.000000Z",
         sf_context=SalesforceContext(
-            api_version="56.0",
+            api_version="53.0",
             payload_version="0.1",
             user_context=SalesforceUserContext(
                 org_id="00Dxx0000006IYJ",
                 user_id="005xx000001X8Uz",
                 on_behalf_of_user_id="another-user@example.tld",
                 username="user@example.tld",
-                salesforce_base_url="https://d8d000005zejveai-dev-ed.my.salesforce.com",
-                org_domain_url="https://d8d000005zejveai-dev-ed.my.salesforce.com",
+                salesforce_base_url="https://example-base-url.my.salesforce-sites.com",
+                org_domain_url="https://example-domain-url.my.salesforce.com",
             ),
         ),
         sf_function_context=SalesforceFunctionContext(
@@ -75,15 +75,15 @@ def test_minimal_cloud_event() -> None:
         subject=None,
         time=None,
         sf_context=SalesforceContext(
-            api_version="56.0",
+            api_version="53.0",
             payload_version="0.1",
             user_context=SalesforceUserContext(
                 org_id="00Dxx0000006IYJ",
                 user_id="005xx000001X8Uz",
                 on_behalf_of_user_id=None,
                 username="user@example.tld",
-                salesforce_base_url="https://d8d000005zejveai-dev-ed.my.salesforce.com",
-                org_domain_url="https://d8d000005zejveai-dev-ed.my.salesforce.com",
+                salesforce_base_url="https://example-base-url.my.salesforce-sites.com",
+                org_domain_url="https://example-domain-url.my.salesforce.com",
             ),
         ),
         sf_function_context=SalesforceFunctionContext(
