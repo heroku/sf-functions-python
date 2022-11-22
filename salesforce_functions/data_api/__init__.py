@@ -4,10 +4,7 @@ from typing import TypeVar
 from aiohttp import ClientSession
 
 from ..__version__ import __version__
-from .exceptions import UnexpectedRestApiResponsePayload
-from .record import Record, RecordQueryResult
-from .reference_id import ReferenceId
-from .requests import (
+from ._requests import (
     CompositeGraphRestApiRequest,
     CreateRecordRestApiRequest,
     DeleteRecordRestApiRequest,
@@ -16,6 +13,9 @@ from .requests import (
     RestApiRequest,
     UpdateRecordRestApiRequest,
 )
+from .exceptions import UnexpectedRestApiResponsePayload
+from .record import Record, RecordQueryResult
+from .reference_id import ReferenceId
 from .unit_of_work import UnitOfWork
 
 T = TypeVar("T")

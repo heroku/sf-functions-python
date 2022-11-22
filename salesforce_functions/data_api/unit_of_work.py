@@ -1,11 +1,11 @@
-from .record import Record
-from .reference_id import ReferenceId
-from .requests import (
+from ._requests import (
     CreateRecordRestApiRequest,
     DeleteRecordRestApiRequest,
     RestApiRequest,
     UpdateRecordRestApiRequest,
 )
+from .record import Record
+from .reference_id import ReferenceId
 
 
 class UnitOfWork:
