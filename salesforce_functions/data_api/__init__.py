@@ -110,6 +110,4 @@ class DataAPI:
             if not self._shared_session:
                 await session.close()
 
-        return rest_api_request.process_response(
-            response.status, response.headers, json_body
-        )
+        return rest_api_request.process_response(response.status, json_body)

@@ -1,8 +1,6 @@
 from typing import Any, Generic, Literal, TypeVar, cast
 from urllib.parse import urlencode
 
-from multidict import CIMultiDictProxy
-
 from .exceptions import (
     InnerSalesforceRestApiError,
     MissingIdFieldError,
@@ -28,9 +26,7 @@ class RestApiRequest(Generic[T]):
     def request_body(self) -> Json | None:
         raise NotImplementedError
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> T:
+    def process_response(self, status_code: int, json_body: Json) -> T:
         raise NotImplementedError
 
 
@@ -47,10 +43,8 @@ class QueryRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> RecordQueryResult:
-        return _process_records_response(status_code, headers, json_body)
+    def process_response(self, status_code: int, json_body: Json) -> RecordQueryResult:
+        return _process_records_response(status_code, json_body)
 
 
 class QueryNextRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
@@ -66,10 +60,8 @@ class QueryNextRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> RecordQueryResult:
-        return _process_records_response(status_code, headers, json_body)
+    def process_response(self, status_code: int, json_body: Json) -> RecordQueryResult:
+        return _process_records_response(status_code, json_body)
 
 
 class CreateRecordRestApiRequest(RestApiRequest[str]):
@@ -85,9 +77,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return _normalize_record_fields(self._record.fields)
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> str:
+    def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 201:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -119,9 +109,7 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
             }
         )
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> str:
+    def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -142,9 +130,7 @@ class DeleteRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return None
 
-    def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-    ) -> str:
+    def process_response(self, status_code: int, json_body: Json) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -190,7 +176,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         }
 
     def process_response(
-        self, status_code: int, headers: CIMultiDictProxy[str], json_body: Json
+        self, status_code: int, json_body: Json
     ) -> dict[ReferenceId, str]:
         # This is the case when the composite request itself has errors. Errors of the sub-requests are handled
         # separately.
@@ -207,13 +193,12 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
             for composite_response in composite_responses:
                 reference_id = ReferenceId(composite_response["referenceId"])
                 sub_status_code = composite_response["httpStatusCode"]
-                headers = composite_response["httpHeaders"]
                 body = composite_response.get("body")
 
                 try:
                     result[reference_id] = self._sub_requests[
                         reference_id
-                    ].process_response(sub_status_code, headers, body)
+                    ].process_response(sub_status_code, body)
                 except SalesforceRestApiError as rest_api_error:
                     errors.extend(rest_api_error.api_errors)
 
@@ -225,9 +210,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         raise UnexpectedRestApiResponsePayload()
 
 
-def _process_records_response(
-    status_code: int, headers: CIMultiDictProxy[str], json_body: Json
-) -> RecordQueryResult:
+def _process_records_response(status_code: int, json_body: Json) -> RecordQueryResult:
     if status_code != 200:
         raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -248,7 +231,7 @@ def _process_records_response(
 
                 if isinstance(value, dict):
                     sub_query_results[key] = _process_records_response(
-                        status_code, headers, cast(dict[str, Any], value)
+                        status_code, cast(dict[str, Any], value)
                     )
                 else:
                     fields[key] = value
