@@ -7,6 +7,8 @@ from ._requests import (
 from .record import Record
 from .reference_id import ReferenceId
 
+__all__ = ["UnitOfWork"]
+
 
 class UnitOfWork:
     """

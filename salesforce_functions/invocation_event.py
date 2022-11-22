@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
+__all__ = ["InvocationEvent"]
+
 T = TypeVar("T")
 
 

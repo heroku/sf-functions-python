@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+__all__ = ["ReferenceId"]
+
 
 @dataclass(frozen=True, slots=True)
 class ReferenceId:
