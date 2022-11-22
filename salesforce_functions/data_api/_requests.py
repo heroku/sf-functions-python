@@ -246,14 +246,11 @@ def _process_records_response(status_code: int, json_body: Json) -> RecordQueryR
 
 
 def _normalize_record_fields(fields: dict[str, Any]) -> dict[str, Any]:
-    normalized: dict[str, Any] = {}
-    for key, value in fields.items():
-        if isinstance(value, ReferenceId):
-            value = f"@{{{value.id}.id}}"
+    return {key: _normalize_field_value(value) for (key, value) in fields.items()}
 
-        normalized[key] = value
 
-    return normalized
+def _normalize_field_value(value: Any) -> Any:
+    return f"@{{{value.id}.id}}" if isinstance(value, ReferenceId) else value
 
 
 def _parse_errors(json_errors: Json) -> list[InnerSalesforceRestApiError]:
