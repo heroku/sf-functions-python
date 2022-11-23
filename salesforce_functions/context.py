@@ -37,5 +37,5 @@ class Org:
 class Context:
     """Information relating to the function and the Salesforce org with which it is associated."""
 
-    org: Org | None
+    org: Org
     """Information about the invoking Salesforce organization and user."""
