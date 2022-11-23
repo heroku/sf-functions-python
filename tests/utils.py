@@ -38,7 +38,7 @@ def generate_cloud_event_headers(
             {
                 "ce-dataschema": "dataschema TODO",
                 "ce-subject": "subject TODO",
-                "ce-time": "2022-11-01T12:00:00.000000Z",
+                "ce-time": "2022-11-01T12:30:10.123456Z",
             }
         )
 

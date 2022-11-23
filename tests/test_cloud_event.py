@@ -1,4 +1,6 @@
 import binascii
+import sys
+from datetime import datetime, timezone
 
 import orjson
 import pytest
@@ -34,7 +36,7 @@ def test_cloud_event() -> None:
         data_content_type="application/json",
         data_schema="dataschema TODO",
         subject="subject TODO",
-        time="2022-11-01T12:00:00.000000Z",
+        time=datetime(2022, 11, 1, 12, 30, 10, 123456, tzinfo=timezone.utc),
         sf_context=SalesforceContext(
             api_version="53.0",
             payload_version="0.1",
@@ -121,6 +123,19 @@ def test_invalid_body_not_json() -> None:
 
     with pytest.raises(CloudEventError, match=expected_message):
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
+
+
+def test_invalid_event_time() -> None:
+    headers = generate_cloud_event_headers()
+    headers["ce-time"] = "12:00"
+
+    if sys.version_info < (3, 11):
+        expected_message = r"Unable to parse event time: invalid literal .+"
+    else:
+        expected_message = r"Unable to parse event time: Invalid isoformat string: .+"
+
+    with pytest.raises(CloudEventError, match=expected_message):
+        SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")
 
 
 @pytest.mark.parametrize(

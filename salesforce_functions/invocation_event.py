@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Generic, TypeVar
 
 __all__ = ["InvocationEvent"]
@@ -23,8 +24,7 @@ class InvocationEvent(Generic[T]):
     """
     data: T
     """The payload of the event."""
-    # TODO: Switch this to `datetime`?
-    time: str | None
+    time: datetime | None
     """
     The timestamp of when the occurrence happened.
 
