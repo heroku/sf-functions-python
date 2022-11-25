@@ -4,6 +4,7 @@ __all__ = [
     "InnerSalesforceRestApiError",
     "DataApiError",
     "MissingIdFieldError",
+    "SalesforceRestApiError",
     "UnexpectedRestApiResponsePayload",
 ]
 
