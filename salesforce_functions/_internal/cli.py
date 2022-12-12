@@ -10,6 +10,7 @@ from .config import PROJECT_PATH_ENV_VAR
 from .function_loader import LoadFunctionError, load_function
 
 PROGRAM_NAME = "sf-functions-python"
+ASGI_APP_IMPORT_STRING = "salesforce_functions._internal.app:app"
 
 
 def main(args: list[str] | None = None) -> int:
@@ -112,7 +113,7 @@ def start_server(project_path: Path, host: str, port: int, workers: int) -> int:
         # This only ever returns in the case of a successful shutdown (from a SIGINT/SIGTERM).
         # If errors occur, uvicorn will catch/log them and call `sys.exit()` itself.
         uvicorn.run(  # pyright: ignore [reportUnknownMemberType]
-            "salesforce_functions._internal.app:app",
+            ASGI_APP_IMPORT_STRING,
             host=host,
             port=port,
             workers=workers,
