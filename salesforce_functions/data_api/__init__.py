@@ -1,7 +1,7 @@
 from json.decoder import JSONDecodeError
 from typing import TypeVar
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, DummyCookieJar
 
 from ..__version__ import __version__
 from ._requests import (
@@ -115,7 +115,7 @@ class DataAPI:
         return await rest_api_request.process_response(response.status, json_body)
 
     async def _download_file(self, url: str) -> bytes:
-        session = self._shared_session or ClientSession()
+        session = self._shared_session or self._create_session()
 
         try:
             response = await session.request(
@@ -132,3 +132,10 @@ class DataAPI:
             "Authorization": f"Bearer {self.access_token}",
             "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
         }
+
+    @staticmethod
+    def _create_session() -> ClientSession:
+        # Disable cookie storage using `DummyCookieJar`, given that:
+        # - The same session will be used by multiple invocation events.
+        # - We don't need cookie support.
+        return ClientSession(cookie_jar=DummyCookieJar())
