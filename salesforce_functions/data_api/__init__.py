@@ -1,7 +1,8 @@
-from json.decoder import JSONDecodeError
-from typing import TypeVar
+from typing import Any, TypeVar
 
+import orjson
 from aiohttp import ClientSession, DummyCookieJar
+from aiohttp.payload import BytesPayload
 
 from ..__version__ import __version__
 from ._requests import (
@@ -97,17 +98,22 @@ class DataAPI:
 
         try:
             response = await session.request(
-                method, url, headers=self._default_headers(), json=body
+                method,
+                url,
+                headers=self._default_headers(),
+                data=self._json_serialize(body),
             )
 
-            # Disable content type validation:
-            # https://docs.aiohttp.org/en/stable/client_advanced.html#disabling-content-type-validation-for-json-responses
-            # Some successful requests.py return 204 (No Content) which will not have an
-            # application/json content type header. However, these parse just fine as JSON helping to unify the
-            # interface to the REST request classes.
-            json_body = await response.json(content_type=None)
-        except JSONDecodeError as exception:
-            raise UnexpectedRestApiResponsePayload() from exception
+            # Using orjson for faster JSON deserialization over the stdlib.
+            # This is not implemented using the `loads` argument to `Response.json` since:
+            # - We don't want the content type validation, since some successful requests.py return 204
+            #   (No Content) which will not have an `application/json`` content type header. However,
+            #   these parse just fine as JSON helping to unify the interface to the REST request classes.
+            # - Orjson's performance/memory usage is better if it is passed bytes directly instead of `str`.
+            response_body = await response.read()
+            json_body = orjson.loads(response_body) if response_body else None
+        except orjson.JSONDecodeError as e:
+            raise UnexpectedRestApiResponsePayload() from e
         finally:
             if not self._shared_session:
                 await session.close()
@@ -139,3 +145,21 @@ class DataAPI:
         # - The same session will be used by multiple invocation events.
         # - We don't need cookie support.
         return ClientSession(cookie_jar=DummyCookieJar())
+
+    @staticmethod
+    def _json_serialize(data: Any) -> BytesPayload:
+        """
+        Replacement for aiohttp's default JSON implementation to use an alternative library for JSON serialisation.
+
+        We're using `orjson` since it has much better performance than the Python stdlib's `json` module:
+        https://github.com/ijl/orjson#performance
+
+        We can't just implement this by passing `json_serialize` to `ClientSession`, due to:
+        https://github.com/aio-libs/aiohttp/issues/4482
+
+        So instead this is based on `payload.JsonPayload`:
+        https://github.com/aio-libs/aiohttp/blob/v3.8.3/aiohttp/payload.py#L386-L403
+        """
+        return BytesPayload(
+            orjson.dumps(data), content_type="utf-8", encoding="application/json"
+        )
