@@ -662,13 +662,8 @@ async def test_query_with_associated_record_results() -> None:
                 type="Account",
                 fields={
                     "Name": "TestAccount5",
-                    "Owner": QueriedRecord(
-                        type="User",
-                        fields={
-                            "Name": "Guy Smiley"
-                        }
-                    )
-                }
+                    "Owner": QueriedRecord(type="User", fields={"Name": "Guy Smiley"}),
+                },
             )
-        ]
+        ],
     )

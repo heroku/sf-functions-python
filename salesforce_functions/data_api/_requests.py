@@ -235,8 +235,7 @@ async def _process_records_response(
 
 
 async def _parse_record_query_result(
-        json_body: dict[str, Any],
-        download_file_fn: DownloadFileFunction
+    json_body: dict[str, Any], download_file_fn: DownloadFileFunction
 ) -> RecordQueryResult:
     done: bool = json_body["done"]
     total_size: int = json_body["totalSize"]
@@ -249,7 +248,9 @@ async def _parse_record_query_result(
     return RecordQueryResult(done, total_size, records, next_records_url)
 
 
-async def _parse_queried_record(record_json: dict[str, Any], download_file_fn: DownloadFileFunction) -> QueriedRecord:
+async def _parse_queried_record(
+    record_json: dict[str, Any], download_file_fn: DownloadFileFunction
+) -> QueriedRecord:
     salesforce_object_type = record_json["attributes"]["type"]
 
     fields: dict[str, bytes | QueriedRecord | Any] = {}
@@ -262,7 +263,9 @@ async def _parse_queried_record(record_json: dict[str, Any], download_file_fn: D
             if "attributes" in value:
                 fields[key] = await _parse_queried_record(value, download_file_fn)
             else:
-                sub_query_results[key] = await _parse_record_query_result(value, download_file_fn)
+                sub_query_results[key] = await _parse_record_query_result(
+                    value, download_file_fn
+                )
         elif _is_binary_field(salesforce_object_type, key):
             fields[key] = await download_file_fn(value)
         else:
