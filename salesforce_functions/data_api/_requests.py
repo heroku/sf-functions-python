@@ -28,7 +28,7 @@ class RestApiRequest(Generic[T]):
     def request_body(self) -> Json | None:
         raise NotImplementedError
 
-    async def process_response(self, status_code: int, json_body: Json) -> T:
+    async def process_response(self, status_code: int, json_body: Json | None) -> T:
         raise NotImplementedError
 
 
@@ -47,7 +47,7 @@ class QueryRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
         return None
 
     async def process_response(
-        self, status_code: int, json_body: Json
+        self, status_code: int, json_body: Json | None
     ) -> RecordQueryResult:
         return await _process_records_response(
             status_code, json_body, self._download_file_fn
@@ -69,7 +69,7 @@ class QueryNextRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
         return None
 
     async def process_response(
-        self, status_code: int, json_body: Json
+        self, status_code: int, json_body: Json | None
     ) -> RecordQueryResult:
         return await _process_records_response(
             status_code, json_body, self._download_file_fn
@@ -89,7 +89,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return _normalize_record_fields(self._record.fields)
 
-    async def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 201:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -121,7 +121,7 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
             }
         )
 
-    async def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -142,7 +142,7 @@ class DeleteRecordRestApiRequest(RestApiRequest[str]):
     def request_body(self) -> Json | None:
         return None
 
-    async def process_response(self, status_code: int, json_body: Json) -> str:
+    async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 204:
             raise SalesforceRestApiError(_parse_errors(json_body))
 
@@ -188,7 +188,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         }
 
     async def process_response(
-        self, status_code: int, json_body: Json
+        self, status_code: int, json_body: Json | None
     ) -> dict[ReferenceId, str]:
         # This is the case when the composite request itself has errors. Errors of the sub-requests are handled
         # separately.
@@ -223,7 +223,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
 
 
 async def _process_records_response(
-    status_code: int, json_body: Json, download_file_fn: DownloadFileFunction
+    status_code: int, json_body: Json | None, download_file_fn: DownloadFileFunction
 ) -> RecordQueryResult:
     if status_code != 200:
         raise SalesforceRestApiError(_parse_errors(json_body))
@@ -279,7 +279,7 @@ def _normalize_field_value(value: Any) -> Any:
     return value
 
 
-def _parse_errors(json_errors: Json) -> list[InnerSalesforceRestApiError]:
+def _parse_errors(json_errors: Json | None) -> list[InnerSalesforceRestApiError]:
     if isinstance(json_errors, list):
         return [
             InnerSalesforceRestApiError(
