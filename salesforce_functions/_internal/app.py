@@ -4,7 +4,6 @@ from typing import Any, AsyncGenerator
 
 import orjson
 import structlog
-from aiohttp import ClientSession, DummyCookieJar
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -70,7 +69,7 @@ async def invoke(request: Request) -> OrjsonResponse:
                 # TODO: This should be the API version in project.toml instead
                 cloudevent.sf_context.api_version,
                 cloudevent.sf_function_context.access_token,
-                request.app.state.aiohttp_session,
+                session=request.app.state.data_api_session,
             ),
             user=User(
                 id=cloudevent.sf_context.user_context.user_id,
@@ -128,11 +127,10 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
         sys.tracebacklimit = 0
         raise RuntimeError(f"Function failed to load! {e}") from None
 
-    # Disable cookie storage using `DummyCookieJar`, given that:
-    # - The same session will be used by multiple invocation events.
-    # - We don't need cookie support.
-    async with ClientSession(cookie_jar=DummyCookieJar()) as aiohttp_session:
-        app.state.aiohttp_session = aiohttp_session
+    async with (
+        DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
+    ) as data_api_session:
+        app.state.data_api_session = data_api_session
         yield
 
 
