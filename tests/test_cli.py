@@ -99,7 +99,7 @@ def test_check_subcommand_valid_function(capsys: CaptureFixture[str]) -> None:
 
     output = capsys.readouterr()
     assert output.err == ""
-    assert output.out == "Checking function...\n\nFunction passed validation\n"
+    assert output.out == "Function passed validation\n"
 
 
 def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
@@ -110,7 +110,7 @@ def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     assert exit_code == 1
 
     output = capsys.readouterr()
-    assert output.out == "Checking function...\n\n"
+    assert output.out == ""
     assert (
         output.err
         == f"Error: Function failed validation! File not found: {absolute_function_path}\n"
@@ -156,7 +156,7 @@ def test_serve_subcommand_missing_project_path(capsys: CaptureFixture[str]) -> N
     assert "error: the following arguments are required: <project-path>" in output.err
 
 
-def test_serve_subcommand_default_options() -> None:
+def test_serve_subcommand_default_options(capsys: CaptureFixture[str]) -> None:
     project_path = "path/to/function"
     # Still a relative path, but with the path separators adjusted for the current OS.
     normalised_path = str(Path(project_path))
@@ -179,8 +179,15 @@ def test_serve_subcommand_default_options() -> None:
 
     assert PROJECT_PATH_ENV_VAR not in os.environ
 
+    output = capsys.readouterr()
+    assert output.err == ""
+    assert (
+        output.out
+        == f"Starting sf-functions-python v{__version__} in single process mode.\n"
+    )
 
-def test_serve_subcommand_custom_options() -> None:
+
+def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
     project_path = "path/to/function"
     # Still a relative path, but with the path separators adjusted for the current OS.
     normalised_path = str(Path(project_path))
@@ -214,6 +221,13 @@ def test_serve_subcommand_custom_options() -> None:
 
     assert PROJECT_PATH_ENV_VAR not in os.environ
 
+    output = capsys.readouterr()
+    assert output.err == ""
+    assert (
+        output.out
+        == f"Starting sf-functions-python v{__version__} in multi-process mode (5 worker processes).\n"
+    )
+
 
 def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/invalid_function_missing_module"
@@ -232,7 +246,10 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     assert exit_code == 3
 
     output = capsys.readouterr()
-    assert output.out == ""
+    assert (
+        output.out
+        == f"Starting sf-functions-python v{__version__} in single process mode.\n"
+    )
     assert output.err.endswith(
         rf"""
 INFO:     Waiting for application startup.
