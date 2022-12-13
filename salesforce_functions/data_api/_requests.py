@@ -234,7 +234,7 @@ async def _process_records_response(
     raise UnexpectedRestApiResponsePayload()
 
 
-async def _parse_record_query_result(json_body: dict, download_file_fn: DownloadFileFunction) -> RecordQueryResult:
+async def _parse_record_query_result(json_body: dict[str, Any], download_file_fn: DownloadFileFunction) -> RecordQueryResult:
     done: bool = json_body["done"]
     total_size: int = json_body["totalSize"]
     next_records_url: str | None = json_body.get("nextRecordsUrl")
@@ -246,10 +246,10 @@ async def _parse_record_query_result(json_body: dict, download_file_fn: Download
     return RecordQueryResult(done, total_size, records, next_records_url)
 
 
-async def _parse_queried_record(record_json: dict, download_file_fn: DownloadFileFunction) -> QueriedRecord:
+async def _parse_queried_record(record_json: dict[str, Any], download_file_fn: DownloadFileFunction) -> QueriedRecord:
     salesforce_object_type = record_json["attributes"]["type"]
 
-    fields = {}
+    fields: dict[str, bytes | QueriedRecord | Any] = {}
     sub_query_results = {}
     for key, value in record_json.items():
         if key == "attributes":
