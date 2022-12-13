@@ -267,3 +267,10 @@ def test_version_subcommand(capsys: CaptureFixture[str]) -> None:
     output = capsys.readouterr()
     assert output.err == ""
     assert output.out == f"{__version__}\n"
+
+    # Ensure the command output can be parsed as a semver-compatible string by the CLI and CNB.
+    # This test is more restrictive than semver, but that's fine for our purposes, and saves
+    # adding another dependency (which might even be using a different semver flavour anyway).
+    version_parts = output.out.strip().split(".")
+    assert len(version_parts) == 3
+    assert all(map(lambda s: s.isdigit(), version_parts))
