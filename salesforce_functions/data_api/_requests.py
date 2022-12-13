@@ -264,11 +264,13 @@ async def _parse_queried_record(record_json: dict[str, Any], download_file_fn: D
             fields[key] = await download_file_fn(value)
         else:
             fields[key] = value
+
     return QueriedRecord(salesforce_object_type, fields, sub_query_results)
 
 
 def _is_binary_field(salesforce_object_type: str, field_name: str) -> bool:
     return salesforce_object_type == "ContentVersion" and field_name == "VersionData"
+
 
 def _normalize_record_fields(fields: dict[str, Any]) -> dict[str, Any]:
     return {key: _normalize_field_value(value) for (key, value) in fields.items()}
