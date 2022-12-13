@@ -1,5 +1,5 @@
 from base64 import standard_b64encode
-from typing import Any, Awaitable, Callable, Generic, Literal, TypeVar, cast
+from typing import Any, Awaitable, Callable, Generic, Literal, TypeVar
 from urllib.parse import urlencode
 
 from .exceptions import (
@@ -229,41 +229,46 @@ async def _process_records_response(
         raise SalesforceRestApiError(_parse_errors(json_body))
 
     if isinstance(json_body, dict):
-        done: bool = json_body["done"]
-        total_size: int = json_body["totalSize"]
-        next_records_url: str | None = json_body.get("nextRecordsUrl")
-
-        records: list[QueriedRecord] = []
-        for record_json in json_body["records"]:
-            salesforce_object_type = record_json["attributes"]["type"]
-
-            fields = {}
-            sub_query_results = {}
-            for key, value in record_json.items():
-                if key == "attributes":
-                    continue
-
-                if isinstance(value, dict):
-                    sub_query_results[key] = await _process_records_response(
-                        status_code, cast(dict[str, Any], value), download_file_fn
-                    )
-                elif _is_binary_field(salesforce_object_type, key):
-                    fields[key] = await download_file_fn(value)
-                else:
-                    fields[key] = value
-
-            records.append(
-                QueriedRecord(salesforce_object_type, fields, sub_query_results)
-            )
-
-        return RecordQueryResult(done, total_size, records, next_records_url)
+        return await _parse_record_query_result(json_body, download_file_fn)
 
     raise UnexpectedRestApiResponsePayload()
 
 
+async def _parse_record_query_result(json_body: dict, download_file_fn: DownloadFileFunction) -> RecordQueryResult:
+    done: bool = json_body["done"]
+    total_size: int = json_body["totalSize"]
+    next_records_url: str | None = json_body.get("nextRecordsUrl")
+
+    records: list[QueriedRecord] = []
+    for record_json in json_body["records"]:
+        records.append(await _parse_queried_record(record_json, download_file_fn))
+
+    return RecordQueryResult(done, total_size, records, next_records_url)
+
+
+async def _parse_queried_record(record_json: dict, download_file_fn: DownloadFileFunction) -> QueriedRecord:
+    salesforce_object_type = record_json["attributes"]["type"]
+
+    fields = {}
+    sub_query_results = {}
+    for key, value in record_json.items():
+        if key == "attributes":
+            continue
+
+        if isinstance(value, dict):
+            if "attributes" in value:
+                fields[key] = await _parse_queried_record(value, download_file_fn)
+            else:
+                sub_query_results[key] = await _parse_record_query_result(value, download_file_fn)
+        elif _is_binary_field(salesforce_object_type, key):
+            fields[key] = await download_file_fn(value)
+        else:
+            fields[key] = value
+    return QueriedRecord(salesforce_object_type, fields, sub_query_results)
+
+
 def _is_binary_field(salesforce_object_type: str, field_name: str) -> bool:
     return salesforce_object_type == "ContentVersion" and field_name == "VersionData"
-
 
 def _normalize_record_fields(fields: dict[str, Any]) -> dict[str, Any]:
     return {key: _normalize_field_value(value) for (key, value) in fields.items()}

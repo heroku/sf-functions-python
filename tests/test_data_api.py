@@ -645,3 +645,29 @@ async def test_unit_of_work_single_delete() -> None:
     assert result == {
         ReferenceId("referenceId0"): "a01B0000009gSr9IAE",
     }
+
+@pytest.mark.requires_wiremock
+async def test_query_with_associated_record_results() -> None:
+    data_api = new_data_api()
+
+    result = await data_api.query("SELECT Name, Owner.Name from Account LIMIT 1")
+
+    assert result == RecordQueryResult(
+        done=True,
+        total_size=1,
+        next_records_url=None,
+        records=[
+            QueriedRecord(
+                type="Account",
+                fields={
+                    "Name": "TestAccount5",
+                    "Owner": QueriedRecord(
+                        type="User",
+                        fields={
+                            "Name": "Guy Smiley"
+                        }
+                    )
+                }
+            )
+        ]
+    )
