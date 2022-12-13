@@ -234,7 +234,10 @@ async def _process_records_response(
     raise UnexpectedRestApiResponsePayload()
 
 
-async def _parse_record_query_result(json_body: dict[str, Any], download_file_fn: DownloadFileFunction) -> RecordQueryResult:
+async def _parse_record_query_result(
+        json_body: dict[str, Any],
+        download_file_fn: DownloadFileFunction
+) -> RecordQueryResult:
     done: bool = json_body["done"]
     total_size: int = json_body["totalSize"]
     next_records_url: str | None = json_body.get("nextRecordsUrl")
