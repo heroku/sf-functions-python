@@ -20,16 +20,16 @@ T = TypeVar("T")
 
 class RestApiRequest(Generic[T]):
     def url(self, org_domain_url: str, api_version: str) -> str:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def http_method(self) -> HttpMethod:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def request_body(self) -> Json | None:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     async def process_response(self, status_code: int, json_body: Json | None) -> T:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class QueryRecordsRestApiRequest(RestApiRequest[RecordQueryResult]):
@@ -96,7 +96,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
         if isinstance(json_body, dict):
             return str(json_body["id"])
 
-        raise UnexpectedRestApiResponsePayload()
+        raise UnexpectedRestApiResponsePayload()  # pragma: no cover
 
 
 class UpdateRecordRestApiRequest(RestApiRequest[str]):
@@ -123,7 +123,7 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
 
     async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 204:
-            raise SalesforceRestApiError(_parse_errors(json_body))
+            raise SalesforceRestApiError(_parse_errors(json_body))  # pragma: no cover
 
         return str(self._record.fields["Id"])
 
@@ -193,7 +193,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         # This is the case when the composite request itself has errors. Errors of the sub-requests are handled
         # separately.
         if status_code != 200:
-            raise SalesforceRestApiError(_parse_errors(json_body))
+            raise SalesforceRestApiError(_parse_errors(json_body))  # pragma: no cover
 
         if isinstance(json_body, dict):
             composite_responses = json_body["graphs"][0]["graphResponse"][
@@ -219,7 +219,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
 
             return result
 
-        raise UnexpectedRestApiResponsePayload()
+        raise UnexpectedRestApiResponsePayload()  # pragma: no cover
 
 
 async def _process_records_response(
@@ -231,7 +231,7 @@ async def _process_records_response(
     if isinstance(json_body, dict):
         return await _parse_record_query_result(json_body, download_file_fn)
 
-    raise UnexpectedRestApiResponsePayload()
+    raise UnexpectedRestApiResponsePayload()  # pragma: no cover
 
 
 async def _parse_record_query_result(
@@ -303,4 +303,4 @@ def _parse_errors(json_errors: Json | None) -> list[InnerSalesforceRestApiError]
             for json_error in json_errors
         ]
 
-    raise UnexpectedRestApiResponsePayload()
+    raise UnexpectedRestApiResponsePayload()  # pragma: no cover

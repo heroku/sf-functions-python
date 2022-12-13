@@ -86,7 +86,7 @@ def main(args: list[str] | None = None) -> int:
         case "version":
             print(__version__)
             return 0
-        case other:
+        case other:  # pragma: no cover
             # This is only reachable in the case of the parser config being out of sync,
             # since argparse handles the user providing invalid subcommands for us.
             raise NotImplementedError(f"Unhandled subcommand '{other}'")
