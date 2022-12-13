@@ -1,0 +1,32 @@
+{
+  "id" : "fb30aeaf-08a7-4cbc-b4c0-50fc034c1409",
+  "name" : "services_data_v530_query",
+  "request" : {
+    "urlPath" : "/services/data/v53.0/query",
+    "method" : "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "SELECT Name, Owner.Name from Account LIMIT 1"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"totalSize\":1,\"done\":true,\"records\":[{\"attributes\":{\"type\":\"Account\",\"url\":\"/services/data/v53.0/sobjects/Account/001B000001PUvQUIA1\"},\"Name\":\"TestAccount5\",\"Owner\":{\"attributes\":{\"type\":\"User\",\"url\":\"/services/data/v53.0/sobjects/User/005B0000008UC2PIAW\"},\"Name\":\"Guy Smiley\"}}]}",
+    "headers" : {
+      "Date" : "Fri, 02 Dec 2022 18:02:55 GMT",
+      "Set-Cookie" : [ "CookieConsentPolicy=0:1; path=/; expires=Sat, 02-Dec-2023 18:02:55 GMT; Max-Age=31536000", "LSKey-c$CookieConsentPolicy=0:1; path=/; expires=Sat, 02-Dec-2023 18:02:55 GMT; Max-Age=31536000", "BrowserId=jA2SIXJrEe2HE63eO1gD5Q; domain=.salesforce.com; path=/; expires=Sat, 02-Dec-2023 18:02:55 GMT; Max-Age=31536000" ],
+      "Strict-Transport-Security" : "max-age=63072000; includeSubDomains",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "X-Robots-Tag" : "none",
+      "Cache-Control" : "no-cache,must-revalidate,max-age=0,no-store,private",
+      "Sforce-Limit-Info" : "api-usage=11/100000",
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Vary" : "Accept-Encoding"
+    }
+  },
+  "uuid" : "fb30aeaf-08a7-4cbc-b4c0-50fc034c1409",
+  "persistent" : true,
+  "insertionIndex" : 3
+}
