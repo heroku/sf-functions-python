@@ -56,20 +56,20 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: Install dependencies
         run: pip install --disable-pip-version-check --progress-bar off --editable .[development]
-      - name: Run pytest
-        run: pytest --verbosity 2 --color yes
-      - name: Set up Java 11 for WireMock
-        if: matrix.os != 'windows-latest'
+      - name: Set up Java 11 for WireMock (non-Windows only)
+        if: runner.os != 'Windows'
         uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 11
-      - name: Download WireMock
-        if: matrix.os != 'windows-latest'
+      - name: Download WireMock (non-Windows only)
+        if: runner.os != 'Windows'
         run: curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 60 -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-jre8-standalone/2.35.0/wiremock-jre8-standalone-2.35.0.jar
-      - name: Start WireMock
-        if: matrix.os != 'windows-latest'
+      - name: Start WireMock (non-Windows only)
+        if: runner.os != 'Windows'
         run: java -jar wiremock.jar --root-dir tests/wiremock --port 12345 &
-      - name: Run pytest (Tests marked with requires_wiremock)
-        if: matrix.os != 'windows-latest'
+      - name: Run pytest (tests that work on all platforms)
+        run: pytest --verbosity 2 --color yes
+      - name: Run pytest (tests that require WireMock)
+        if: runner.os != 'Windows'
         run: pytest --verbosity 2 --color yes -m requires_wiremock
