@@ -4,5 +4,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 dist/
+htmlcov/
 tests/wiremock/__files/
 .DS_Store
+.coverage

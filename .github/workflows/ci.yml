@@ -72,4 +72,7 @@ jobs:
         run: pytest --verbosity 2 --color yes
       - name: Run pytest (tests that require WireMock)
         if: runner.os != 'Windows'
-        run: pytest --verbosity 2 --color yes -m requires_wiremock
+        run: pytest --verbosity 2 --color yes -m requires_wiremock --cov-append
+      - name: Check code coverage (non-Windows only)
+        if: runner.os != 'Windows'
+        run: coverage report --show-missing --fail-under=100

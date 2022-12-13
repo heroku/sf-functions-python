@@ -115,7 +115,7 @@ class DataAPI:
         except orjson.JSONDecodeError as e:
             raise UnexpectedRestApiResponsePayload() from e
         finally:
-            if not self._shared_session:
+            if session != self._shared_session:  # pragma: no cover
                 await session.close()
 
         return await rest_api_request.process_response(response.status, json_body)
@@ -130,7 +130,7 @@ class DataAPI:
 
             return await response.read()
         finally:
-            if not self._shared_session:
+            if session != self._shared_session:  # pragma: no cover
                 await session.close()
 
     def _default_headers(self) -> dict[str, str]:

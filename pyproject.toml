@@ -32,6 +32,7 @@ development = [
     "pylint==2.15.8",
     "pytest==7.2.0",
     "pytest-asyncio==0.20.3",
+    "pytest-cov==4.0.0",
 ]
 
 [project.scripts]
@@ -54,6 +55,11 @@ path = "salesforce_functions/__version__.py"
 [tool.black]
 target-version = ['py310', 'py311']
 extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
+
+[tool.coverage.run]
+branch = true
+omit = ["salesforce_functions/__main__.py"]
+source = ["salesforce_functions"]
 
 [tool.mypy]
 exclude = ["^tests/fixtures/invalid_syntax_error/main.py$"]
@@ -92,6 +98,8 @@ output-format = "colorized"
 
 [tool.pytest.ini_options]
 addopts = [
+    "--cov",
+    "--cov-report=term-missing",
     "--import-mode=importlib",
     "--strict-markers",
     "-m not requires_wiremock",
