@@ -93,8 +93,6 @@ def main(args: list[str] | None = None) -> int:
 
 
 def check_function(project_path: Path) -> int:
-    print("Checking function...\n")
-
     try:
         load_function(project_path)
     except LoadFunctionError as e:
@@ -106,6 +104,13 @@ def check_function(project_path: Path) -> int:
 
 
 def start_server(project_path: Path, host: str, port: int, workers: int) -> int:
+    if workers == 1:
+        process_mode = "single process mode"
+    else:
+        process_mode = f"multi-process mode ({workers} worker processes)"
+
+    print(f"Starting {PROGRAM_NAME} v{__version__} in {process_mode}.")
+
     # Propagate CLI args to the ASGI app (uvicorn doesn't support passing custom config directly).
     os.environ[PROJECT_PATH_ENV_VAR] = str(project_path)
 
