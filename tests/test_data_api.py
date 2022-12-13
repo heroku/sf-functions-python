@@ -646,6 +646,7 @@ async def test_unit_of_work_single_delete() -> None:
         ReferenceId("referenceId0"): "a01B0000009gSr9IAE",
     }
 
+
 @pytest.mark.requires_wiremock
 async def test_query_with_associated_record_results() -> None:
     data_api = new_data_api()
