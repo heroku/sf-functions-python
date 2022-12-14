@@ -39,6 +39,7 @@ development = [
 sf-functions-python = "salesforce_functions._internal.cli:main"
 
 [project.urls]
+Changelog = "https://github.com/heroku/sf-functions-python/blob/main/CHANGELOG.md"
 Source = "https://github.com/heroku/sf-functions-python"
 
 [tool.hatch.build]
