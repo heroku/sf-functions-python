@@ -101,6 +101,7 @@ addopts = [
     "--cov",
     "--cov-report=term-missing",
     "--import-mode=importlib",
+    "--no-cov-on-fail",
     "--strict-markers",
     "-m not requires_wiremock",
 ]
