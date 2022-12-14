@@ -58,7 +58,6 @@ extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
 
 [tool.coverage.run]
 branch = true
-omit = ["salesforce_functions/__main__.py"]
 source = ["salesforce_functions"]
 
 [tool.mypy]
