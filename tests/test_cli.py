@@ -1,15 +1,21 @@
 import os
+import subprocess
 import sys
 from importlib.metadata import distribution
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
+import httpx
 import pytest
 from pytest import CaptureFixture
 
 from salesforce_functions.__version__ import __version__
-from salesforce_functions._internal.cli import PROGRAM_NAME, main
+from salesforce_functions._internal.cli import (
+    ASGI_APP_IMPORT_STRING,
+    PROGRAM_NAME,
+    main,
+)
 from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
 
@@ -170,7 +176,7 @@ def test_serve_subcommand_default_options(capsys: CaptureFixture[str]) -> None:
         main(args=["serve", project_path])
 
         mock_uvicorn_run.assert_called_once_with(
-            "salesforce_functions._internal.app:app",
+            ASGI_APP_IMPORT_STRING,
             host="localhost",
             port=8080,
             workers=1,
@@ -212,7 +218,7 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
         )
 
         mock_uvicorn_run.assert_called_once_with(
-            "salesforce_functions._internal.app:app",
+            ASGI_APP_IMPORT_STRING,
             host="0.0.0.0",
             port=12345,
             workers=5,
@@ -227,6 +233,40 @@ def test_serve_subcommand_custom_options(capsys: CaptureFixture[str]) -> None:
         output.out
         == f"Starting sf-functions-python v{__version__} in multi-process mode (5 worker processes).\n"
     )
+
+
+def test_serve_subcommand_valid_function() -> None:
+    fixture = "tests/fixtures/basic"
+    port = 41234
+
+    with subprocess.Popen(
+        ["python", "-m", "salesforce_functions", "serve", "--port", str(port), fixture]
+    ) as server_process:
+        try:
+            with httpx.Client(transport=httpx.HTTPTransport(retries=5)) as client:
+                # Checks that uvicorn is binding to both the IPv4 and IPv6 adapters
+                # when it is binding to localhost, since clients will use either.
+                headers = {"x-health-check": "true"}
+                ipv4_response = client.post(f"http://127.0.0.1:{port}", headers=headers)
+                ipv6_response = client.post(f"http://[::1]:{port}", headers=headers)
+        finally:
+            server_process.terminate()
+            try:
+                server_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                server_process.kill()
+
+    # Using `Popen.terminate()` results in a non-zero exit code on Windows for some reason.
+    if sys.platform == "win32":
+        assert server_process.returncode == 1
+    else:
+        assert server_process.returncode == 0
+
+    assert ipv4_response.status_code == 200
+    assert ipv4_response.json() == "OK"
+
+    assert ipv6_response.status_code == 200
+    assert ipv6_response.json() == "OK"
 
 
 def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
