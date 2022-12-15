@@ -48,7 +48,7 @@ sfdx update
 
 This will update both the sfdx and sf commands.  Verify that:
 
-* `sf --version` is `1.57.0` (or higher)
+* `sf --version` is `1.59.0` (or higher)
 * `sfdx --version` is `7.180.0` (or higher)
 
 ### [Create a SFDX Project](https://developer.salesforce.com/docs/platform/functions/guide/create-dx-project.html)
