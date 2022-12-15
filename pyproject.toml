@@ -5,10 +5,16 @@ build-backend = "hatchling.build"
 [project]
 name = "salesforce-functions"
 description = "Python support for Salesforce Functions"
+keywords = ["functions", "salesforce"]
 readme = "README.md"
 license = "BSD-3-Clause"
 dynamic = ["version"]
 requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
 # httptools and uvloop are optional uvicorn dependencies that improve performance.
 dependencies = [
     "aiohttp>=3.8.3,<4",
