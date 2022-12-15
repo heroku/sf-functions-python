@@ -140,7 +140,7 @@ sf env create compute \
   --alias PythonCompute
 ```
 
-This will make it so that, when you deploy a Function, it will be deployed to the *PythonCompute* environment linked to 
+This will make it so that when you deploy a Function, it will be deployed to the **PythonCompute** environment linked to 
 your scratch org.
 
 ## Create and Run a Python Function Locally
