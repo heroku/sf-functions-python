@@ -53,7 +53,7 @@ This will update both the sfdx and sf commands.  Verify that:
 
 ### [Create a SFDX Project](https://developer.salesforce.com/docs/platform/functions/guide/create-dx-project.html)
 
-Functions must be located within a SFDX project so let’s create one.  
+Functions must be located within a SFDX project, so let’s create one.  
 
 ```sh
 sf generate project --name PythonFunctionsAlpha
