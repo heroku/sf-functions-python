@@ -10,7 +10,7 @@ Python support for [Salesforce Functions](https://developer.salesforce.com/docs/
 
 ## Prerequisites
 
-> Any install commands that follow assume a Mac OSX system with Homebrew available.  If you’re on another OS you’ll have to click through the links to get alternative install instructions.
+> Any install commands that follow assume an Apple macOS system with Homebrew available.  If you’re on another OS you’ll have to click through the links to get alternative install instructions.
 
 ### [Install Python 3](https://www.python.org/downloads/)
 
