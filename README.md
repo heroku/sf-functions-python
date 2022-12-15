@@ -121,7 +121,7 @@ sfdx force:org:create \
   --setdefaultusername
 ```
 
-This will make it so that, when you run a Function, it will connect to and use the **PythonScratch** org.
+This will make it so that when you run a Function, it will connect to and use the **PythonScratch** org.
 
 ### Connect Your Compute Environment
 
