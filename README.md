@@ -46,7 +46,7 @@ functions support:
 sfdx update
 ```
 
-This will update both the sfdx and sf commands.  Verify that:
+This will update both the `sfdx` and `sf` commands.  Verify that:
 
 * `sf --version` is `1.59.0` (or higher)
 * `sfdx --version` is `7.180.0` (or higher)
