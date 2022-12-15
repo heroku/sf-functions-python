@@ -18,7 +18,7 @@ Python support for [Salesforce Functions](https://developer.salesforce.com/docs/
 brew install python3
 ```
 
-The installed Python version should be at least `3.10.6` or higher  
+The installed Python version should be at least `3.10` or higher  
 
 You can check this with `python3 --version`
 
@@ -39,17 +39,16 @@ You can check this with `git --version`
 If you haven’t already installed the Salesforce CLI, follow 
 [these steps](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm). 
 
-If you already have the Salesforce CLI installed, make sure it is updated to the latest release, which contains the Python 
+If you already have the Salesforce CLI installed, make sure it is updated to the latest release candidate, which contains the Python 
 functions support:
 
 ```sh
-sfdx update
+sfdx update stable-rc
 ```
 
-This will update both the `sfdx` and `sf` commands.  Verify that:
+This will update both the `sfdx` and `sf` commands.  The installed version of `sf` should be `1.59.0` or higher.
 
-* `sf --version` is `1.59.0` (or higher)
-* `sfdx --version` is `7.180.0` (or higher)
+You can check this with `sf --version`
 
 ### [Create a SFDX Project](https://developer.salesforce.com/docs/platform/functions/guide/create-dx-project.html)
 
@@ -167,6 +166,7 @@ cd functions/hellopython
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
+echo "venv/" > .gitignore
 ```
 
 This will ensure your function has all dependencies it requires installed before you run it.  If you forgot to do this 
