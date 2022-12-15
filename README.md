@@ -56,7 +56,7 @@ This will update both the sfdx and sf commands.  Verify that:
 Functions must be located within a SFDX project so let’s create one.  
 
 ```sh
-sf generate project -n PythonFunctionsAlpha
+sf generate project --name PythonFunctionsAlpha
 ```
 
 Some of the following commands need to be run from within the SFDX project directory so change into that directory now with
