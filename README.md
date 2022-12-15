@@ -1,5 +1,8 @@
 # sf-functions-python
 
+[![PyPI](https://img.shields.io/pypi/v/salesforce-functions.svg?label=PyPI)](https://pypi.org/project/salesforce-functions/)
+[![CI](https://github.com/heroku/sf-functions-python/actions/workflows/ci.yml/badge.svg)](https://github.com/heroku/sf-functions-python/actions/workflows/ci.yml)
+
 Python support for [Salesforce Functions](https://developer.salesforce.com/docs/platform/functions/overview).
 
 > Note: This feature is in beta and has been released early so we can collect feedback. It may contain significant problems, undergo major changes, or be discontinued. The use of this feature is governed by the Salesforce.com Program Agreement.
