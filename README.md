@@ -145,6 +145,41 @@ sf env create compute \
 This will make it so that when you deploy a Function, it will be deployed to the **PythonCompute** environment linked to 
 your scratch org.
 
+### Assign Permissions
+
+The default Python project you'll generate requires `read` access to the `Account` object in your scratch org.  Create 
+a file named `force-app/main/default/permissionsets/Functions.permissionset-meta.xml` in your SFDX project and add the following content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Permissions for Salesforce Functions to access Salesforce org data</description>
+    <hasActivationRequired>true</hasActivationRequired>
+    <label>Functions</label>
+    <objectPermissions>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>Account</object>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+</PermissionSet>
+```
+
+Upload this permission set to your org:
+
+```sh
+sf deploy metadata --ignore-conflicts
+```
+
+Then assign the permissions to the `Functions` profile with
+
+```sh
+sfdx force:user:permset:assign -n Functions
+```
+
 ## Create and Run a Python Function Locally
 
 ### Generate the Python Function
@@ -163,14 +198,46 @@ The remaining commands will be executed within the newly generated project folde
 cd functions/hellopython
 ```
 
+You should also create a `.gitignore` file in the function directory with the following contents:
+```gitignore
+venv
+__pycache__
+```
+
+The following command will do this for you:
+```sh
+echo "venv\n__pycache__" > .gitignore
+```
+
 ### Create the Python [Virtual Environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) & Install Dependencies
 
+To install the dependencies required by the Python Function locally, we first need to create a "Virtual Environment" (venv) 
+which we can install packages into without affecting your system Python installation.  This can be done by running:
 ```sh
 python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-echo "venv/" > .gitignore
 ```
+
+Next, the virtual environment needs to be activated.  
+
+On a **macOS / Linux system** you can activate the virtual environment with
+
+```sh
+source venv/bin/activate
+```
+
+On a **Microsoft Windows system** you can activate the virtual environment with
+```sh
+.\venv\Scripts\activate
+```
+
+> For help with setting up a virtual environment, see the [Python documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment).
+
+Finally, the dependencies can be installed into the newly created environment:
+
+```sh
+pip3 install -r requirements.txt
+```
+
 
 This will ensure your function has all dependencies it requires installed before you run it.  If you forgot to do this 
 before starting the Function locally you’ll receive an error reminding you to perform this step.
@@ -257,10 +324,18 @@ Open a developer console
 sfdx force:org:open -p /_ui/common/apex/debug/ApexCSIPage
 ```
 
-And execute the function with
+Then execute the function.
+
+On a **macOS / Linux system** you can execute the function with:
 
 ```sh
 echo "ApexTrigger.runFunction();" | sfdx force:apex:execute -f /dev/stdin
+```
+
+On a **Microsoft Windows system** you can execute the function with:
+
+```sh
+echo "FunctionApex.test();" | sfdx force:apex:execute
 ```
 
 The developer console will show a log entry after the function executes which you can double-click to open.  Toggle the 
