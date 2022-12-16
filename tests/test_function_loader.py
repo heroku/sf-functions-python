@@ -36,6 +36,11 @@ def test_function_without_type_annotations() -> None:
     load_function(fixture)
 
 
+def test_template_function() -> None:
+    fixture = Path("tests/fixtures/template")
+    load_function(fixture)
+
+
 def test_invalid_function_nonexistent_directory() -> None:
     fixture = Path("this_directory_does_not_exist")
     absolute_function_path = fixture.resolve().joinpath("main.py")
