@@ -308,7 +308,7 @@ public with sharing class ApexTrigger {
 
 This code will:
 
-* Lookup the reference to our function using the functions.Function.get method 
+* Lookup the reference to our function using the `functions.Function.get` method 
 * Invoke the function with an empty json payload
 * Print the response
 
