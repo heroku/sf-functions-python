@@ -339,7 +339,7 @@ echo "FunctionApex.test();" | sfdx force:apex:execute
 ```
 
 The developer console will show a log entry after the function executes which you can double-click to open.  Toggle the 
-Debug Only filter to reduce the log messages to just the ones from the ApexTrigger function.  You should see a view like 
+Debug Only filter to reduce the log messages to just the ones from the `ApexTrigger` function.  You should see a view like 
 the one below:
 
 ![Developer Console](./assets/developer-console.png)
