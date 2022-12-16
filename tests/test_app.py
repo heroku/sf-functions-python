@@ -149,6 +149,19 @@ record_id=12345 invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=info msg
     assert output.err == ""
 
 
+def test_template_function() -> None:
+    # TODO: Create a WireMock mapping for the template function's data API usage, and make
+    # this test actually invoke the function, rather than just performing a health check.
+    # Or alternatively, stop using the data API in the template function so the template
+    # works out of the box in production without requiring permissions setup.
+    response = invoke_function(
+        "tests/fixtures/template", headers={"x-health-check": "true"}
+    )
+    assert response.status_code == 200
+    assert response.headers.get("Content-Type") == "application/json"
+    assert response.json() == "OK"
+
+
 def test_invalid_function() -> None:
     expected_message = r"Function failed to load! File not found: .+$"
 

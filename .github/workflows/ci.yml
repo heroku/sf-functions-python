@@ -76,3 +76,87 @@ jobs:
       - name: Check code coverage (non-Windows only)
         if: runner.os != 'Windows'
         run: coverage report --show-missing --fail-under=100
+
+  # This job tests:
+  # - Building the package as a wheel using Hatch's CLI (otherwise only performed when publishing to PyPI).
+  # - That the package and template function are compatible with the latest Python CNB/builder image.
+  # - Using the package from `site-packages` (the unit tests use editable mode, so run from the source directory).
+  # - Using the package without the development-only dependencies installed (in case there was a mix up).
+  integration-test-buildpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Pack CLI
+        uses: buildpacks/github-actions/setup-pack@v4.9.0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install Hatch
+        run: pip install hatch
+      - name: Build a wheel for the salesforce-functions package
+        run: hatch build --clean --target wheel
+      - name: Update the template function to use the wheel
+        run: |
+          set -x
+          PACKAGE_VERSION=$(hatch version)
+          WHEEL_FILENAME="salesforce_functions-${PACKAGE_VERSION}-py3-none-any.whl"
+          mv "dist/${WHEEL_FILENAME}" tests/fixtures/template/
+          echo "./${WHEEL_FILENAME}" > tests/fixtures/template/requirements.txt
+      - name: Build the template function using pack
+        run: pack build --builder heroku/builder:22 --path tests/fixtures/template/ template-function
+      - name: Start the template function container
+        run: docker run --name template-function --detach -p 12345:12345 --env PORT=12345 template-function
+      - name: Test the template function's health check response
+        # We're testing via the health check since the template function uses the data API,
+        # so would otherwise require us to mock the Salesforce org using WireMock.
+        run: |
+          if curl --fail --retry 5 --retry-delay 1 --retry-all-errors --connect-timeout 3 -X POST -i -H 'x-health-check: true' http://localhost:12345; then
+            echo "Successful response from function"
+          else
+            echo -e "Function did not respond successfully\n\nContainer logs:\n"
+            docker logs template-function
+            exit 1
+          fi
+
+  # This job tests:
+  # - That the package and template function are compatible with the latest SF CLI's Python local function runner.
+  # - Using the package from `site-packages` (the unit tests use editable mode, so run from the source directory).
+  # - Using the package without the development-only dependencies installed (in case there was a mix up).
+  integration-test-sf-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install SF CLI
+        run: |
+          curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 60 https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz \
+            | tar -xJC "${HOME}"
+          echo "${HOME}/sfdx/bin" >> "${GITHUB_PATH}"
+      - name: Output SF CLI version
+        run: sf --version
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install the salesforce-functions package and its dependencies
+        run: pip install --disable-pip-version-check --progress-bar off .
+      - name: Start the template function locally
+        run: sf run function start local &> ../server-output.txt &
+        working-directory: tests/fixtures/template/
+      - name: Test the template function's health check response
+        # We're testing via the health check since the template function uses the data API,
+        # so would otherwise require us to mock the Salesforce org using WireMock.
+        run: |
+          if curl --fail --retry 5 --retry-delay 1 --retry-all-errors --connect-timeout 3 -X POST -i -H 'x-health-check: true' http://localhost:8080; then
+            echo "Successful response from function"
+          else
+            echo -e "Function did not respond successfully\n\nServer logs:\n"
+            cat server-output.txt
+            exit 1
+          fi
