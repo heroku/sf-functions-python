@@ -275,7 +275,7 @@ git add .
 git commit -m "Trying out python functions"
 ```
 
-Once everything is committed to git run
+Once everything is committed to git, run:
 
 ```sh
 sf deploy functions --connected-org PythonScratch
