@@ -318,7 +318,7 @@ Upload this Apex class to your scratch org with
 sfdx force:source:push --targetusername PythonScratch
 ```
 
-Open a developer console
+Open a developer console:
 
 ```sh
 sfdx force:org:open -p /_ui/common/apex/debug/ApexCSIPage
