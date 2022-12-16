@@ -192,7 +192,7 @@ sf generate function \
   --function-name hellopython
 ```
 
-The remaining commands will be executed within the newly generated project folder change to that folder by running
+The remaining commands will be executed within the newly generated project folder. Change to that folder by running:
 
 ```sh
 cd functions/hellopython
