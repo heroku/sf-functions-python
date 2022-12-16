@@ -98,6 +98,9 @@ disable = [
     "redefined-outer-name",
     "too-many-instance-attributes",
 ]
+enable = [
+    "useless-suppression",
+]
 
 [tool.pylint.reports]
 output-format = "colorized"
