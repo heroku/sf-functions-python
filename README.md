@@ -21,7 +21,7 @@ Python support for [Salesforce Functions](https://developer.salesforce.com/docs/
 brew install python3
 ```
 
-The installed Python version should be at least `3.10` or higher  
+The installed Python version should be at least `3.10` or higher.
 
 You can check this with `python3 --version`
 
@@ -206,7 +206,7 @@ __pycache__
 
 The following command will do this for you:
 ```sh
-echo "venv\n__pycache__" > .gitignore
+echo -e "venv\n__pycache__" > .gitignore
 ```
 
 ### Create the Python [Virtual Environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) & Install Dependencies
@@ -238,7 +238,6 @@ Finally, the dependencies can be installed into the newly created environment:
 pip3 install -r requirements.txt
 ```
 
-
 This will ensure your function has all dependencies it requires installed before you run it.  If you forgot to do this 
 before starting the Function locally you’ll receive an error reminding you to perform this step.
 
@@ -264,14 +263,18 @@ sf run function --function-url http://localhost:8080 --payload '{}'
 
 ## Deploy the Python Function
 
-The following commands need to be executed from the **root of your SFDX project** so change into that directory now.
+The remaining commands need to be executed from the **root of your SFDX project**, so change into that directory now:
+
+```sh
+cd ../../
+```
 
 ### Commit your changes to Git
 
-All code changes made to a function will need to be staged and committed before you can deploy.
+All code changes made to a function will need to be staged and committed before you can deploy:
 
 ```sh
-git add . 
+git add .
 git commit -m "Trying out python functions"
 ```
 
@@ -282,6 +285,8 @@ sf deploy functions --connected-org PythonScratch
 ```
 
 This deployment process may take several minutes.
+
+If you receive a `Request failed with status code 404` error message, check the earlier `sf env create compute` step was performed.
 
 ### Invoke the Function from Apex
 
@@ -338,9 +343,10 @@ On a **Microsoft Windows system** you can execute the function with:
 echo "FunctionApex.test();" | sfdx force:apex:execute
 ```
 
-The developer console will show a log entry after the function executes which you can double-click to open.  Toggle the 
-Debug Only filter to reduce the log messages to just the ones from the `ApexTrigger` function.  You should see a view like 
-the one below:
+The developer console will show a log entry in the bottom panel after the function executes, which you can double-click to open.
+Toggle the Debug Only filter to reduce the log messages to just the ones from the `ApexTrigger` function.
+
+You should see a view like the one below:
 
 ![Developer Console](./assets/developer-console.png)
 
