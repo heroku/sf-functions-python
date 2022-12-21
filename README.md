@@ -42,11 +42,11 @@ You can check this with `git --version`
 If you haven’t already installed the Salesforce CLI, follow 
 [these steps](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm). 
 
-If you already have the Salesforce CLI installed, make sure it is updated to the latest release candidate, which contains the Python 
-functions support:
+If you already have the Salesforce CLI installed, make sure it is updated to the latest release, which contains
+Python functions support:
 
 ```sh
-sfdx update stable-rc
+sfdx update
 ```
 
 This will update both the `sfdx` and `sf` commands.  The installed version of `sf` should be `1.59.0` or higher.
