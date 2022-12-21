@@ -16,6 +16,7 @@ from ..context import Context, Org, User
 from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
+from .config import ConfigError, load_config
 from .function_loader import LoadFunctionError, load_function
 from .logging import configure_logging, get_logger
 
@@ -69,8 +70,7 @@ async def invoke(request: Request) -> OrjsonResponse:
             domain_url=cloudevent.sf_context.user_context.org_domain_url,
             data_api=DataAPI(
                 cloudevent.sf_context.user_context.org_domain_url,
-                # TODO: This should be the API version in project.toml instead
-                cloudevent.sf_context.api_version,
+                app.state.salesforce_api_version,
                 cloudevent.sf_function_context.access_token,
                 session=request.app.state.data_api_session,
             ),
@@ -125,13 +125,16 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     project_path = Path(os.environ[PROJECT_PATH_ENV_VAR])
 
     try:
+        config = load_config(project_path)
         app.state.function = load_function(project_path)
-    except LoadFunctionError as e:
+    except (ConfigError, LoadFunctionError) as e:
         # We cannot log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
         # since we're running inside a uvicorn-managed coroutine. So instead, we raise an
         # exception and suppress the unwanted traceback using `tracebacklimit`.
         sys.tracebacklimit = 0
         raise RuntimeError(f"Unable to load function: {e}") from None
+
+    app.state.salesforce_api_version = config.salesforce_api_version
 
     async with (
         DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
