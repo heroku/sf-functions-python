@@ -273,14 +273,19 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/invalid_function_missing_module"
     absolute_function_path = Path(fixture).resolve().joinpath("main.py")
 
-    with pytest.raises(SystemExit) as exc_info:
-        main(args=["serve", fixture])
+    try:
+        with pytest.raises(SystemExit) as exc_info:
+            main(args=["serve", fixture])
 
-    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
-    # improve readability of the error message. This must be cleaned up otherwise
-    # traceback output for later tests will be affected too.
-    assert getattr(sys, "tracebacklimit") == 0
-    del sys.tracebacklimit
+        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # truncate the traceback, to improve readability of the error message.
+        assert getattr(sys, "tracebacklimit", None) == 0
+    finally:
+        try:
+            # Prevent the traceback output in later tests from being truncated too.
+            del sys.tracebacklimit
+        except AttributeError:
+            pass
 
     exit_code = exc_info.value.code
     assert exit_code == 3
