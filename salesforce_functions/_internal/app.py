@@ -80,7 +80,7 @@ async def invoke(request: Request) -> OrjsonResponse:
     )
 
     try:
-        function_result = await app.state.user_function(event, context)
+        function_result = await app.state.function(event, context)
     except Exception as e:  # pylint: disable=broad-except
         message = (
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
@@ -119,13 +119,13 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     app.state.logger = get_logger().bind()
 
     try:
-        app.state.user_function = load_function(config.project_path())
+        app.state.function = load_function(config.project_path())
     except LoadFunctionError as e:
         # We cannot log an error message and `sys.exit(1)` like in the CLI's `check_function()`,
         # since we're running inside a uvicorn-managed coroutine. So instead, we raise an
         # exception and suppress the unwanted traceback using `tracebacklimit`.
         sys.tracebacklimit = 0
-        raise RuntimeError(f"Function failed to load! {e}") from None
+        raise RuntimeError(f"Unable to load function: {e}") from None
 
     async with (
         DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
