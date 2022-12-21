@@ -11,12 +11,12 @@ import pytest
 from pytest import CaptureFixture
 
 from salesforce_functions.__version__ import __version__
+from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR
 from salesforce_functions._internal.cli import (
     ASGI_APP_IMPORT_STRING,
     PROGRAM_NAME,
     main,
 )
-from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
 
 
 def test_program_name_matches_package_entry_points() -> None:

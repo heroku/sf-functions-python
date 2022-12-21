@@ -7,8 +7,7 @@ import orjson
 from httpx import Response
 from starlette.testclient import TestClient
 
-from salesforce_functions._internal.app import app
-from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
+from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, app
 
 WIREMOCK_SERVER_URL = "http://localhost:12345"
 
