@@ -6,8 +6,7 @@ import pytest
 from pytest import CaptureFixture
 from starlette.testclient import TestClient
 
-from salesforce_functions._internal.app import app
-from salesforce_functions._internal.config import PROJECT_PATH_ENV_VAR
+from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, app
 
 from .utils import (
     WIREMOCK_SERVER_URL,

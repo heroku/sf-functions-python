@@ -6,7 +6,7 @@ from pathlib import Path
 import uvicorn
 
 from ..__version__ import __version__
-from .config import PROJECT_PATH_ENV_VAR
+from .app import PROJECT_PATH_ENV_VAR
 from .function_loader import LoadFunctionError, load_function
 
 PROGRAM_NAME = "sf-functions-python"
