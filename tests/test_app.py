@@ -165,14 +165,19 @@ def test_template_function() -> None:
 def test_invalid_function() -> None:
     expected_message = r"Function failed to load! File not found: .+$"
 
-    with pytest.raises(RuntimeError, match=expected_message):
-        invoke_function("tests/fixtures/invalid_function_missing_module")
+    try:
+        with pytest.raises(RuntimeError, match=expected_message):
+            invoke_function("tests/fixtures/invalid_function_missing_module")
 
-    # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
-    # improve readability of the error message. This must be cleaned up otherwise
-    # traceback output for later tests will be affected too.
-    assert getattr(sys, "tracebacklimit") == 0
-    del sys.tracebacklimit
+        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # truncate the traceback, to improve readability of the error message.
+        assert getattr(sys, "tracebacklimit", None) == 0
+    finally:
+        try:
+            # Prevent the traceback output in later tests from being truncated too.
+            del sys.tracebacklimit
+        except AttributeError:
+            pass
 
 
 def test_cloud_event_headers_missing(capsys: CaptureFixture[str]) -> None:
@@ -207,6 +212,11 @@ def test_cloud_event_body_not_json(capsys: CaptureFixture[str]) -> None:
 
 
 def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> None:
+    assert not hasattr(sys, "tracebacklimit"), (
+        "A custom `sys.tracebacklimit` is still defined but should not be, otherwise it"
+        " will affect this test. Check earlier tests aren't missing a cleanup step."
+    )
+
     response = invoke_function("tests/fixtures/raises_exception_at_runtime")
 
     expected_message = "Exception occurred whilst executing function: ZeroDivisionError: division by zero"
