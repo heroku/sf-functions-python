@@ -96,7 +96,7 @@ def check_function(project_path: Path) -> int:
     try:
         load_function(project_path)
     except LoadFunctionError as e:
-        print(f"Error: Function failed validation! {e}", file=sys.stderr)
+        print(f"Function failed validation: {e}", file=sys.stderr)
         return 1
 
     print("Function passed validation")

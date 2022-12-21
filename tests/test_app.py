@@ -163,11 +163,11 @@ def test_template_function() -> None:
 
 
 def test_invalid_function() -> None:
-    expected_message = r"Function failed to load! File not found: .+$"
+    expected_message = r"Unable to load function: A main.py file was not found at: .+$"
 
     try:
         with pytest.raises(RuntimeError, match=expected_message):
-            invoke_function("tests/fixtures/invalid_function_missing_module")
+            invoke_function("tests/fixtures/invalid_missing_main_py")
 
         # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
         # truncate the traceback, to improve readability of the error message.

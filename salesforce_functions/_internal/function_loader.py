@@ -12,10 +12,10 @@ from ..invocation_event import InvocationEvent
 FUNCTION_MODULE_NAME = "main"
 FUNCTION_NAME = "function"
 
-UserFunction = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
+Function = Callable[[InvocationEvent[Any], Context], Awaitable[Any]]
 
 
-def load_function(project_path: Path) -> UserFunction:
+def load_function(project_path: Path) -> Function:
     """
     Load and validate the function inside `main.py` in the specified directory.
 
@@ -29,8 +29,10 @@ def load_function(project_path: Path) -> UserFunction:
     module_filename = f"{FUNCTION_MODULE_NAME}.py"
     module_path = project_path.joinpath(module_filename)
 
-    if not module_path.exists():
-        raise LoadFunctionError(f"File not found: {module_path}")
+    if not module_path.is_file():
+        raise LoadFunctionError(
+            f"A {module_filename} file was not found at: {module_path}"
+        )
 
     # `submodule_search_locations` is set to ensure relative imports work within the imported module.
     spec = importlib.util.spec_from_file_location(
@@ -53,31 +55,31 @@ def load_function(project_path: Path) -> UserFunction:
 
     try:
         spec.loader.exec_module(module)
-    except Exception as e:
+    except Exception as e:  # e.g.: SyntaxError, ImportError, NameError.
         raise LoadFunctionError(
-            f"Exception during import:\n\n{traceback.format_exc()}"
+            f"Could not import {module_filename}:\n\n{traceback.format_exc()}"
         ) from e
 
     function = getattr(module, FUNCTION_NAME, None)
 
     if function is None or not inspect.isfunction(function):
         raise LoadFunctionError(
-            f"A function named '{FUNCTION_NAME}' was not found in: {module_path}"
+            f"A function named '{FUNCTION_NAME}' was not found in {module_filename}."
         )
 
     if not inspect.iscoroutinefunction(function):
         raise LoadFunctionError(
-            f"The function named '{FUNCTION_NAME}' must be an async function. Change the function"
-            f" definition from 'def {FUNCTION_NAME}' to 'async def {FUNCTION_NAME}'."
+            f"The function named '{FUNCTION_NAME}' in {module_filename} must be an async function."
+            f" Change the function definition from 'def {FUNCTION_NAME}' to 'async def {FUNCTION_NAME}'."
         )
 
     parameter_count = len(inspect.signature(function).parameters)
-    expected_parameter_count = len(typing.get_args(UserFunction)[0])
+    expected_parameter_count = len(typing.get_args(Function)[0])
 
     if parameter_count != expected_parameter_count:
         raise LoadFunctionError(
-            f"The function named '{FUNCTION_NAME}' has the wrong number of parameters"
-            f" (expected {expected_parameter_count} but found {parameter_count})."
+            f"The function named '{FUNCTION_NAME}' in {module_filename} has the wrong number of"
+            f" parameters (expected {expected_parameter_count} but found {parameter_count})."
         )
 
     return function

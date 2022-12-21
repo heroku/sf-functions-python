@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The error messages shown for invalid functions have been improved.
 
 ## [0.1.0] - 2022-12-14
 
