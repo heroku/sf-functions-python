@@ -1,6 +1,7 @@
 from hashlib import md5
 
 import pytest
+from aiohttp import ClientSession
 
 from salesforce_functions import (
     QueriedRecord,
@@ -20,8 +21,8 @@ from salesforce_functions.data_api.exceptions import (
 from .utils import WIREMOCK_SERVER_URL
 
 
-def new_data_api() -> DataAPI:
-    return DataAPI(WIREMOCK_SERVER_URL, "53.0", "EXAMPLE-TOKEN")
+def new_data_api(session: ClientSession | None = None) -> DataAPI:
+    return DataAPI(WIREMOCK_SERVER_URL, "53.0", "EXAMPLE-TOKEN", session=session)
 
 
 @pytest.mark.requires_wiremock
@@ -98,7 +99,7 @@ async def test_query_with_malformed_soql() -> None:
 
 
 @pytest.mark.requires_wiremock
-async def test_query_with_unknown_colum() -> None:
+async def test_query_with_unknown_column() -> None:
     data_api = new_data_api()
 
     with pytest.raises(SalesforceRestApiError) as exception_info:
@@ -667,3 +668,31 @@ async def test_query_with_associated_record_results() -> None:
             )
         ],
     )
+
+
+@pytest.mark.requires_wiremock
+async def test_session() -> None:
+    """
+    Tests use of a shared client session (as is used when DataAPI is initialised in the ASGI app).
+
+    Ensures that the session remains valid for multiple requests, ie: that it's been left open
+    after each request (including when requests fail). The query used is one that returns binary
+    data, to ensure that the session handling in `DataAPI._download_file()` is exercised too.
+    """
+    async with (
+        DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
+    ) as session:
+        data_api = new_data_api(session=session)
+
+        first_result = await data_api.query(
+            "SELECT Id, VersionData FROM ContentVersion"
+        )
+        assert first_result.total_size == 1
+
+        with pytest.raises(UnexpectedRestApiResponsePayload):
+            await data_api.query("SELECT Name FROM FruitVendor__c")
+
+        second_result = await data_api.query(
+            "SELECT Id, VersionData FROM ContentVersion"
+        )
+        assert second_result.total_size == 1
