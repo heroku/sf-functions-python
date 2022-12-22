@@ -161,6 +161,26 @@ def test_template_function() -> None:
     assert response.json() == "OK"
 
 
+def test_invalid_config() -> None:
+    expected_message = (
+        r"Unable to load function: A project.toml file was not found at: .+$"
+    )
+
+    try:
+        with pytest.raises(RuntimeError, match=expected_message):
+            invoke_function("tests/fixtures/project_toml_file_missing")
+
+        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # truncate the traceback, to improve readability of the error message.
+        assert getattr(sys, "tracebacklimit", None) == 0
+    finally:
+        try:
+            # Prevent the traceback output in later tests from being truncated too.
+            del sys.tracebacklimit
+        except AttributeError:
+            pass
+
+
 def test_invalid_function() -> None:
     expected_message = r"Unable to load function: A main.py file was not found at: .+$"
 

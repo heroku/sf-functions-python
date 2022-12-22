@@ -7,6 +7,7 @@ import uvicorn
 
 from ..__version__ import __version__
 from .app import PROJECT_PATH_ENV_VAR
+from .config import ConfigError, load_config
 from .function_loader import LoadFunctionError, load_function
 
 PROGRAM_NAME = "sf-functions-python"
@@ -94,8 +95,9 @@ def main(args: list[str] | None = None) -> int:
 
 def check_function(project_path: Path) -> int:
     try:
+        load_config(project_path)
         load_function(project_path)
-    except LoadFunctionError as e:
+    except (ConfigError, LoadFunctionError) as e:
         print(f"Function failed validation: {e}", file=sys.stderr)
         return 1
 

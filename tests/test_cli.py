@@ -108,6 +108,21 @@ def test_check_subcommand_valid_function(capsys: CaptureFixture[str]) -> None:
     assert output.out == "Function passed validation\n"
 
 
+def test_check_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
+    fixture = "tests/fixtures/project_toml_file_missing"
+    project_toml_path = Path(fixture).resolve().joinpath("project.toml")
+
+    exit_code = main(args=["check", fixture])
+    assert exit_code == 1
+
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert (
+        output.err
+        == f"Function failed validation: A project.toml file was not found at: {project_toml_path}\n"
+    )
+
+
 def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     fixture = "tests/fixtures/invalid_missing_main_py"
     main_py_path = Path(fixture).resolve().joinpath("main.py")
@@ -267,6 +282,42 @@ def test_serve_subcommand_valid_function() -> None:
 
     assert ipv6_response.status_code == 200
     assert ipv6_response.json() == "OK"
+
+
+def test_serve_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
+    fixture = "tests/fixtures/project_toml_file_missing"
+    project_toml_path = Path(fixture).resolve().joinpath("project.toml")
+
+    try:
+        with pytest.raises(SystemExit) as exc_info:
+            main(args=["serve", fixture])
+
+        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # truncate the traceback, to improve readability of the error message.
+        assert getattr(sys, "tracebacklimit", None) == 0
+    finally:
+        try:
+            # Prevent the traceback output in later tests from being truncated too.
+            del sys.tracebacklimit
+        except AttributeError:
+            pass
+
+    exit_code = exc_info.value.code
+    assert exit_code == 3
+
+    output = capsys.readouterr()
+    assert (
+        output.out
+        == f"Starting sf-functions-python v{__version__} in single process mode.\n"
+    )
+    assert output.err.endswith(
+        rf"""
+INFO:     Waiting for application startup.
+ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: {project_toml_path}
+
+ERROR:    Application startup failed. Exiting.
+"""
+    )
 
 
 def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
