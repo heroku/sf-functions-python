@@ -8,7 +8,9 @@ import orjson
 from starlette.datastructures import Headers
 
 if sys.version_info < (3, 11):
-    import dateutil.parser  # pragma: no cover
+    import dateutil.parser  # pragma: no-cover-python-gte-311
+else:
+    pass  # pragma: no-cover-python-lt-311
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,9 +162,11 @@ def _parse_event_time(time_string: str | None) -> datetime | None:
         # RFC 3339 format dates, so an external library has to be used instead. This library
         # is not used on newer Pythons to keep dependencies to a minimum.
         if sys.version_info < (3, 11):
-            return dateutil.parser.isoparse(time_string)  # pragma: no cover
+            return dateutil.parser.isoparse(
+                time_string
+            )  # pragma: no-cover-python-gte-311
 
-        return datetime.fromisoformat(time_string)  # pragma: no cover
+        return datetime.fromisoformat(time_string)  # pragma: no-cover-python-lt-311
     except (TypeError, ValueError) as e:
         raise CloudEventError(f"Unable to parse event time: {e}") from e
 

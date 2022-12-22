@@ -31,6 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 development = [
     "black==22.12.0",
+    "coverage-conditional-plugin==0.8.0",
     "flake8==6.0.0",
     "isort[colors]==5.11.4",
     # httpx is required for starlette's `TestClient`.
@@ -64,8 +65,15 @@ path = "salesforce_functions/__version__.py"
 target-version = ['py310', 'py311']
 extend-exclude = "(tests/fixtures/invalid_syntax_error/main.py)"
 
+[tool.coverage.coverage_conditional_plugin.rules]
+# We're using the `no-cover-` rule name prefixes since the default pragma syntax isn't intuitive:
+# https://github.com/wemake-services/coverage-conditional-plugin/issues/188
+no-cover-python-gte-311 = "sys_version_info >= (3, 11)"
+no-cover-python-lt-311 = "sys_version_info < (3, 11)"
+
 [tool.coverage.run]
 branch = true
+plugins = ["coverage_conditional_plugin"]
 source = ["salesforce_functions"]
 
 [tool.mypy]

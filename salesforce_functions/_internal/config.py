@@ -7,9 +7,9 @@ from typing import Any
 if sys.version_info < (3, 11):
     # `tomllib` was only added to the stdlib in Python 3.11, so for older Python
     # versions we use the third party `tomli` package, which has an identical API.
-    import tomli as tomllib  # pragma: no cover
+    import tomli as tomllib  # pragma: no-cover-python-gte-311
 else:
-    import tomllib  # pragma: no cover
+    import tomllib  # pragma: no-cover-python-lt-311
 
 MINIMUM_SALESFORCE_API_MAJOR_VERSION = 53
 
