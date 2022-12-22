@@ -5,7 +5,9 @@
 
 Python support for [Salesforce Functions](https://developer.salesforce.com/docs/platform/functions/overview).
 
-> Note: This feature is in beta and has been released early so we can collect feedback. It may contain significant problems, undergo major changes, or be discontinued. The use of this feature is governed by the Salesforce.com Program Agreement.
+> Note: This feature is a Beta Service. Customers may opt to try such Beta Services in their sole discretion.
+> Any use of the Beta Service is subject to the applicable Beta Services Terms provided at
+> [Agreements and Terms](https://www.salesforce.com/company/legal/agreements/).
 
 ---
 
