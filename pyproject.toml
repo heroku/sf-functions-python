@@ -32,7 +32,7 @@ dependencies = [
 development = [
     "black==22.12.0",
     "flake8==6.0.0",
-    "isort[colors]==5.11.1",
+    "isort[colors]==5.11.4",
     # httpx is required for starlette's `TestClient`.
     "httpx==0.23.1",
     "mypy==0.991",
