@@ -5,7 +5,7 @@
 
 Python support for [Salesforce Functions](https://developer.salesforce.com/docs/platform/functions/overview).
 
-> Note: This feature is in beta and has been released early so we can collect feedback. It may contain significant problems, undergo major changes, or be discontinued. The use of this feature is governed by the Salesforce.com Program Agreement.
+> Note: This feature is a Beta Service. Customer may opt to try such Beta Service in its sole discretion. Any use of the Beta Service is subject to the applicable Beta Services Terms provided at [Agreements and Terms](https://www.salesforce.com/company/legal/agreements/). 
 
 ---
 
@@ -13,7 +13,7 @@ Python support for [Salesforce Functions](https://developer.salesforce.com/docs/
 
 ## Prerequisites
 
-> Any install commands that follow assume an Apple macOS system with Homebrew available.  If you’re on another OS you’ll have to click through the links to get alternative install instructions.
+> Install commands assume an Apple macOS system with Homebrew available.  If you’re on another OS you’ll have to click through the links to get alternative install instructions.
 
 ### [Install Python 3](https://www.python.org/downloads/)
 
@@ -21,11 +21,11 @@ Python support for [Salesforce Functions](https://developer.salesforce.com/docs/
 brew install python3
 ```
 
-The installed Python version should be at least `3.10` or higher.
+The installed Python version must be at least `3.10` or higher.
 
-You can check this with `python3 --version`
+Check your version of python with `python3 --version`.
 
-> On some machines it’s necessary to run Python and Pip commands using python3 or pip3 which point to the Homebrew-managed Python interpreter versus running python or pip which tends to point at the system installed Python interpreter.  
+> On some machines Python and Pip commands must be run using python3 or pip3, which point to the Homebrew-managed Python interpreter. Using python or pip instead often points at the system installed Python interpreter.  
 
 ### [Install Git](https://git-scm.com/downloads)
 
@@ -33,43 +33,45 @@ You can check this with `python3 --version`
 brew install git
 ```
 
-The installed Git version should be at least `2.36.0` or higher
+The installed Git version should be at least `2.36.0` or higher.
 
-You can check this with `git --version`
+Check your version of git with `git --version`.
 
 ### [Install / Update the Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli_rc.htm)
 
-If you haven’t already installed the Salesforce CLI, follow 
-[these steps](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm). 
+[Install the Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) if you haven't already.
 
-If you already have the Salesforce CLI installed, make sure it is updated to the latest release, which contains
+Update to the latest version of Salesforce CLI that contains
 Python functions support:
 
 ```sh
 sfdx update
 ```
 
-This will update both the `sfdx` and `sf` commands.  The installed version of `sf` should be `1.59.0` or higher.
+The command `sfdx update` updates both the `sfdx` and `sf` commands.
 
-You can check this with `sf --version`
+Check your version of the Salesforce CLI with `sf --version`. The installed version of `sf` should be `1.59.0` or higher.
 
-### [Create a SFDX Project](https://developer.salesforce.com/docs/platform/functions/guide/create-dx-project.html)
+### [Create a Salesfoce DX Project](https://developer.salesforce.com/docs/platform/functions/guide/create-dx-project.html)
 
-Functions must be located within a SFDX project, so let’s create one.  
+Create a DX project in the directory you want your Salesforce Functions project to be located. 
 
 ```sh
 sf generate project --name PythonFunctionsAlpha
 ```
 
-Some of the following commands need to be run from within the SFDX project directory so change into that directory now with
+Some of the following commands run from within the SFDX project directory. 
+
+Navigate to your SFDX directory:
 
 ```sh
 cd PythonFunctionsAlpha
 ```
 
-You should also edit the `config/project-scratch-def.json` file to include the **`Functions`** feature.  After modification, your 
-file should look similar to the following:
 
+Add the `Functions` feature needed for connecting and deploying Functions in scratch orgs. Edit the `config/project-scratch-def.json` file to include the **`Functions`** feature.
+
+For example:
 ```json
 {
   "orgName": "SomeOrgName",
@@ -85,36 +87,34 @@ file should look similar to the following:
   }
 }
 ```
+> Note: We recommend using a Dev Hub and scratch org for Salesforce Functions development. See [Connect and Prepare your Development Environment](https://developer.salesforce.com/docs/platform/functions/guide/connect-dev-org.html).
 
-The above is needed for connecting and deploying Functions in scratch orgs which is 
-[the recommended workflow](https://developer.salesforce.com/docs/platform/functions/guide/connect-dev-org.html) when working 
-with Functions.
-
-And, to deploy any Salesforce Function, your SFDX project needs to be a git repo.  This is because the deployment process 
+Your SFDX project needs to be a git repo to deploy any Salesforce Function because the deployment process 
 uses git tracked changes to figure out what to deploy.  Run the following commands to setup git:
 
 ```sh
 git init
-```
+``` []
 
-> It is not a requirement to push your code to GitHub or any other code hosting site.  Committing locally will work fine for deploying.  
+Commit your changes locally for deployment. 
+> It is not a requirement to push your code to GitHub or any other code hosting site but can be useful for [sharing and maintaining functions code](https://developer.salesforce.com/docs/platform/functions/guide/dev-alm-workflow.html?q=github#maintain-and-share-function-source-code). 
 
 ### Connect Your Org
 
-You’ll need to configure your Salesforce org to develop and invoke Salesforce Functions. Develop your functions in scratch 
-orgs with Dev Hub or in sandbox orgs.  Follow the steps on 
-[this page](https://developer.salesforce.com/docs/platform/functions/guide/configure_your_org.html) to ensure everything 
-is setup correctly first.
+Configure your Salesforce org to develop and invoke Salesforce Functions. Develop your functions in scratch 
+orgs with Dev Hub or in sandbox orgs. Follow the steps on 
+[Configure Your Org](https://developer.salesforce.com/docs/platform/functions/guide/configure_your_org.html) to ensure everything 
+is setup.
 
-Once your Org is configured you can login and set it as the default Dev Hub with the following command:
+Once your Org is configured, log in and set it as the default Dev Hub with the following command:
 
 ```sh
 sf login org --alias PythonOrg --set-default-dev-hub --set-default
 ```
 
-This will make **PythonOrg** the default Dev Hub for subsequent commands.
+**PythonOrg** is the the default Dev Hub for subsequent commands.
 
-Then create a scratch org:
+Create a scratch org:
 
 ```sh
 sfdx force:org:create \
@@ -123,17 +123,17 @@ sfdx force:org:create \
   --setdefaultusername
 ```
 
-This will make it so that when you run a Function, it will connect to and use the **PythonScratch** org.
+Now when you run a Function, it will connect to and use the **PythonScratch** org.
 
 ### Connect Your Compute Environment
 
-Login to Salesforce Functions with the same credentials you used to connect your Dev Hub org.
+Log in to Salesforce Functions with the same credentials you used to connect your Dev Hub org.
 
 ```sh
 sf login functions
 ```
 
-Then you will be able to create the compute environment and associate it with the **PythonScratch** org we created while
+Create the compute environment and associate it with the **PythonScratch** org we created while
 connecting your org.
 
 ```sh
@@ -142,12 +142,12 @@ sf env create compute \
   --alias PythonCompute
 ```
 
-This will make it so that when you deploy a Function, it will be deployed to the **PythonCompute** environment linked to 
+Future functions deployed to the **PythonCompute** environment are linked to 
 your scratch org.
 
 ### Assign Permissions
 
-The default Python project you'll generate requires `read` access to the `Account` object in your scratch org.  Create 
+The default Python project requires `read` access to the `Account` object in your scratch org. Create 
 a file named `force-app/main/default/permissionsets/Functions.permissionset-meta.xml` in your SFDX project and add the following content:
 
 ```xml
@@ -168,13 +168,13 @@ a file named `force-app/main/default/permissionsets/Functions.permissionset-meta
 </PermissionSet>
 ```
 
-Upload this permission set to your org:
+Upload the permission set to your org.
 
 ```sh
 sf deploy metadata --ignore-conflicts
 ```
 
-Then assign the permissions to the `Functions` profile with
+Then assign the permissions to the `Functions` profile.
 
 ```sh
 sfdx force:user:permset:assign -n Functions
@@ -184,7 +184,7 @@ sfdx force:user:permset:assign -n Functions
 
 ### Generate the Python Function
 
-From the SFDX project root, run:
+From the root directory of your SFDX project, run:
 
 ```sh
 sf generate function \
@@ -192,70 +192,69 @@ sf generate function \
   --function-name hellopython
 ```
 
-The remaining commands will be executed within the newly generated project folder. Change to that folder by running:
+Navigate to the `hellopython` folder.
 
 ```sh
 cd functions/hellopython
 ```
 
-You should also create a `.gitignore` file in the function directory with the following contents:
-```gitignore
-venv
-__pycache__
-```
+Create a `.gitignore` file in the function directory that ignores changes to `venv` and `__pycache__`.
 
-The following command will do this for you:
 ```sh
 echo -e "venv\n__pycache__" > .gitignore
 ```
 
 ### Create the Python [Virtual Environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) & Install Dependencies
 
-To install the dependencies required by the Python Function locally, we first need to create a "Virtual Environment" (venv) 
-which we can install packages into without affecting your system Python installation.  This can be done by running:
+Create a "Virtual Environment" (venv) before installing the dependencies required to run the Python function locally.
+Install using packages without affecting your system Python installation by setting up your virtual environment.
+
+Create the virtual environment.
+
 ```sh
 python3 -m venv venv
 ```
 
-Next, the virtual environment needs to be activated.  
+Activate the virtual environment.  
 
-On a **macOS / Linux system** you can activate the virtual environment with
+On a **macOS / Linux system**:
 
 ```sh
 source venv/bin/activate
 ```
 
-On a **Microsoft Windows system** you can activate the virtual environment with
+On a **Microsoft Windows system**:
 ```sh
 .\venv\Scripts\activate
 ```
 
-> For help with setting up a virtual environment, see the [Python documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment).
+> See the [Python documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment) for help with setting up a virtual environment.
 
-Finally, the dependencies can be installed into the newly created environment:
+Finally, install the dependencies into the virtual environment.
 
 ```sh
 pip3 install -r requirements.txt
 ```
 
-This will ensure your function has all dependencies it requires installed before you run it.  If you forgot to do this 
-before starting the Function locally you’ll receive an error reminding you to perform this step.
+Using a virtual environment ensures your function has all required dependencies before you run it.  
+
+> Note: Starting the Function locally without setting up your virtual environment results in an error.
 
 ### Run the Python Function Locally
+
+Start the function running locally. 
 
 ```sh
 sf run function start
 ```
 
-This will start the function running locally on http://localhost:8080.  Messages logged by the running function will appear here.
+Messages logged by the running function will appear on http://localhost:8080.
 
 ### Invoke the Running Python Function
 
-After starting the function:
+After starting the function, open a new command line terminal and navigate to the `hellopython` directory.
 
-* open a new command line terminal 
-* navigate to the `hellopython` directory 
-* invoke the function by sending it a payload
+Invoke the function by sending it a payload.
 
 ```sh
 sf run function --function-url http://localhost:8080 --payload '{}'
@@ -263,7 +262,7 @@ sf run function --function-url http://localhost:8080 --payload '{}'
 
 ## Deploy the Python Function
 
-The remaining commands need to be executed from the **root of your SFDX project**, so change into that directory now:
+Change to the root directory of your SFDX project before committing changes and running your function. 
 
 ```sh
 cd ../../
@@ -271,14 +270,16 @@ cd ../../
 
 ### Commit your changes to Git
 
-All code changes made to a function will need to be staged and committed before you can deploy:
+All code changes made to a function need to be staged and committed before you can deploy.
+
+Commit all changes to your project.
 
 ```sh
 git add .
 git commit -m "Trying out python functions"
 ```
 
-Once everything is committed to git, run:
+Deploy your functions project.
 
 ```sh
 sf deploy functions --connected-org PythonScratch
@@ -286,11 +287,11 @@ sf deploy functions --connected-org PythonScratch
 
 This deployment process may take several minutes.
 
-If you receive a `Request failed with status code 404` error message, check the earlier `sf env create compute` step was performed.
+> Note: If you receive a `Request failed with status code 404` error message, check the earlier `sf env create compute` step was performed.
 
 ### Invoke the Function from Apex
 
-The easiest way to invoke the function deployed to our scratch org is with some Apex code.  Generate an Apex class with:
+Use Apex to invoke the function deployed to our scratch org. Generate an Apex class with:
 
 ```sh
 sfdx force:apex:class:create \
@@ -298,7 +299,10 @@ sfdx force:apex:class:create \
   --outputdir force-app/main/default/classes
 ```
 
-Open `force-app/main/default/classes/ApexTrigger.cls` and replace it with the following code:
+Have your apex code lookup the reference to our function using the `functions.Function.get` method, invoke the function with an empty json payload, and
+print the response.
+
+Open `force-app/main/default/classes/ApexTrigger.cls` and replace it's contents with:
 
 ```java
 public with sharing class ApexTrigger {
@@ -311,39 +315,33 @@ public with sharing class ApexTrigger {
 }
 ```
 
-This code will:
-
-* Lookup the reference to our function using the `functions.Function.get` method 
-* Invoke the function with an empty json payload
-* Print the response
-
-Upload this Apex class to your scratch org with
+Upload this Apex class to your scratch org.
 
 ```sh
 sfdx force:source:push --targetusername PythonScratch
 ```
 
-Open a developer console:
+Open a developer console.
 
 ```sh
 sfdx force:org:open -p /_ui/common/apex/debug/ApexCSIPage
 ```
 
-Then execute the function.
+Execute the function from the developer console.
 
-On a **macOS / Linux system** you can execute the function with:
+On a **macOS / Linux system**:
 
 ```sh
 echo "ApexTrigger.runFunction();" | sfdx force:apex:execute -f /dev/stdin
 ```
 
-On a **Microsoft Windows system** you can execute the function with:
+On a **Microsoft Windows system**:
 
 ```sh
 echo "FunctionApex.test();" | sfdx force:apex:execute
 ```
 
-The developer console will show a log entry in the bottom panel after the function executes, which you can double-click to open.
+The developer console shows a log entry in the bottom panel after the function executes, which you can double-click to open.
 Toggle the Debug Only filter to reduce the log messages to just the ones from the `ApexTrigger` function.
 
 You should see a view like the one below:
