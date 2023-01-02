@@ -198,10 +198,10 @@ Navigate to the `hellopython` folder.
 cd functions/hellopython
 ```
 
-Create a `.gitignore` file in the function directory that ignores changes to `venv` and `__pycache__`.
+Create a `.gitignore` file in the function directory that ignores changes to `.venv` and `__pycache__`.
 
 ```sh
-echo -e "venv\n__pycache__" > .gitignore
+echo -e ".venv\n__pycache__" > .gitignore
 ```
 
 ### Create the Python [Virtual Environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) & Install Dependencies
@@ -212,7 +212,7 @@ Install using packages without affecting your system Python installation by sett
 Create the virtual environment.
 
 ```sh
-python3 -m venv venv
+python3 -m venv .venv
 ```
 
 Activate the virtual environment.  
@@ -220,12 +220,12 @@ Activate the virtual environment.
 On a **macOS / Linux system**:
 
 ```sh
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 On a **Microsoft Windows system**:
 ```sh
-.\venv\Scripts\activate
+.\.venv\Scripts\activate
 ```
 
 > See the [Python documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment) for help with setting up a virtual environment.
