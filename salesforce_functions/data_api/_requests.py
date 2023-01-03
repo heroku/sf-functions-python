@@ -1,5 +1,5 @@
 from base64 import standard_b64encode
-from typing import Any, Awaitable, Callable, Generic, Literal, TypeVar
+from typing import Any, Awaitable, Callable, Generic, Literal, TypeVar, cast
 from urllib.parse import urlencode
 
 from .exceptions import (
@@ -260,6 +260,7 @@ async def _parse_queried_record(
             continue
 
         if isinstance(value, dict):
+            value = cast(dict[str, Any], value)
             if "attributes" in value:
                 fields[key] = await _parse_queried_record(value, download_file_fn)
             else:

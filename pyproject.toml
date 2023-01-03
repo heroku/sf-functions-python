@@ -114,6 +114,12 @@ enable = [
 [tool.pylint.reports]
 output-format = "colorized"
 
+[tool.pyright]
+exclude = ["tests/fixtures/invalid_syntax_error/main.py"]
+include = ["salesforce_functions", "tests"]
+pythonPlatform = "All"
+typeCheckingMode = "strict"
+
 [tool.pytest.ini_options]
 addopts = [
     "--cov",
