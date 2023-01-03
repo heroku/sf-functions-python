@@ -33,6 +33,10 @@ jobs:
         run: pylint salesforce_functions/ tests/
       - name: Run mypy
         run: mypy
+      - name: Run pyright
+        run: npx --package=pyright@latest -- pyright --warnings
+      - name: Run pyright in verify exported types mode
+        run: npx --package=pyright@latest -- pyright --ignoreexternal --verifytypes salesforce_functions
       - name: Run Black
         run: black --check --diff --color .
       - name: Run isort
