@@ -69,9 +69,9 @@ async def invoke(request: Request) -> OrjsonResponse:
             base_url=cloudevent.sf_context.user_context.salesforce_base_url,
             domain_url=cloudevent.sf_context.user_context.org_domain_url,
             data_api=DataAPI(
-                cloudevent.sf_context.user_context.org_domain_url,
-                app.state.salesforce_api_version,
-                cloudevent.sf_function_context.access_token,
+                org_domain_url=cloudevent.sf_context.user_context.org_domain_url,
+                api_version=request.app.state.salesforce_api_version,
+                access_token=cloudevent.sf_function_context.access_token,
                 session=request.app.state.data_api_session,
             ),
             user=User(
@@ -83,7 +83,7 @@ async def invoke(request: Request) -> OrjsonResponse:
     )
 
     try:
-        function_result = await app.state.function(event, context)
+        function_result = await request.app.state.function(event, context)
     except Exception as e:  # pylint: disable=broad-except
         message = (
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"

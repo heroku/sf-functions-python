@@ -91,7 +91,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
 
     async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 201:
-            raise SalesforceRestApiError(_parse_errors(json_body))
+            raise SalesforceRestApiError(api_errors=_parse_errors(json_body))
 
         if isinstance(json_body, dict):
             return str(json_body["id"])
@@ -123,7 +123,9 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
 
     async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 204:
-            raise SalesforceRestApiError(_parse_errors(json_body))  # pragma: no cover
+            raise SalesforceRestApiError(
+                api_errors=_parse_errors(json_body)
+            )  # pragma: no cover
 
         return str(self._record.fields["Id"])
 
@@ -144,7 +146,7 @@ class DeleteRecordRestApiRequest(RestApiRequest[str]):
 
     async def process_response(self, status_code: int, json_body: Json | None) -> str:
         if status_code != 204:
-            raise SalesforceRestApiError(_parse_errors(json_body))
+            raise SalesforceRestApiError(api_errors=_parse_errors(json_body))
 
         return self._record_id
 
@@ -193,7 +195,9 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
         # This is the case when the composite request itself has errors. Errors of the sub-requests are handled
         # separately.
         if status_code != 200:
-            raise SalesforceRestApiError(_parse_errors(json_body))  # pragma: no cover
+            raise SalesforceRestApiError(
+                api_errors=_parse_errors(json_body)
+            )  # pragma: no cover
 
         if isinstance(json_body, dict):
             composite_responses = json_body["graphs"][0]["graphResponse"][
@@ -203,7 +207,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
             errors: list[InnerSalesforceRestApiError] = []
 
             for composite_response in composite_responses:
-                reference_id = ReferenceId(composite_response["referenceId"])
+                reference_id = ReferenceId(id=composite_response["referenceId"])
                 sub_status_code = composite_response["httpStatusCode"]
                 body = composite_response.get("body")
 
@@ -215,7 +219,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
                     errors.extend(rest_api_error.api_errors)
 
             if errors:
-                raise SalesforceRestApiError(errors)
+                raise SalesforceRestApiError(api_errors=errors)
 
             return result
 
@@ -226,7 +230,7 @@ async def _process_records_response(
     status_code: int, json_body: Json | None, download_file_fn: DownloadFileFunction
 ) -> RecordQueryResult:
     if status_code != 200:
-        raise SalesforceRestApiError(_parse_errors(json_body))
+        raise SalesforceRestApiError(api_errors=_parse_errors(json_body))
 
     if isinstance(json_body, dict):
         return await _parse_record_query_result(json_body, download_file_fn)
@@ -245,7 +249,12 @@ async def _parse_record_query_result(
     for record_json in json_body["records"]:
         records.append(await _parse_queried_record(record_json, download_file_fn))
 
-    return RecordQueryResult(done, total_size, records, next_records_url)
+    return RecordQueryResult(
+        done=done,
+        total_size=total_size,
+        records=records,
+        next_records_url=next_records_url,
+    )
 
 
 async def _parse_queried_record(
@@ -272,7 +281,9 @@ async def _parse_queried_record(
         else:
             fields[key] = value
 
-    return QueriedRecord(salesforce_object_type, fields, sub_query_results)
+    return QueriedRecord(
+        type=salesforce_object_type, fields=fields, sub_query_results=sub_query_results
+    )
 
 
 def _is_binary_field(salesforce_object_type: str, field_name: str) -> bool:
@@ -297,9 +308,9 @@ def _parse_errors(json_errors: Json | None) -> list[InnerSalesforceRestApiError]
     if isinstance(json_errors, list):
         return [
             InnerSalesforceRestApiError(
-                json_error["message"],
-                json_error["errorCode"],
-                json_error.get("fields", []),
+                message=json_error["message"],
+                error_code=json_error["errorCode"],
+                fields=json_error.get("fields", []),
             )
             for json_error in json_errors
         ]

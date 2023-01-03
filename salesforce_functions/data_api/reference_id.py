@@ -3,7 +3,7 @@ from dataclasses import dataclass
 __all__ = ["ReferenceId"]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class ReferenceId:
     """
     A reference id for an operation inside a unit of work.

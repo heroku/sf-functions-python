@@ -4,7 +4,7 @@ from typing import Any
 __all__ = ["Record", "QueriedRecord", "RecordQueryResult"]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class Record:
     """A Salesforce record."""
 
@@ -14,7 +14,7 @@ class Record:
     """The fields belonging to the record."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class QueriedRecord(Record):
     """
     A Salesforce record that has been queried.
@@ -27,7 +27,7 @@ class QueriedRecord(Record):
     """Additional query results from sub queries."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class RecordQueryResult:
     """The result of a record query."""
 
