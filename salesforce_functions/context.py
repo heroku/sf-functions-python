@@ -5,7 +5,7 @@ from .data_api import DataAPI
 __all__ = ["User", "Org", "Context"]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class User:
     """Information about the invoking Salesforce user."""
 
@@ -17,7 +17,7 @@ class User:
     """The ID of the user on whose behalf this user is operating."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class Org:
     """Information about the invoking Salesforce organization and user."""
 
@@ -33,7 +33,7 @@ class Org:
     """The currently logged in user."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class Context:
     """Information relating to the function and the Salesforce org with which it is associated."""
 

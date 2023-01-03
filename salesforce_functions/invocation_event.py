@@ -7,7 +7,7 @@ __all__ = ["InvocationEvent"]
 T = TypeVar("T")
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class InvocationEvent(Generic[T]):
     """The metadata and data payload of the event that caused the function to be invoked."""
 

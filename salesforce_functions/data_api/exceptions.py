@@ -9,7 +9,7 @@ __all__ = [
 ]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class InnerSalesforceRestApiError:
     """An error returned from the Salesforce REST API."""
 
@@ -22,18 +22,18 @@ class DataApiError(Exception):
     """Base class for Data API exceptions"""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class SalesforceRestApiError(DataApiError):
     """Raised when the Salesforce REST API signalled error(s)."""
 
     api_errors: list[InnerSalesforceRestApiError]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class MissingIdFieldError(DataApiError):
     """Raised when the given Record must contain an "Id" field, but none was found."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class UnexpectedRestApiResponsePayload(DataApiError):
     """Raised when the Salesforce REST API returned an unexpected payload."""

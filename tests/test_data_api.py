@@ -22,7 +22,12 @@ from .utils import WIREMOCK_SERVER_URL
 
 
 def new_data_api(session: ClientSession | None = None) -> DataAPI:
-    return DataAPI(WIREMOCK_SERVER_URL, "53.0", "EXAMPLE-TOKEN", session=session)
+    return DataAPI(
+        org_domain_url=WIREMOCK_SERVER_URL,
+        api_version="53.0",
+        access_token="EXAMPLE-TOKEN",
+        session=session,
+    )
 
 
 @pytest.mark.requires_wiremock
@@ -44,11 +49,13 @@ async def test_query() -> None:
         done=True,
         total_size=5,
         records=[
-            QueriedRecord("Account", {"Name": "An awesome test account"}),
-            QueriedRecord("Account", {"Name": "Global Media"}),
-            QueriedRecord("Account", {"Name": "Acme"}),
-            QueriedRecord("Account", {"Name": "salesforce.com"}),
-            QueriedRecord("Account", {"Name": "Sample Account for Entitlements"}),
+            QueriedRecord(type="Account", fields={"Name": "An awesome test account"}),
+            QueriedRecord(type="Account", fields={"Name": "Global Media"}),
+            QueriedRecord(type="Account", fields={"Name": "Acme"}),
+            QueriedRecord(type="Account", fields={"Name": "salesforce.com"}),
+            QueriedRecord(
+                type="Account", fields={"Name": "Sample Account for Entitlements"}
+            ),
         ],
         next_records_url=None,
     )
@@ -92,7 +99,9 @@ async def test_query_with_malformed_soql() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "unexpected token: SELEKT", "MALFORMED_QUERY", []
+                message="unexpected token: SELEKT",
+                error_code="MALFORMED_QUERY",
+                fields=[],
             )
         ]
     )
@@ -108,11 +117,12 @@ async def test_query_with_unknown_column() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "\nSELECT Bacon__c FROM Account LIMIT 2\n       ^\nERROR at Row:1:Column:8\nNo such column 'Bacon__c'"
-                " on entity 'Account'. If you are attempting to use a custom field, be sure to append the '__c' after"
-                " the custom field name. Please reference your WSDL or the describe call for the appropriate names.",
-                "INVALID_FIELD",
-                [],
+                message="\nSELECT Bacon__c FROM Account LIMIT 2\n       ^\nERROR at Row:1:Column:8"
+                "\nNo such column 'Bacon__c' on entity 'Account'. If you are attempting to use a"
+                " custom field, be sure to append the '__c' after the custom field name. Please"
+                " reference your WSDL or the describe call for the appropriate names.",
+                error_code="INVALID_FIELD",
+                fields=[],
             )
         ]
     )
@@ -248,7 +258,7 @@ async def test_create() -> None:
         # This example is also used by `tests/fixtures/data_api`.
         # pylint: disable-next=duplicate-code
         Record(
-            "Movie__c",
+            type="Movie__c",
             fields={
                 "Name": "Star Wars Episode V: The Empire Strikes Back",
                 "Rating__c": "Excellent",
@@ -265,7 +275,7 @@ async def test_create_with_binary_data() -> None:
 
     result = await data_api.create(
         Record(
-            "ContentVersion",
+            type="ContentVersion",
             fields={
                 "Title": "File for testing",
                 "PathOnClient": "file.bin",
@@ -283,7 +293,7 @@ async def test_create_with_binary_data_from_bytearray() -> None:
 
     result = await data_api.create(
         Record(
-            "ContentVersion",
+            type="ContentVersion",
             fields={
                 "Title": "File for testing",
                 "PathOnClient": "file.bin",
@@ -302,7 +312,7 @@ async def test_create_with_invalid_picklist_value() -> None:
     with pytest.raises(SalesforceRestApiError) as exception_info:
         await data_api.create(
             Record(
-                "Movie__c",
+                type="Movie__c",
                 fields={
                     "Name": "Star Wars Episode VIII: The Last Jedi",
                     "Rating__c": "Terrible",
@@ -313,9 +323,9 @@ async def test_create_with_invalid_picklist_value() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "Rating: bad value for restricted picklist field: Terrible",
-                "INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST",
-                ["Rating__c"],
+                message="Rating: bad value for restricted picklist field: Terrible",
+                error_code="INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST",
+                fields=["Rating__c"],
             )
         ]
     )
@@ -328,7 +338,7 @@ async def test_create_with_unknown_object_type() -> None:
     with pytest.raises(SalesforceRestApiError) as exception_info:
         await data_api.create(
             Record(
-                "PlayingCard__c",
+                type="PlayingCard__c",
                 fields={
                     "Name": "Ace of Spades",
                 },
@@ -338,9 +348,9 @@ async def test_create_with_unknown_object_type() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "The requested resource does not exist",
-                "NOT_FOUND",
-                [],
+                message="The requested resource does not exist",
+                error_code="NOT_FOUND",
+                fields=[],
             )
         ]
     )
@@ -353,7 +363,7 @@ async def test_create_with_invalid_field() -> None:
     with pytest.raises(SalesforceRestApiError) as exception_info:
         await data_api.create(
             Record(
-                "Account",
+                type="Account",
                 fields={
                     "FavoritePet__c": "Dog",
                 },
@@ -363,9 +373,9 @@ async def test_create_with_invalid_field() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "No such column 'FavoritePet__c' on sobject of type Account",
-                "INVALID_FIELD",
-                [],
+                message="No such column 'FavoritePet__c' on sobject of type Account",
+                error_code="INVALID_FIELD",
+                fields=[],
             )
         ]
     )
@@ -378,7 +388,7 @@ async def test_create_with_required_field_missing() -> None:
     with pytest.raises(SalesforceRestApiError) as exception_info:
         await data_api.create(
             Record(
-                "Spaceship__c",
+                type="Spaceship__c",
                 fields={
                     "Name": "Falcon 9",
                 },
@@ -388,9 +398,9 @@ async def test_create_with_required_field_missing() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "Required fields are missing: [Website__c]",
-                "REQUIRED_FIELD_MISSING",
-                ["Website__c"],
+                message="Required fields are missing: [Website__c]",
+                error_code="REQUIRED_FIELD_MISSING",
+                fields=["Website__c"],
             )
         ]
     )
@@ -402,7 +412,7 @@ async def test_update() -> None:
 
     result = await data_api.update(
         Record(
-            "Movie__c",
+            type="Movie__c",
             fields={"Id": "a00B000000FSjVUIA1", "ReleaseDate__c": "1980-05-21"},
         )
     )
@@ -416,7 +426,7 @@ async def test_update_with_binary_data() -> None:
 
     result = await data_api.update(
         Record(
-            "ContentVersion",
+            type="ContentVersion",
             fields={
                 "Id": "0687S00000AX5kgQAD",
                 "VersionData": b"\x04\x08\x15\x16\x23\x42",
@@ -433,7 +443,7 @@ async def test_update_with_binary_data_from_bytearray() -> None:
 
     result = await data_api.update(
         Record(
-            "ContentVersion",
+            type="ContentVersion",
             fields={
                 "Id": "0687S00000AX5kgQAD",
                 "VersionData": bytearray(b"\x04\x08\x15\x16\x23\x42"),
@@ -450,7 +460,7 @@ async def test_update_without_id_field() -> None:
 
     with pytest.raises(MissingIdFieldError) as exception_info:
         await data_api.update(
-            Record("Movie__c", fields={"ReleaseDate__c": "1980-05-21"})
+            Record(type="Movie__c", fields={"ReleaseDate__c": "1980-05-21"})
         )
 
     assert exception_info.value == MissingIdFieldError()
@@ -473,7 +483,11 @@ async def test_delete_with_already_deleted() -> None:
         await data_api.delete("Account", "001B000001Lp1G2IAJ")
 
     assert exception_info.value == SalesforceRestApiError(
-        [InnerSalesforceRestApiError("entity is deleted", "ENTITY_IS_DELETED", [])]
+        api_errors=[
+            InnerSalesforceRestApiError(
+                message="entity is deleted", error_code="ENTITY_IS_DELETED", fields=[]
+            )
+        ]
     )
 
 
@@ -490,13 +504,13 @@ async def test_unit_of_work() -> None:
     unit_of_work = UnitOfWork()
 
     franchise_reference_id = unit_of_work.register_create(
-        Record("Franchise__c", {"Name": "Star Wars"})
+        Record(type="Franchise__c", fields={"Name": "Star Wars"})
     )
 
     unit_of_work.register_create(
         Record(
-            "Movie__c",
-            {
+            type="Movie__c",
+            fields={
                 "Name": "Star Wars Episode I - A Phantom Menace",
                 "Franchise__c": franchise_reference_id,
             },
@@ -505,8 +519,8 @@ async def test_unit_of_work() -> None:
 
     unit_of_work.register_create(
         Record(
-            "Movie__c",
-            {
+            type="Movie__c",
+            fields={
                 "Name": "Star Wars Episode II - Attack Of The Clones",
                 "Franchise__c": franchise_reference_id,
             },
@@ -515,8 +529,8 @@ async def test_unit_of_work() -> None:
 
     unit_of_work.register_create(
         Record(
-            "Movie__c",
-            {
+            type="Movie__c",
+            fields={
                 "Name": "Star Wars Episode III - Revenge Of The Sith",
                 "Franchise__c": franchise_reference_id,
             },
@@ -526,10 +540,10 @@ async def test_unit_of_work() -> None:
     result = await data_api.commit_unit_of_work(unit_of_work)
 
     assert result == {
-        ReferenceId("referenceId0"): "a03B0000007BhQQIA0",
-        ReferenceId("referenceId1"): "a00B000000FSkioIAD",
-        ReferenceId("referenceId2"): "a00B000000FSkipIAD",
-        ReferenceId("referenceId3"): "a00B000000FSkiqIAD",
+        ReferenceId(id="referenceId0"): "a03B0000007BhQQIA0",
+        ReferenceId(id="referenceId1"): "a00B000000FSkioIAD",
+        ReferenceId(id="referenceId2"): "a00B000000FSkipIAD",
+        ReferenceId(id="referenceId3"): "a00B000000FSkiqIAD",
     }
 
 
@@ -540,7 +554,7 @@ async def test_unit_of_work_update() -> None:
 
     update_record_reference = unit_of_work.register_update(
         Record(
-            "Movie__c",
+            type="Movie__c",
             fields={"Id": "a01B0000009gSrFIAU", "ReleaseDate__c": "1980-05-21"},
         )
     )
@@ -582,7 +596,7 @@ async def test_unit_of_work_single_create() -> None:
     result = await data_api.commit_unit_of_work(unit_of_work)
 
     assert result == {
-        ReferenceId("referenceId0"): "a01B0000009gSoxIAE",
+        ReferenceId(id="referenceId0"): "a01B0000009gSoxIAE",
     }
 
 
@@ -607,9 +621,9 @@ async def test_unit_of_work_single_create_with_error() -> None:
     assert exception_info.value == SalesforceRestApiError(
         api_errors=[
             InnerSalesforceRestApiError(
-                "Rating: bad value for restricted picklist field: Amazing",
-                "INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST",
-                ["Rating__c"],
+                message="Rating: bad value for restricted picklist field: Amazing",
+                error_code="INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST",
+                fields=["Rating__c"],
             )
         ]
     )
@@ -630,7 +644,7 @@ async def test_unit_of_work_single_update() -> None:
     result = await data_api.commit_unit_of_work(unit_of_work)
 
     assert result == {
-        ReferenceId("referenceId0"): "a01B0000009gSrFIAU",
+        ReferenceId(id="referenceId0"): "a01B0000009gSrFIAU",
     }
 
 
@@ -644,7 +658,7 @@ async def test_unit_of_work_single_delete() -> None:
     result = await data_api.commit_unit_of_work(unit_of_work)
 
     assert result == {
-        ReferenceId("referenceId0"): "a01B0000009gSr9IAE",
+        ReferenceId(id="referenceId0"): "a01B0000009gSr9IAE",
     }
 
 

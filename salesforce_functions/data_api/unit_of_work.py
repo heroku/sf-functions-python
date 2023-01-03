@@ -46,7 +46,7 @@ class UnitOfWork:
         return self._register(DeleteRecordRestApiRequest(object_type, record_id))
 
     def _register(self, request: RestApiRequest[str]) -> ReferenceId:
-        reference_id = ReferenceId("referenceId" + str(self._next_reference_id))
+        reference_id = ReferenceId(id="referenceId" + str(self._next_reference_id))
         self._next_reference_id += 1
 
         self._sub_requests[reference_id] = request

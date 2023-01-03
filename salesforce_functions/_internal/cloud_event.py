@@ -13,7 +13,7 @@ else:
     pass  # pragma: no-cover-python-lt-311
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class SalesforceUserContext:
     org_id: str
     user_id: str
@@ -24,7 +24,7 @@ class SalesforceUserContext:
     org_domain_url: str
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class SalesforceContext:
     api_version: str
     payload_version: str
@@ -61,7 +61,7 @@ class SalesforceContext:
             raise CloudEventError(f"sfcontext missing required key {e}") from e
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class SalesforceFunctionContext:
     # TODO: Figure out discrepancy with schema: https://github.com/forcedotcom/sf-fx-schema/issues/8
     access_token: str
@@ -99,7 +99,7 @@ class SalesforceFunctionContext:
             raise CloudEventError(f"sffncontext missing required key {e}") from e
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, kw_only=True, slots=True)
 class SalesforceFunctionsCloudEvent:
     id: str
     source: str

@@ -29,6 +29,7 @@ class DataAPI:
 
     def __init__(
         self,
+        *,
         org_domain_url: str,
         api_version: str,
         access_token: str,
@@ -49,7 +50,12 @@ class DataAPI:
     async def query_more(self, result: RecordQueryResult) -> RecordQueryResult:
         """Query for more records, based on the given `RecordQueryResult`."""
         if result.next_records_url is None:
-            return RecordQueryResult(True, result.total_size, [], None)
+            return RecordQueryResult(
+                done=True,
+                total_size=result.total_size,
+                records=[],
+                next_records_url=None,
+            )
 
         return await self._execute(
             QueryNextRecordsRestApiRequest(result.next_records_url, self._download_file)
