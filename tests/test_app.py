@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from unittest.mock import patch
 
@@ -244,11 +245,16 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> No
     assert response.json() == expected_message
 
     output = capsys.readouterr()
-    assert output.out.endswith(
-        rf"""
+    assert re.fullmatch(
+        rf"""Traceback \(most recent call last\):
+  File ".+app.py", line \d+, in handle_function_invocation
+    function_result = await function\(event, context\)
+  .+
 ZeroDivisionError: division by zero
 invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="{expected_message}"
-"""
+""",
+        output.out,
+        flags=re.DOTALL,
     )
     assert output.err == ""
 
