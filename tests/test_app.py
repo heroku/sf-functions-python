@@ -290,7 +290,15 @@ def test_internal_error(capsys: CaptureFixture[str]) -> None:
     assert response.json() == expected_message
 
     output = capsys.readouterr()
-    assert output.out == f'level=error msg="{expected_message}"\n'
+    assert re.fullmatch(
+        rf"""Traceback \(most recent call last\):
+  .+
+ValueError: Some internal error
+level=error msg="{expected_message}"
+""",
+        output.out,
+        flags=re.DOTALL,
+    )
     assert output.err == ""
 
 
