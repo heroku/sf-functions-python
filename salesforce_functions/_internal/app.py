@@ -104,8 +104,9 @@ async def handle_function_invocation(request: Request) -> OrjsonResponse:
 
 
 async def handle_internal_error(request: Request, e: Exception) -> OrjsonResponse:
+    logger: BoundLogger = request.app.state.logger
     message = f"Internal error: {e.__class__.__name__}: {e}"
-    request.app.state.logger.error(message)
+    logger.exception(message)
     return OrjsonResponse(message, status_code=500)
 
 
