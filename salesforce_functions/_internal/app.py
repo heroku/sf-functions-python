@@ -17,7 +17,7 @@ from ..data_api import DataAPI
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
 from .config import ConfigError, load_config
-from .function_loader import LoadFunctionError, load_function
+from .function_loader import Function, LoadFunctionError, load_function
 from .logging import configure_logging, get_logger
 
 PROJECT_PATH_ENV_VAR = "FUNCTION_PROJECT_PATH"
@@ -35,7 +35,7 @@ class OrjsonResponse(JSONResponse):
         return orjson.dumps(content)
 
 
-async def invoke(request: Request) -> OrjsonResponse:
+async def handle_function_invocation(request: Request) -> OrjsonResponse:
     """Handle an incoming function invocation request."""
     structlog.contextvars.clear_contextvars()
     logger: BoundLogger = request.app.state.logger
@@ -82,8 +82,10 @@ async def invoke(request: Request) -> OrjsonResponse:
         )
     )
 
+    function: Function = request.app.state.function
+
     try:
-        function_result = await request.app.state.function(event, context)
+        function_result = await function(event, context)
     except Exception as e:  # pylint: disable=broad-except
         message = (
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
@@ -148,6 +150,6 @@ app = Starlette(
     exception_handlers={Exception: handle_internal_error},
     lifespan=lifespan,
     routes=[
-        Route("/", invoke, methods=["POST"]),
+        Route("/", handle_function_invocation, methods=["POST"]),
     ],
 )
