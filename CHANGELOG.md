@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - All publicly exported `dataclass`es (such as `Context`, `InvocationEvent` and `Record`) now only accept their fields being passed as keyword arguments, rather than as positional arguments.
 - If an unhandled internal runtime error occurs, the log output now includes the full stack trace.
+- The minimum version of the dependencies `orjson`, `starlette` and `structlog` have been raised.
 
 ## [0.2.0] - 2022-12-22
 
