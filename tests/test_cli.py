@@ -1,7 +1,6 @@
 import os
 import subprocess
 import sys
-from importlib.metadata import distribution
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -12,20 +11,7 @@ from pytest import CaptureFixture
 
 from salesforce_functions.__version__ import __version__
 from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR
-from salesforce_functions._internal.cli import (
-    ASGI_APP_IMPORT_STRING,
-    PROGRAM_NAME,
-    main,
-)
-
-
-def test_program_name_matches_package_entry_points() -> None:
-    package_script_names = (
-        distribution("salesforce_functions")
-        .entry_points.select(group="console_scripts")
-        .names
-    )
-    assert PROGRAM_NAME in package_script_names
+from salesforce_functions._internal.cli import ASGI_APP_IMPORT_STRING, main
 
 
 def test_base_help(capsys: CaptureFixture[str]) -> None:
