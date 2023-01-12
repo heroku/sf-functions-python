@@ -76,9 +76,9 @@ def main(args: list[str] | None = None) -> int:
 
     match parsed_args.subcommand:
         case "check":
-            return check_function(parsed_args.project_path)
+            return _check_function(parsed_args.project_path)
         case "serve":
-            return start_server(
+            return _start_server(
                 parsed_args.project_path,
                 parsed_args.host,
                 parsed_args.port,
@@ -93,7 +93,7 @@ def main(args: list[str] | None = None) -> int:
             raise NotImplementedError(f"Unhandled subcommand '{other}'")
 
 
-def check_function(project_path: Path) -> int:
+def _check_function(project_path: Path) -> int:
     try:
         load_config(project_path)
         load_function(project_path)
@@ -105,7 +105,7 @@ def check_function(project_path: Path) -> int:
     return 0
 
 
-def start_server(project_path: Path, host: str, port: int, workers: int) -> int:
+def _start_server(project_path: Path, host: str, port: int, workers: int) -> int:
     if workers == 1:
         process_mode = "single process mode"
     else:

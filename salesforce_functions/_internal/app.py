@@ -23,7 +23,7 @@ from .logging import configure_logging, get_logger
 PROJECT_PATH_ENV_VAR = "FUNCTION_PROJECT_PATH"
 
 
-class OrjsonResponse(JSONResponse):
+class _OrjsonResponse(JSONResponse):
     """
     Wrapper around Starlette's `JSONResponse` to use an alternative library for JSON serialisation.
 
@@ -35,13 +35,13 @@ class OrjsonResponse(JSONResponse):
         return orjson.dumps(content)
 
 
-async def handle_function_invocation(request: Request) -> OrjsonResponse:
+async def _handle_function_invocation(request: Request) -> _OrjsonResponse:
     """Handle an incoming function invocation request."""
     structlog.contextvars.clear_contextvars()
     logger: BoundLogger = request.app.state.logger
 
     if request.headers.get("x-health-check", "").lower() == "true":
-        return OrjsonResponse("OK")
+        return _OrjsonResponse("OK")
 
     body = await request.body()
 
@@ -51,7 +51,7 @@ async def handle_function_invocation(request: Request) -> OrjsonResponse:
         # TODO: Should the invocation ID be extracted manually for this error message?
         message = f"Could not parse CloudEvent: {e}"
         logger.error(message)
-        return OrjsonResponse(message, status_code=400)
+        return _OrjsonResponse(message, status_code=400)
 
     structlog.contextvars.bind_contextvars(invocationId=cloudevent.id)
 
@@ -91,27 +91,27 @@ async def handle_function_invocation(request: Request) -> OrjsonResponse:
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
         )
         logger.exception(message)
-        return OrjsonResponse(message, status_code=500)
+        return _OrjsonResponse(message, status_code=500)
 
     try:
-        return OrjsonResponse(function_result)
+        return _OrjsonResponse(function_result)
     except orjson.JSONEncodeError as e:
         message = (
             f"Function return value cannot be serialized: {e.__class__.__name__}: {e}"
         )
         logger.error(message)
-        return OrjsonResponse(message, status_code=500)
+        return _OrjsonResponse(message, status_code=500)
 
 
-async def handle_internal_error(request: Request, e: Exception) -> OrjsonResponse:
+async def _handle_internal_error(request: Request, e: Exception) -> _OrjsonResponse:
     logger: BoundLogger = request.app.state.logger
     message = f"Internal error: {e.__class__.__name__}: {e}"
     logger.exception(message)
-    return OrjsonResponse(message, status_code=500)
+    return _OrjsonResponse(message, status_code=500)
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
+async def _lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     """
     Asynchronous context manager for handling app setup/teardown.
 
@@ -148,9 +148,9 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
 
 # The ASGI app that will be run by uvicorn.
 app = Starlette(
-    exception_handlers={Exception: handle_internal_error},
-    lifespan=lifespan,
+    exception_handlers={Exception: _handle_internal_error},
+    lifespan=_lifespan,
     routes=[
-        Route("/", handle_function_invocation, methods=["POST"]),
+        Route("/", _handle_function_invocation, methods=["POST"]),
     ],
 )

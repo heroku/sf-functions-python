@@ -278,7 +278,7 @@ def test_serve_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main(args=["serve", fixture])
 
-        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # The error handling in `app._lifespan()` sets a custom `sys.tracebacklimit` to
         # truncate the traceback, to improve readability of the error message.
         assert getattr(sys, "tracebacklimit", None) == 0
     finally:
@@ -314,7 +314,7 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
         with pytest.raises(SystemExit) as exc_info:
             main(args=["serve", fixture])
 
-        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # The error handling in `app._lifespan()` sets a custom `sys.tracebacklimit` to
         # truncate the traceback, to improve readability of the error message.
         assert getattr(sys, "tracebacklimit", None) == 0
     finally:
