@@ -119,10 +119,7 @@ async def lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     requests, and anything after will be run when the server shuts down.
     """
     configure_logging()
-    # `get_logger()` returns a proxy that only instantiates the logger on first usage.
-    # Calling `bind()` here ensures that this instantiation doesn't have to occur each
-    # time the function is invoked.
-    app.state.logger = get_logger().bind()
+    app.state.logger = get_logger()
 
     # This env var is set by the CLI, as a way to propagate CLI args to the ASGI app.
     project_path = Path(os.environ[PROJECT_PATH_ENV_VAR])

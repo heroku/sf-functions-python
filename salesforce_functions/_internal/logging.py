@@ -1,5 +1,4 @@
 import logging
-from typing import Callable
 
 import structlog
 
@@ -32,4 +31,15 @@ def configure_logging() -> None:
     )
 
 
-get_logger: Callable[..., structlog.stdlib.BoundLogger] = structlog.stdlib.get_logger
+def get_logger() -> structlog.stdlib.BoundLogger:
+    """
+    Create a logger instance that outputs logs in logfmt style.
+
+    The logger's API matches the stdlib's `logger.Logger`, however the output
+    will be in the structured `logfmt` logging style.
+    """
+    # structlog's `get_logger()` returns a proxy that only instantiates the logger on first usage.
+    # Calling `bind()` here ensures that this instantiation doesn't have to occur each time a
+    # the function is invoked. `configure_logging()` must be called (by us) prior to `get_logger()`
+    # being used for the first time.
+    return structlog.stdlib.get_logger().bind()
