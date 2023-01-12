@@ -19,7 +19,7 @@ class InnerSalesforceRestApiError:
 
 
 class DataApiError(Exception):
-    """Base class for Data API exceptions"""
+    """Base class for Data API exceptions."""
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -31,7 +31,7 @@ class SalesforceRestApiError(DataApiError):
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class MissingIdFieldError(DataApiError):
-    """Raised when the given Record must contain an "Id" field, but none was found."""
+    """Raised when the given Record must contain an `Id` field, but none was found."""
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)

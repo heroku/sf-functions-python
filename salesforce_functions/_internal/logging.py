@@ -37,6 +37,21 @@ def get_logger() -> structlog.stdlib.BoundLogger:
 
     The logger's API matches the stdlib's `logger.Logger`, however the output
     will be in the structured `logfmt` logging style.
+
+    Example:
+
+    ```python
+    from salesforce_functions import get_logger
+
+    logger = get_logger()
+
+    async def function(event: InvocationEvent[Any], context: Context):
+        logger.info("Info message")
+        logger.warning("Warning message")
+        logger.error("Error message")
+
+        logger.info("Info message with an additional structured log attribute", record_id=12345)
+    ```
     """
     # structlog's `get_logger()` returns a proxy that only instantiates the logger on first usage.
     # Calling `bind()` here ensures that this instantiation doesn't have to occur each time a

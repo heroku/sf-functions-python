@@ -12,9 +12,9 @@ __all__ = ["UnitOfWork"]
 
 class UnitOfWork:
     """
-    Represents a UnitOfWork.
+    Represents a `UnitOfWork`.
 
-    After registering all operations, it can be submitted via the commit_unit_of_work method of DataApi.
+    After registering all operations, it can be submitted via the `commit_unit_of_work` method of `DataAPI`.
     """
 
     def __init__(self) -> None:
@@ -23,25 +23,28 @@ class UnitOfWork:
 
     def register_create(self, record: Record) -> ReferenceId:
         """
-        Register a record creation for the UnitOfWork.
+        Register a record creation for the `UnitOfWork`.
 
-        Returns a ReferenceId that can be used to refer to the created record in subsequent operations in this
-        UnitOfWork.
+        Returns a `ReferenceId` that can be used to refer to the created record in subsequent operations in this
+        `UnitOfWork`.
         """
         return self._register(CreateRecordRestApiRequest(record))
 
     def register_update(self, record: Record) -> ReferenceId:
         """
-        Register a record update for the UnitOfWork.
+        Register a record update for the `UnitOfWork`.
 
-        Returns a ReferenceId that can be used to refer to the updated record in subsequent operations in this
-        UnitOfWork.
+        Returns a `ReferenceId` that can be used to refer to the updated record in subsequent operations in this
+        `UnitOfWork`.
         """
         return self._register(UpdateRecordRestApiRequest(record))
 
     def register_delete(self, object_type: str, record_id: str) -> ReferenceId:
         """
         Register a deletion of an existing record of the given type and id.
+
+        Returns a `ReferenceId` that can be used to refer to the updated record in subsequent operations in this
+        `UnitOfWork`.
         """
         return self._register(DeleteRecordRestApiRequest(object_type, record_id))
 
