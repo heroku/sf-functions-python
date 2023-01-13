@@ -171,7 +171,7 @@ def test_invalid_config() -> None:
         with pytest.raises(RuntimeError, match=expected_message):
             invoke_function("tests/fixtures/project_toml_file_missing")
 
-        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # The error handling in `app._lifespan()` sets a custom `sys.tracebacklimit` to
         # truncate the traceback, to improve readability of the error message.
         assert getattr(sys, "tracebacklimit", None) == 0
     finally:
@@ -189,7 +189,7 @@ def test_invalid_function() -> None:
         with pytest.raises(RuntimeError, match=expected_message):
             invoke_function("tests/fixtures/invalid_missing_main_py")
 
-        # The error handling in `app.lifespan()` sets a custom `sys.tracebacklimit` to
+        # The error handling in `app._lifespan()` sets a custom `sys.tracebacklimit` to
         # truncate the traceback, to improve readability of the error message.
         assert getattr(sys, "tracebacklimit", None) == 0
     finally:
@@ -247,7 +247,7 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> No
     output = capsys.readouterr()
     assert re.fullmatch(
         rf"""Traceback \(most recent call last\):
-  File ".+app.py", line \d+, in handle_function_invocation
+  File ".+app.py", line \d+, in _handle_function_invocation
     function_result = await function\(event, context\)
   .+
 ZeroDivisionError: division by zero
