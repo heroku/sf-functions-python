@@ -10,6 +10,9 @@ from salesforce_functions import (
     ReferenceId,
     UnitOfWork,
 )
+from salesforce_functions.data_api import (
+    _create_session,  # pyright: ignore [reportPrivateUsage]
+)
 from salesforce_functions.data_api import DataAPI
 from salesforce_functions.data_api.exceptions import (
     InnerSalesforceRestApiError,
@@ -693,9 +696,7 @@ async def test_session() -> None:
     after each request (including when requests fail). The query used is one that returns binary
     data, to ensure that the session handling in `DataAPI._download_file()` is exercised too.
     """
-    async with (
-        DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
-    ) as session:
+    async with _create_session() as session:
         data_api = new_data_api(session=session)
 
         first_result = await data_api.query(

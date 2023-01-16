@@ -107,7 +107,7 @@ class DataAPI:
                 method,
                 url,
                 headers=self._default_headers(),
-                data=self._json_serialize(body),
+                data=_json_serialize(body),
             )
 
             # Using orjson for faster JSON deserialization over the stdlib.
@@ -127,7 +127,7 @@ class DataAPI:
         return await rest_api_request.process_response(response.status, json_body)
 
     async def _download_file(self, url: str) -> bytes:
-        session = self._shared_session or self._create_session()
+        session = self._shared_session or _create_session()
 
         try:
             response = await session.request(
@@ -145,27 +145,28 @@ class DataAPI:
             "Sforce-Call-Options": f"client=sf-functions-python:{__version__}",
         }
 
-    @staticmethod
-    def _create_session() -> ClientSession:
-        # Disable cookie storage using `DummyCookieJar`, given that:
-        # - The same session will be used by multiple invocation events.
-        # - We don't need cookie support.
-        return ClientSession(cookie_jar=DummyCookieJar())
 
-    @staticmethod
-    def _json_serialize(data: Any) -> BytesPayload:
-        """
-        Replacement for aiohttp's default JSON implementation to use an alternative library for JSON serialisation.
+def _create_session() -> ClientSession:
+    # Disable cookie storage using `DummyCookieJar`, given that:
+    # - The same session will be used by multiple invocation events.
+    # - We don't need cookie support.
+    return ClientSession(cookie_jar=DummyCookieJar())
 
-        We're using `orjson` since it has much better performance than the Python stdlib's `json` module:
-        https://github.com/ijl/orjson#performance
 
-        We can't just implement this by passing `json_serialize` to `ClientSession`, due to:
-        https://github.com/aio-libs/aiohttp/issues/4482
+def _json_serialize(data: Any) -> BytesPayload:
+    """
+    JSON serialize the provided data to bytes.
 
-        So instead this is based on `payload.JsonPayload`:
-        https://github.com/aio-libs/aiohttp/blob/v3.8.3/aiohttp/payload.py#L386-L403
-        """
-        return BytesPayload(
-            orjson.dumps(data), content_type="utf-8", encoding="application/json"
-        )
+    This is a replacement for aiohttp's default JSON implementation that uses `orjson` instead
+    of the Python stdlib's `json` module, since `orjson` is faster:
+    https://github.com/ijl/orjson#performance
+
+    We can't just implement this by passing `json_serialize` to `ClientSession`, due to:
+    https://github.com/aio-libs/aiohttp/issues/4482
+
+    So instead this is based on `payload.JsonPayload`:
+    https://github.com/aio-libs/aiohttp/blob/v3.8.3/aiohttp/payload.py#L386-L403
+    """
+    return BytesPayload(
+        orjson.dumps(data), content_type="utf-8", encoding="application/json"
+    )

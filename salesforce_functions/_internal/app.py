@@ -13,7 +13,7 @@ from starlette.routing import Route
 from structlog.stdlib import BoundLogger
 
 from ..context import Context, Org, User
-from ..data_api import DataAPI
+from ..data_api import DataAPI, _create_session  # pyright: ignore [reportPrivateUsage]
 from ..invocation_event import InvocationEvent
 from .cloud_event import CloudEventError, SalesforceFunctionsCloudEvent
 from .config import ConfigError, load_config
@@ -136,9 +136,7 @@ async def _lifespan(app: Starlette) -> AsyncGenerator[None, None]:
 
     app.state.salesforce_api_version = config.salesforce_api_version
 
-    async with (
-        DataAPI._create_session()  # pyright: ignore [reportPrivateUsage] pylint:disable=protected-access
-    ) as data_api_session:
+    async with _create_session() as data_api_session:
         app.state.data_api_session = data_api_session
         yield
 
