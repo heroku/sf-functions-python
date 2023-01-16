@@ -19,7 +19,7 @@ class QueriedRecord(Record):
     """
     A Salesforce record that has been queried.
 
-    Extends Record with potential sub query results that can only exist when
+    Extends `Record` with potential sub query results that can only exist when
     a record was queried from the data API.
     """
 

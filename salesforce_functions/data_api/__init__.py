@@ -25,7 +25,11 @@ T = TypeVar("T")
 
 
 class DataAPI:
-    """Data API client to interact with data in a Salesforce org."""
+    """
+    Data API client to interact with data in a Salesforce org.
+
+    A preconfigured instance of this client is provided at `Context.org.data_api`.
+    """
 
     def __init__(
         self,
@@ -74,7 +78,7 @@ class DataAPI:
         return await self._execute(UpdateRecordRestApiRequest(record))
 
     async def delete(self, object_type: str, record_id: str) -> str:
-        """Deletes an existing record of the given type and id."""
+        """Delete an existing record of the given type and id."""
         return await self._execute(DeleteRecordRestApiRequest(object_type, record_id))
 
     async def commit_unit_of_work(
