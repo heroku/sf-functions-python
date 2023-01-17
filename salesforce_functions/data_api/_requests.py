@@ -154,16 +154,14 @@ class DeleteRecordRestApiRequest(RestApiRequest[str]):
 class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
     def __init__(
         self,
-        base_uri: str,
         api_version: str,
         sub_requests: dict[ReferenceId, RestApiRequest[str]],
     ):
-        self._base_uri = base_uri
         self._api_version = api_version
         self._sub_requests = sub_requests
 
     def url(self, org_domain_url: str, api_version: str) -> str:
-        return f"{self._base_uri}/services/data/v{api_version}/composite/graph"
+        return f"{org_domain_url}/services/data/v{api_version}/composite/graph"
 
     def http_method(self) -> HttpMethod:
         return "POST"
@@ -173,9 +171,8 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
 
         for reference_id, sub_request in self._sub_requests.items():
             json_sub_request: dict[str, Any] = {
-                "url": sub_request.url(self._base_uri, self._api_version).removeprefix(
-                    self._base_uri
-                ),
+                # Sub-requests use relative URLs, hence the empty-string `org_domain_url`.
+                "url": sub_request.url("", self._api_version),
                 "method": sub_request.http_method(),
                 "referenceId": reference_id.id,
             }
