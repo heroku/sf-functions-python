@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - All publicly exported `dataclass`es (such as `Context`, `InvocationEvent` and `Record`) now only accept their fields being passed as keyword arguments, rather than as positional arguments.
-- If an unhandled internal runtime error occurs, the log output now includes the full stack trace.
+- If an unhandled internal runtime error occurs, the log output now includes the full stack trace,
+  and the function response's HTTP status code is now `503` rather than `500`.
+- Invocation metadata is now set on the function response via the `x-extra-info` header.
 - The docstrings for several public types and APIs have been improved.
 - The minimum version of the dependencies `orjson`, `starlette` and `structlog` have been raised.
 

@@ -1,6 +1,9 @@
 import contextlib
 import os
 import sys
+import time
+import traceback
+from enum import Enum
 from pathlib import Path
 from typing import Any, AsyncGenerator
 
@@ -8,7 +11,7 @@ import orjson
 import structlog
 from starlette.applications import Starlette
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import Response
 from starlette.routing import Route
 from structlog.stdlib import BoundLogger
 
@@ -23,35 +26,22 @@ from .logging import configure_logging, get_logger
 PROJECT_PATH_ENV_VAR = "FUNCTION_PROJECT_PATH"
 
 
-class _OrjsonResponse(JSONResponse):
-    """
-    Wrapper around Starlette's `JSONResponse` to use an alternative library for JSON serialisation.
-
-    Used since `orjson` has much better performance than the Python stdlib's `json` module:
-    https://github.com/ijl/orjson#performance
-    """
-
-    def render(self, content: Any) -> bytes:
-        return orjson.dumps(content)
-
-
-async def _handle_function_invocation(request: Request) -> _OrjsonResponse:
+async def _handle_function_invocation(request: Request) -> Response:
     """Handle an incoming function invocation request."""
     structlog.contextvars.clear_contextvars()
     logger: BoundLogger = request.app.state.logger
 
     if request.headers.get("x-health-check", "").lower() == "true":
-        return _OrjsonResponse("OK")
+        return _make_response("OK", _StatusCode.SUCCESS)
 
     body = await request.body()
 
     try:
         cloudevent = SalesforceFunctionsCloudEvent.from_http(request.headers, body)
     except CloudEventError as e:
-        # TODO: Should the invocation ID be extracted manually for this error message?
         message = f"Could not parse CloudEvent: {e}"
         logger.error(message)
-        return _OrjsonResponse(message, status_code=400)
+        return _make_response(message, _StatusCode.REQUEST_ERROR, exception=e)
 
     structlog.contextvars.bind_contextvars(invocationId=cloudevent.id)
 
@@ -83,6 +73,7 @@ async def _handle_function_invocation(request: Request) -> _OrjsonResponse:
     )
 
     function: Function = request.app.state.function
+    function_start_time_ns = time.perf_counter_ns()
 
     try:
         function_result = await function(event, context)
@@ -91,23 +82,84 @@ async def _handle_function_invocation(request: Request) -> _OrjsonResponse:
             f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
         )
         logger.exception(message)
-        return _OrjsonResponse(message, status_code=500)
+        return _make_response(
+            message,
+            _StatusCode.FUNCTION_ERROR,
+            cloudevent=cloudevent,
+            function_duration_ns=time.perf_counter_ns() - function_start_time_ns,
+            exception=e,
+        )
+
+    function_duration_ns = time.perf_counter_ns() - function_start_time_ns
 
     try:
-        return _OrjsonResponse(function_result)
+        return _make_response(
+            function_result,
+            _StatusCode.SUCCESS,
+            cloudevent=cloudevent,
+            function_duration_ns=function_duration_ns,
+        )
     except orjson.JSONEncodeError as e:
         message = (
             f"Function return value cannot be serialized: {e.__class__.__name__}: {e}"
         )
         logger.error(message)
-        return _OrjsonResponse(message, status_code=500)
+        return _make_response(
+            message,
+            _StatusCode.FUNCTION_ERROR,
+            cloudevent=cloudevent,
+            function_duration_ns=function_duration_ns,
+            exception=e,
+        )
 
 
-async def _handle_internal_error(request: Request, e: Exception) -> _OrjsonResponse:
+async def _handle_internal_error(request: Request, exception: Exception) -> Response:
     logger: BoundLogger = request.app.state.logger
-    message = f"Internal error: {e.__class__.__name__}: {e}"
+    message = f"Internal error: {exception.__class__.__name__}: {exception}"
     logger.exception(message)
-    return _OrjsonResponse(message, status_code=500)
+    return _make_response(message, _StatusCode.INTERNAL_ERROR, exception=exception)
+
+
+class _StatusCode(Enum):
+    SUCCESS = 200
+    REQUEST_ERROR = 400
+    FUNCTION_ERROR = 500
+    INTERNAL_ERROR = 503
+
+
+def _make_response(
+    content: Any,
+    status_code: _StatusCode,
+    cloudevent: SalesforceFunctionsCloudEvent | None = None,
+    function_duration_ns: int | None = None,
+    exception: Exception | None = None,
+) -> Response:
+    # Based on the `responseExtraInfo` definition in:
+    # https://github.com/forcedotcom/sf-fx-schema/blob/main/schema.json
+    metadata: dict[str, str | int | bool] = {
+        "requestId": cloudevent.id if cloudevent else "n/a",
+        "source": cloudevent.source if cloudevent else "n/a",
+        "statusCode": status_code.value,
+    }
+
+    if function_duration_ns:
+        metadata["execTimeMs"] = round(function_duration_ns / (1000 * 1000))
+
+    if exception:
+        metadata["stack"] = "".join(traceback.format_exception(exception))
+        metadata["isFunctionError"] = status_code == _StatusCode.FUNCTION_ERROR
+
+    # We're not using Starlette's `JSONResponse`, since it uses the Python stdlib's
+    # `json` module for JSON serialization, whereas `orjson` has better performance:
+    # https://github.com/ijl/orjson#performance
+    return Response(
+        content=orjson.dumps(content),
+        media_type="application/json",
+        status_code=status_code.value,
+        headers={
+            "x-extra-info": orjson.dumps(metadata).decode(),
+        },
+    )
 
 
 @contextlib.asynccontextmanager

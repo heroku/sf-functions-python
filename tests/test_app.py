@@ -1,8 +1,10 @@
 import os
 import re
 import sys
+from typing import Any
 from unittest.mock import patch
 
+import orjson
 import pytest
 from pytest import CaptureFixture
 from starlette.testclient import TestClient
@@ -26,6 +28,13 @@ def test_health_check(capsys: CaptureFixture[str]) -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == "OK"
 
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    assert extra_info == {
+        "requestId": "n/a",
+        "source": "n/a",
+        "statusCode": 200,
+    }
+
     output = capsys.readouterr()
     assert output.out == ""
     assert output.err == ""
@@ -36,6 +45,15 @@ def test_empty_payload_and_response(capsys: CaptureFixture[str]) -> None:
     assert response.status_code == 200
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() is None
+
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    exec_time_ms: int = extra_info.pop("execTimeMs")
+    assert extra_info == {
+        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
+        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "statusCode": 200,
+    }
+    assert 0 <= exec_time_ms < 1000
 
     output = capsys.readouterr()
     assert output.out == ""
@@ -210,6 +228,23 @@ def test_cloud_event_headers_missing(capsys: CaptureFixture[str]) -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
 
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    stack: str = extra_info.pop("stack")
+    assert extra_info == {
+        "isFunctionError": False,
+        "requestId": "n/a",
+        "source": "n/a",
+        "statusCode": 400,
+    }
+    assert re.fullmatch(
+        r"""Traceback \(most recent call last\):
+  .+
+salesforce_functions._internal.cloud_event.CloudEventError: Content-Type must be 'application/json' not ''
+""",
+        stack,
+        flags=re.DOTALL,
+    )
+
     output = capsys.readouterr()
     assert output.out == f'level=error msg="{expected_message}"\n'
     assert output.err == ""
@@ -225,6 +260,23 @@ def test_cloud_event_body_not_json(capsys: CaptureFixture[str]) -> None:
     assert response.status_code == 400
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
+
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    stack: str = extra_info.pop("stack")
+    assert extra_info == {
+        "isFunctionError": False,
+        "requestId": "n/a",
+        "source": "n/a",
+        "statusCode": 400,
+    }
+    assert re.fullmatch(
+        r"""Traceback \(most recent call last\):
+  .+
+salesforce_functions._internal.cloud_event.CloudEventError: Data payload is not valid JSON: .+
+""",
+        stack,
+        flags=re.DOTALL,
+    )
 
     output = capsys.readouterr()
     assert output.out == f'level=error msg="{expected_message}"\n'
@@ -243,6 +295,27 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> No
     assert response.status_code == 500
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
+
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    exec_time_ms: int = extra_info.pop("execTimeMs")
+    stack: str = extra_info.pop("stack")
+    assert extra_info == {
+        "isFunctionError": True,
+        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
+        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "statusCode": 500,
+    }
+    assert 0 <= exec_time_ms < 1000
+    assert re.fullmatch(
+        r"""Traceback \(most recent call last\):
+  File ".+app.py", line \d+, in _handle_function_invocation
+    function_result = await function\(event, context\)
+  .+
+ZeroDivisionError: division by zero
+""",
+        stack,
+        flags=re.DOTALL,
+    )
 
     output = capsys.readouterr()
     assert re.fullmatch(
@@ -267,6 +340,25 @@ def test_return_value_not_serializable(capsys: CaptureFixture[str]) -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
 
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    exec_time_ms: int = extra_info.pop("execTimeMs")
+    stack: str = extra_info.pop("stack")
+    assert extra_info == {
+        "isFunctionError": True,
+        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
+        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "statusCode": 500,
+    }
+    assert 0 <= exec_time_ms < 1000
+    assert re.fullmatch(
+        r"""Traceback \(most recent call last\):
+  .+
+TypeError: Type is not JSON serializable: set
+""",
+        stack,
+        flags=re.DOTALL,
+    )
+
     output = capsys.readouterr()
     assert (
         output.out
@@ -285,9 +377,26 @@ def test_internal_error(capsys: CaptureFixture[str]) -> None:
         )
 
     expected_message = "Internal error: ValueError: Some internal error"
-    assert response.status_code == 500
+    assert response.status_code == 503
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
+
+    extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
+    stack: str = extra_info.pop("stack")
+    assert extra_info == {
+        "isFunctionError": False,
+        "requestId": "n/a",
+        "source": "n/a",
+        "statusCode": 503,
+    }
+    assert re.fullmatch(
+        r"""Traceback \(most recent call last\):
+  .+
+ValueError: Some internal error
+""",
+        stack,
+        flags=re.DOTALL,
+    )
 
     output = capsys.readouterr()
     assert re.fullmatch(
