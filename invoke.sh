@@ -8,18 +8,20 @@ function base64_encode() {
   python3 -c "import base64, sys; print(base64.b64encode(sys.stdin.buffer.read()).decode('ascii'))"
 }
 
-invocation_id="00Dxx0000006IYJEA2-4Y4W3Lw_LkoskcHdEaZze--MyFunction-$(openssl rand -hex 12)"
+invocation_id="00DJS0000000123ABC-$(openssl rand -hex 16)"
 
 sfcontext=$(base64_encode <<'EOF'
 {
-  "apiVersion": "53.0",
+  "apiVersion": "56.0",
   "payloadVersion": "0.1",
   "userContext": {
-    "orgId": "00Dxx0000006IYJ",
-    "userId": "005xx000001X8Uz",
-    "username": "user@example.tld",
+    "onBehalfOfUserId": null,
+    "orgDomainUrl": "https://example-domain-url.my.salesforce.com",
+    "orgId": "00DJS0000000123ABC",
     "salesforceBaseUrl": "https://example-base-url.my.salesforce-sites.com",
-    "orgDomainUrl": "https://example-domain-url.my.salesforce.com"
+    "salesforceInstance": "swe1",
+    "userId": "005JS000000H123",
+    "username": "user@example.tld"
   }
 }
 EOF
@@ -28,7 +30,12 @@ EOF
 sffncontext=$(base64_encode <<EOF
 {
   "accessToken": "EXAMPLE-TOKEN",
-  "requestId": "${invocation_id}"
+  "apexFQN": "ExampleClass:example_function():7",
+  "deadline": "2023-01-19T10:11:12.468085Z",
+  "functionName": "ExampleProject.examplefunction",
+  "invokingNamespace": "",
+  "requestId": "${invocation_id}",
+  "resource": "https://examplefunction-cod-mni.crag-123abc.evergreen.space"
 }
 EOF
 )
@@ -37,11 +44,13 @@ curl "${1:?Provide function runtime url as the first argument to this script!}" 
   -i \
   --connect-timeout 3 \
   -d "${2:?Provide the payload as the second argument to this script!}" \
-  -H "Content-Type: application/json" \
+  -H "content-type: application/json" \
   -H "ce-id: ${invocation_id}" \
-  -H "ce-source: urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7" \
+  -H "ce-source: urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7" \
   -H "ce-specversion: 1.0" \
+  -H "ce-time: 2023-01-19T10:09:12.476684Z" \
   -H "ce-type: com.salesforce.function.invoke.sync" \
   -H "ce-sfcontext: ${sfcontext}" \
   -H "ce-sffncontext: ${sffncontext}" \
+  -H "x-request-id: ${invocation_id}" \
   # -H "x-health-check: true" \

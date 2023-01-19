@@ -15,11 +15,11 @@ WIREMOCK_SERVER_URL = "http://localhost:12345"
 def generate_cloud_event_headers(
     include_optional_attributes: bool = True,
 ) -> dict[str, str]:
-    invocation_id = "56ff961b-61b9-4310-a159-1f997221ccfb"
+    invocation_id = "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179"
     headers = {
         "Content-Type": "application/json",
         "ce-id": invocation_id,
-        "ce-source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "ce-source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         "ce-specversion": "1.0",
         "ce-type": "com.salesforce.function.invoke.sync",
         "ce-sfcontext": encode_cloud_event_extension(
@@ -30,6 +30,7 @@ def generate_cloud_event_headers(
                 invocation_id, include_optional_attributes=include_optional_attributes
             )
         ),
+        "x-request-id": invocation_id,
     }
 
     if include_optional_attributes:
@@ -37,7 +38,7 @@ def generate_cloud_event_headers(
             {
                 "ce-dataschema": "dataschema TODO",
                 "ce-subject": "subject TODO",
-                "ce-time": "2022-11-01T12:30:10.123456Z",
+                "ce-time": "2023-01-19T10:09:12.476684Z",
             }
         )
 
@@ -48,22 +49,23 @@ def generate_sf_context(
     include_optional_attributes: bool = True,
 ) -> dict[str, str | dict[str, str]]:
     user_context = {
+        "orgId": "00DJS0000000123ABC",
         "orgDomainUrl": "https://example-domain-url.my.salesforce.com",
-        "orgId": "00Dxx0000006IYJ",
         "salesforceBaseUrl": "https://example-base-url.my.salesforce-sites.com",
-        "userId": "005xx000001X8Uz",
+        "salesforceInstance": "swe1",
+        "userId": "005JS000000H123",
         "username": "user@example.tld",
     }
 
     if include_optional_attributes:
         user_context.update(
             {
-                "onBehalfOfUserId": "another-user@example.tld",
+                "onBehalfOfUserId": "005JS000000H456",
             }
         )
 
     return {
-        "apiVersion": "53.0",
+        "apiVersion": "56.0",
         "payloadVersion": "0.1",
         "userContext": user_context,
     }
@@ -80,11 +82,13 @@ def generate_sf_function_context(
     if include_optional_attributes:
         sf_function_context.update(
             {
-                "apexFQN": "apexFQN TODO",
+                "apexFQN": "ExampleClass:example_function():7",
                 "apexId": "apexId TODO",
+                "deadline": "2023-01-19T10:11:12.468085Z",
                 "functionInvocationId": "functionInvocationId TODO",
-                "functionName": "MyFunction",
-                "resource": "http://example.com:8080",
+                "functionName": "ExampleProject.examplefunction",
+                "invokingNamespace": "",
+                "resource": "https://examplefunction-cod-mni.crag-123abc.evergreen.space",
             }
         )
 

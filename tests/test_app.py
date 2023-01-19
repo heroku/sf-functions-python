@@ -49,8 +49,8 @@ def test_empty_payload_and_response(capsys: CaptureFixture[str]) -> None:
     extra_info: dict[str, Any] = orjson.loads(response.headers["x-extra-info"])
     exec_time_ms: int = extra_info.pop("execTimeMs")
     assert extra_info == {
-        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
-        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "requestId": "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        "source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         "statusCode": 200,
     }
     assert 0 <= exec_time_ms < 1000
@@ -67,9 +67,9 @@ def test_event_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "data": payload,
-        "id": "56ff961b-61b9-4310-a159-1f997221ccfb",
-        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
-        "time": "2022-11-01T12:30:10.123456+00:00",
+        "id": "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        "source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
+        "time": "2023-01-19T10:09:12.476684+00:00",
         "type": "com.salesforce.function.invoke.sync",
     }
 
@@ -83,8 +83,8 @@ def test_minimal_event_attributes() -> None:
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == {
         "data": None,
-        "id": "56ff961b-61b9-4310-a159-1f997221ccfb",
-        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "id": "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        "source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         "time": None,
         "type": "com.salesforce.function.invoke.sync",
     }
@@ -100,10 +100,10 @@ def test_context_attributes() -> None:
             "base_url": "https://example-base-url.my.salesforce-sites.com",
             "data_api": "REMOVED",
             "domain_url": "https://example-domain-url.my.salesforce.com",
-            "id": "00Dxx0000006IYJ",
+            "id": "00DJS0000000123ABC",
             "user": {
-                "id": "005xx000001X8Uz",
-                "on_behalf_of_user_id": "another-user@example.tld",
+                "id": "005JS000000H123",
+                "on_behalf_of_user_id": "005JS000000H456",
                 "username": "user@example.tld",
             },
         },
@@ -122,9 +122,9 @@ def test_minimal_context_attributes() -> None:
             "base_url": "https://example-base-url.my.salesforce-sites.com",
             "data_api": "REMOVED",
             "domain_url": "https://example-domain-url.my.salesforce.com",
-            "id": "00Dxx0000006IYJ",
+            "id": "00DJS0000000123ABC",
             "user": {
-                "id": "005xx000001X8Uz",
+                "id": "005JS000000H123",
                 "on_behalf_of_user_id": None,
                 "username": "user@example.tld",
             },
@@ -157,12 +157,12 @@ def test_logging(capsys: CaptureFixture[str]) -> None:
     assert (
         output.out
         == """Print works but output isn't structured
-invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=info msg="Info message"
-invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=warning msg="Warning message"
-invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="Error message"
-invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=critical msg="Critical message"
-record_id=12345 invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=info msg="Info message with custom metadata"
-"""
+invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=info msg="Info message"
+invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=warning msg="Warning message"
+invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=error msg="Error message"
+invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=critical msg="Critical message"
+record_id=12345 invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=info msg="Info message with custom metadata"
+"""  # noqa: E501
     )
     assert output.err == ""
 
@@ -301,8 +301,8 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> No
     stack: str = extra_info.pop("stack")
     assert extra_info == {
         "isFunctionError": True,
-        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
-        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "requestId": "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        "source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         "statusCode": 500,
     }
     assert 0 <= exec_time_ms < 1000
@@ -324,7 +324,7 @@ ZeroDivisionError: division by zero
     function_result = await function\(event, context\)
   .+
 ZeroDivisionError: division by zero
-invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="{expected_message}"
+invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=error msg="{expected_message}"
 """,
         output.out,
         flags=re.DOTALL,
@@ -345,8 +345,8 @@ def test_return_value_not_serializable(capsys: CaptureFixture[str]) -> None:
     stack: str = extra_info.pop("stack")
     assert extra_info == {
         "isFunctionError": True,
-        "requestId": "56ff961b-61b9-4310-a159-1f997221ccfb",
-        "source": "urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        "requestId": "00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        "source": "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         "statusCode": 500,
     }
     assert 0 <= exec_time_ms < 1000
@@ -362,7 +362,7 @@ TypeError: Type is not JSON serializable: set
     output = capsys.readouterr()
     assert (
         output.out
-        == f'invocationId=56ff961b-61b9-4310-a159-1f997221ccfb level=error msg="{expected_message}"\n'
+        == f'invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=error msg="{expected_message}"\n'
     )
     assert output.err == ""
 
