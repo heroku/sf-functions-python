@@ -28,22 +28,22 @@ def test_cloud_event() -> None:
     cloud_event = SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
 
     assert cloud_event == SalesforceFunctionsCloudEvent(
-        id="56ff961b-61b9-4310-a159-1f997221ccfb",
-        source="urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        id="00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        source="urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         spec_version="1.0",
         type="com.salesforce.function.invoke.sync",
         data={"record_id": 123},
         data_content_type="application/json",
         data_schema="dataschema TODO",
         subject="subject TODO",
-        time=datetime(2022, 11, 1, 12, 30, 10, 123456, tzinfo=timezone.utc),
+        time=datetime(2023, 1, 19, 10, 9, 12, 476684, tzinfo=timezone.utc),
         sf_context=SalesforceContext(
-            api_version="53.0",
+            api_version="56.0",
             payload_version="0.1",
             user_context=SalesforceUserContext(
-                org_id="00Dxx0000006IYJ",
-                user_id="005xx000001X8Uz",
-                on_behalf_of_user_id="another-user@example.tld",
+                org_id="00DJS0000000123ABC",
+                user_id="005JS000000H123",
+                on_behalf_of_user_id="005JS000000H456",
                 username="user@example.tld",
                 salesforce_base_url="https://example-base-url.my.salesforce-sites.com",
                 org_domain_url="https://example-domain-url.my.salesforce.com",
@@ -51,12 +51,12 @@ def test_cloud_event() -> None:
         ),
         sf_function_context=SalesforceFunctionContext(
             access_token="EXAMPLE-TOKEN",
-            request_id="56ff961b-61b9-4310-a159-1f997221ccfb",
+            request_id="00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
             function_invocation_id="functionInvocationId TODO",
-            function_name="MyFunction",
+            function_name="ExampleProject.examplefunction",
             apex_id="apexId TODO",
-            apex_fqn="apexFQN TODO",
-            resource="http://example.com:8080",
+            apex_fqn="ExampleClass:example_function():7",
+            resource="https://examplefunction-cod-mni.crag-123abc.evergreen.space",
         ),
     )
 
@@ -67,8 +67,8 @@ def test_minimal_cloud_event() -> None:
     cloud_event = SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
 
     assert cloud_event == SalesforceFunctionsCloudEvent(
-        id="56ff961b-61b9-4310-a159-1f997221ccfb",
-        source="urn:event:from:salesforce/xx/228.0/00Dxx0000006IYJ/apex/MyFunctionApex:test():7",
+        id="00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
+        source="urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
         spec_version="1.0",
         type="com.salesforce.function.invoke.sync",
         data=None,
@@ -77,11 +77,11 @@ def test_minimal_cloud_event() -> None:
         subject=None,
         time=None,
         sf_context=SalesforceContext(
-            api_version="53.0",
+            api_version="56.0",
             payload_version="0.1",
             user_context=SalesforceUserContext(
-                org_id="00Dxx0000006IYJ",
-                user_id="005xx000001X8Uz",
+                org_id="00DJS0000000123ABC",
+                user_id="005JS000000H123",
                 on_behalf_of_user_id=None,
                 username="user@example.tld",
                 salesforce_base_url="https://example-base-url.my.salesforce-sites.com",
@@ -90,7 +90,7 @@ def test_minimal_cloud_event() -> None:
         ),
         sf_function_context=SalesforceFunctionContext(
             access_token="EXAMPLE-TOKEN",
-            request_id="56ff961b-61b9-4310-a159-1f997221ccfb",
+            request_id="00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179",
             function_invocation_id=None,
             function_name=None,
             apex_id=None,
