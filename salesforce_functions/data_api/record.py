@@ -9,7 +9,11 @@ class Record:
     """A Salesforce record."""
 
     type: str
-    """The Salesforce Object type."""
+    """
+    The Salesforce Object type.
+
+    For example: `Account`
+    """
     fields: dict[str, Any]
     """The fields belonging to the record."""
 
