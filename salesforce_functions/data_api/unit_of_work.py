@@ -15,6 +15,40 @@ class UnitOfWork:
     Represents a `UnitOfWork`.
 
     After registering all operations, it can be submitted via the `commit_unit_of_work` method of `DataAPI`.
+
+    For example:
+
+    ```python
+    from salesforce_functions import Record, UnitOfWork
+
+    # Create a unit of work, against which multiple operations can be registered.
+    unit_of_work = UnitOfWork()
+
+    # Register a new Account for creation
+    account_reference_id = unit_of_work.register_create(
+        Record(
+            type="Account",
+            fields={
+                "Name": "Example Account",
+            },
+        )
+    )
+
+    # Register a new Contact for creation, that references the account above.
+    unit_of_work.register_create(
+        Record(
+            type="Contact",
+            fields={
+                "FirstName": "Joe",
+                "LastName": "Smith",
+                "AccountId": account_reference_id,
+            },
+        )
+    )
+
+    # Commit the unit of work, executing all of the operations registered above.
+    result = await context.org.data_api.commit_unit_of_work(unit_of_work)
+    ```
     """
 
     def __init__(self) -> None:
@@ -27,6 +61,23 @@ class UnitOfWork:
 
         Returns a `ReferenceId` that can be used to refer to the created record in subsequent operations in this
         `UnitOfWork`.
+
+        For example:
+
+        ```python
+        from salesforce_functions import Record, UnitOfWork
+
+        unit_of_work = UnitOfWork()
+
+        reference_id = unit_of_work.register_create(
+            Record(
+                type="Account",
+                fields={
+                    "Name": "Example Account",
+                },
+            )
+        )
+        ```
         """
         return self._register(CreateRecordRestApiRequest(record))
 
@@ -34,8 +85,28 @@ class UnitOfWork:
         """
         Register a record update for the `UnitOfWork`.
 
+        The given `Record` must contain an `Id` field.
+
         Returns a `ReferenceId` that can be used to refer to the updated record in subsequent operations in this
         `UnitOfWork`.
+
+        For example:
+
+        ```python
+        from salesforce_functions import Record, UnitOfWork
+
+        unit_of_work = UnitOfWork()
+
+        reference_id = unit_of_work.register_update(
+            Record(
+                type="Account",
+                fields={
+                    "Id": "001B000001Lp1FxIAJ",
+                    "Name": "New Name",
+                },
+            )
+        )
+        ```
         """
         return self._register(UpdateRecordRestApiRequest(record))
 
@@ -43,8 +114,18 @@ class UnitOfWork:
         """
         Register a deletion of an existing record of the given type and id.
 
-        Returns a `ReferenceId` that can be used to refer to the updated record in subsequent operations in this
+        Returns a `ReferenceId` that can be used to refer to the deleted record in subsequent operations in this
         `UnitOfWork`.
+
+        For example:
+
+        ```python
+        from salesforce_functions import UnitOfWork
+
+        unit_of_work = UnitOfWork()
+
+        reference_id = unit_of_work.register_delete("Account", "001B000001Lp1FxIAJ")
+        ```
         """
         return self._register(DeleteRecordRestApiRequest(object_type, record_id))
 

@@ -28,7 +28,15 @@ class DataAPI:
     """
     Data API client to interact with data in a Salesforce org.
 
-    A preconfigured instance of this client is provided at `Context.org.data_api`.
+    A preconfigured instance of this client is provided at `context.org.data_api`.
+
+    For example:
+
+    ```python
+    async def function(event: InvocationEvent[Any], context: Context):
+        result = await context.org.data_api.query("SELECT Id, Name FROM Account")
+        return result.records
+    ```
     """
 
     def __init__(
@@ -46,13 +54,42 @@ class DataAPI:
         self.access_token = access_token
 
     async def query(self, soql: str) -> RecordQueryResult:
-        """Query for records using the given SOQL string."""
+        """
+        Query for records using the given SOQL string.
+
+        For example:
+
+        ```python
+        result = await context.org.data_api.query("SELECT Id, Name FROM Account")
+
+        for record in result.records:
+            # ...
+        ```
+
+        If the returned `RecordQueryResult`'s `done` attribute is `False`, then it indicates that
+        there are more records to be returned. To retrieve these, use `DataAPI.query_more()`.
+
+        For more information, see the [Query REST API documentation](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_query.htm).
+        """  # noqa: E501 pylint: disable=line-too-long
         return await self._execute(
             QueryRecordsRestApiRequest(soql, self._download_file)
         )
 
     async def query_more(self, result: RecordQueryResult) -> RecordQueryResult:
-        """Query for more records, based on the given `RecordQueryResult`."""
+        """
+        Query for more records, based on the given `RecordQueryResult`.
+
+        For example:
+
+        ```python
+        result = await context.org.data_api.query("SELECT Id, Name FROM Account")
+
+        if not result.done:
+            query_more_result = await context.org.data_api.query_more(result)
+        ```
+
+        For more information, see the [Query More Results REST API documentation](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_query_more_results.htm).
+        """  # noqa: E501 pylint: disable=line-too-long
         if result.next_records_url is None:
             return RecordQueryResult(
                 done=True,
@@ -66,19 +103,64 @@ class DataAPI:
         )
 
     async def create(self, record: Record) -> str:
-        """Create a new record based on the given `Record` object."""
+        """
+        Create a new record based on the given `Record` object.
+
+        Returns the ID of the new record.
+
+        For example:
+
+        ```python
+        from salesforce_functions import Record
+
+        record_id = await context.org.data_api.create(
+            Record(
+                type="Account",
+                fields={
+                    "Name": "Example Account",
+                },
+            )
+        )
+        ```
+        """
         return await self._execute(CreateRecordRestApiRequest(record))
 
     async def update(self, record: Record) -> str:
         """
         Update an existing record based on the given `Record` object.
 
-        The given `Record` must contain an `Id` field.
+        The given `Record` must contain an `Id` field. Returns the ID of the record that was updated.
+
+        For example:
+
+        ```python
+        from salesforce_functions import Record
+
+        await context.org.data_api.update(
+            Record(
+                type="Account",
+                fields={
+                    "Id": "001B000001Lp1FxIAJ",
+                    "Name": "New Name",
+                },
+            )
+        )
+        ```
         """
         return await self._execute(UpdateRecordRestApiRequest(record))
 
     async def delete(self, object_type: str, record_id: str) -> str:
-        """Delete an existing record of the given type and id."""
+        """
+        Delete an existing record of the given type and id.
+
+        Returns the ID of the record that was deleted.
+
+        For example:
+
+        ```python
+        await data_api.delete("Account", "001B000001Lp1FxIAJ")
+        ```
+        """
         return await self._execute(DeleteRecordRestApiRequest(object_type, record_id))
 
     async def commit_unit_of_work(
@@ -87,9 +169,32 @@ class DataAPI:
         """
         Commit a `UnitOfWork`, executing all operations registered with it.
 
-        If any of these operations fail, the whole unit is rolled back. To examine results for a single operation,
-        inspect the returned dict (which is keyed with `ReferenceId` objects returned from the `register*` functions on
-        `UnitOfWork`).
+        If any of these operations fail, the whole unit is rolled back. To examine results for a
+        single operation, inspect the returned dict (which is keyed with `ReferenceId` objects
+        returned from the `register*` functions on `UnitOfWork`).
+
+        For example:
+
+        ```python
+        from salesforce_functions import UnitOfWork
+
+        # Create a unit of work, against which multiple operations can be registered.
+        unit_of_work = UnitOfWork()
+
+        first_reference_id = unit_of_work.register_create(
+            # ...
+        )
+        second_reference_id = unit_of_work.register_create(
+            # ...
+        )
+
+        # Commit the unit of work, executing all of the operations registered above.
+        result = await context.org.data_api.commit_unit_of_work(unit_of_work)
+
+        # The result of each operation.
+        first_record_id = result[first_create_reference_id]
+        second_record_id = result[second_create_reference_id]
+        ```
         """
         return await self._execute(
             CompositeGraphRestApiRequest(

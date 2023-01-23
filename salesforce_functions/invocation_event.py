@@ -19,7 +19,7 @@ class InvocationEvent(Generic[T]):
     explicit type in the type definition that represents the data payload the function
     expects to receive.
 
-    For example, if your function needs to accept JSON input like:
+    For example, if your function must accept JSON input like:
 
     ```json
     {
@@ -28,7 +28,7 @@ class InvocationEvent(Generic[T]):
     }
     ```
 
-    You might wish to use the following Python type annotations:
+    You can use the following Python type annotations:
 
     ```python
     EventPayloadType = dict[str, Any]
@@ -41,15 +41,25 @@ class InvocationEvent(Generic[T]):
     """
 
     id: str
-    """The unique identifier for this execution of the function."""
+    """
+    The unique identifier for this execution of the function.
+
+    For example: `00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179`
+    """
     type: str
-    """The type of this invocation event."""
+    """
+    The type of this invocation event.
+
+    For example: `com.salesforce.function.invoke.sync`
+    """
     source: str
     """
     A URI which identifies the context in which an event happened.
 
     Often this will include information such as the type of the event source, the
-    organization publishing the event or the process that produced the event.
+    org publishing the event or the process that produced the event.
+
+    For example: `urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7`
     """
     data: T
     """
