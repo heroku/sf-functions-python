@@ -95,6 +95,7 @@ uses git tracked changes to figure out what to deploy.  Run the following comman
 
 ```sh
 git init
+```
 
 Commit your changes locally for deployment. 
 > It is not a requirement to push your code to GitHub or any other code hosting site but can be useful for [sharing and maintaining functions code](https://developer.salesforce.com/docs/platform/functions/guide/dev-alm-workflow.html?q=github#maintain-and-share-function-source-code). 
