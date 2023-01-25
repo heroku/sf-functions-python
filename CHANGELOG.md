@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Add example code snippets and attribute values to the docstrings for public APIs.
+- Add a `testing` module, containing `mock_event` and `mock_context` functions for simplifying unit testing of Python functions.
 
 ## [0.3.0] - 2023-01-17
 
