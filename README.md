@@ -58,7 +58,7 @@ Check your version of the Salesforce CLI with `sf --version`. The installed vers
 Create a DX project in the directory you want your Salesforce Functions project to be located. 
 
 ```sh
-sf generate project --name PythonFunctionsAlpha
+sf generate project --name PythonFunctionsBeta
 ```
 
 Some of the following commands run from within the SFDX project directory. 
@@ -66,7 +66,7 @@ Some of the following commands run from within the SFDX project directory.
 Navigate to your SFDX directory:
 
 ```sh
-cd PythonFunctionsAlpha
+cd PythonFunctionsBeta
 ```
 
 
@@ -309,7 +309,7 @@ Open `force-app/main/default/classes/ApexTrigger.cls` and replace it's contents 
 public with sharing class ApexTrigger {
     public static void runFunction() {
         System.debug('Running hellopython');
-        functions.Function fn = functions.Function.get('PythonFunctionsAlpha.hellopython');
+        functions.Function fn = functions.Function.get('PythonFunctionsBeta.hellopython');
         functions.FunctionInvocation invocation = fn.invoke('{}');
         System.debug('Response: ' + invocation.getResponse());
     }
@@ -355,7 +355,7 @@ You should see a view like the one below:
 
 ```
 System.CalloutException: Error during Salesforce Functions Sync Invocation. Ensure that 
-function 'PythonFunctionsAlpha.hellopython' is deployed and its status is 
+function 'PythonFunctionsBeta.hellopython' is deployed and its status is 
 available ('OK', 'up'). If issue persists, contact Salesforce Support.
 ```
 
