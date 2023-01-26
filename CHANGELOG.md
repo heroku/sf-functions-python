@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- The `testing.mock_event` function now generates a unique event ID each time it is called.
 
 ## [0.4.0] - 2023-01-25
 
