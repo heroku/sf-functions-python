@@ -48,7 +48,7 @@ T = TypeVar("T")
 def mock_event(
     *,
     data: T,
-    id: str = str(uuid4()),  # pylint: disable=redefined-builtin
+    id: str | None = None,  # pylint: disable=redefined-builtin
     type: str = "com.salesforce.function.invoke.sync",  # pylint: disable=redefined-builtin
     source: str = "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
     time: datetime = datetime.today(),
@@ -67,7 +67,7 @@ def mock_event(
     ```
     """
     return InvocationEvent(
-        id=id,
+        id=id if id is not None else str(uuid4()),
         type=type,
         source=source,
         data=data,
