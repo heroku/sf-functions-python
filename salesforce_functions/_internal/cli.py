@@ -11,7 +11,7 @@ from .config import ConfigError, load_config
 from .function_loader import LoadFunctionError, load_function
 
 PROGRAM_NAME = "sf-functions-python"
-ASGI_APP_IMPORT_STRING = "salesforce_functions._internal.app:app"
+ASGI_APP_IMPORT_STRING = "salesforce_functions._internal.app:asgi_app"
 
 
 def main(args: list[str] | None = None) -> int:

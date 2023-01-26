@@ -7,7 +7,7 @@ import orjson
 from httpx import Response
 from starlette.testclient import TestClient
 
-from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, app
+from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, asgi_app
 
 WIREMOCK_SERVER_URL = "http://localhost:12345"
 
@@ -111,7 +111,9 @@ def invoke_function(
         headers = generate_cloud_event_headers()
 
     with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: fixture_path}):
-        with TestClient(app, raise_server_exceptions=raise_server_exceptions) as client:
+        with TestClient(
+            asgi_app, raise_server_exceptions=raise_server_exceptions
+        ) as client:
             response = client.post("/", headers=headers, json=json, content=content)
 
     return response

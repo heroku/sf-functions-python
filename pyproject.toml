@@ -104,8 +104,6 @@ disable = [
     "missing-module-docstring",
     # `no-member` has false positives with orjson
     "no-member",
-    "redefined-outer-name",
-    "too-many-instance-attributes",
 ]
 enable = [
     "useless-suppression",

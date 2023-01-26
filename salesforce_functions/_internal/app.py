@@ -194,7 +194,7 @@ async def _lifespan(app: Starlette) -> AsyncGenerator[None, None]:
 
 
 # The ASGI app that will be run by uvicorn.
-app = Starlette(
+asgi_app = Starlette(
     exception_handlers={Exception: _handle_internal_error},
     lifespan=_lifespan,
     routes=[

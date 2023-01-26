@@ -100,7 +100,7 @@ class SalesforceFunctionContext:
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
-class SalesforceFunctionsCloudEvent:
+class SalesforceFunctionsCloudEvent:  # pylint: disable=too-many-instance-attributes
     id: str
     source: str
     spec_version: str
