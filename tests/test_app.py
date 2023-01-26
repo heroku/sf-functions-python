@@ -9,7 +9,7 @@ import pytest
 from pytest import CaptureFixture
 from starlette.testclient import TestClient
 
-from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, app
+from salesforce_functions._internal.app import PROJECT_PATH_ENV_VAR, asgi_app
 
 from .utils import (
     WIREMOCK_SERVER_URL,
@@ -413,7 +413,7 @@ level=error msg="{expected_message}"
 
 def test_nonexistent_path() -> None:
     with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
-        with TestClient(app) as client:
+        with TestClient(asgi_app) as client:
             response = client.post("/nonexistent")
 
     assert response.status_code == 404
@@ -421,7 +421,7 @@ def test_nonexistent_path() -> None:
 
 def test_unsupported_http_method_get() -> None:
     with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
-        with TestClient(app) as client:
+        with TestClient(asgi_app) as client:
             response = client.get("/")
 
     assert response.status_code == 405
@@ -429,7 +429,7 @@ def test_unsupported_http_method_get() -> None:
 
 def test_unsupported_http_method_delete() -> None:
     with patch.dict(os.environ, {PROJECT_PATH_ENV_VAR: "tests/fixtures/basic"}):
-        with TestClient(app) as client:
+        with TestClient(asgi_app) as client:
             response = client.delete("/")
 
     assert response.status_code == 405
