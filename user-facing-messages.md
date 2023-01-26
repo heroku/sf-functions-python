@@ -1,6 +1,59 @@
-# Python Functions user-facing success/error messages
+# Python Functions user-facing messages
 
-## Valid/working function
+## CLI help text
+
+Note: End users mostly won't use the sf-functions-python CLI directly, since they will
+instead use the sf CLI which wraps it - however, I'm including these for completeness.
+
+### sf-functions-python --help
+
+```term
+usage: sf-functions-python [-h] {check,serve,version} ...
+
+Salesforce Functions Python Runtime
+
+options:
+  -h, --help            show this help message and exit
+
+subcommands:
+  {check,serve,version}
+    check               Checks that a function project is configured correctly
+    serve               Serves a function project via HTTP
+    version             Prints the version of the Python Functions Runtime
+```
+
+### sf-functions-python check --help
+
+```term
+usage: sf-functions-python check [-h] <project-path>
+
+positional arguments:
+  <project-path>  The directory that contains the function
+
+options:
+  -h, --help      show this help message and exit
+```
+
+### sf-functions-python serve --help
+
+```term
+usage: sf-functions-python serve [-h] [--host HOST] [-p PORT] [-w WORKERS]
+                                 <project-path>
+
+positional arguments:
+  <project-path>        The directory that contains the function
+
+options:
+  -h, --help            show this help message and exit
+  --host HOST           The host on which the web server should bind (default:
+                        localhost)
+  -p PORT, --port PORT  The port on which the web server should listen
+                        (default: 8080)
+  -w WORKERS, --workers WORKERS
+                        The number of worker processes (default: 1)
+```
+
+## Checking/running a valid function
 
 In the context of the buildpack self-check:
 
@@ -18,7 +71,7 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://localhost:8080 (Press CTRL+C to quit)
 ```
 
-## Functions that fail the self-check
+## Checking/running functions that fail the self-check
 
 Note: The same base error message is used for both the self-check and the start command, however,
 the prefix is different ('Function failed validation:' vs 'Unable to load function: ' etc).

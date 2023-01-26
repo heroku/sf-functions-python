@@ -5,9 +5,28 @@ set -euo pipefail
 export PYTHONUNBUFFERED=1
 server_log="${TMPDIR}/runtime_server_log.txt"
 
-echo "# Python Functions user-facing success/error messages"
+echo "# Python Functions user-facing messages"
 
-echo -e "\n## Valid/working function"
+echo -e "\n## CLI help text"
+
+echo -e "\nNote: End users mostly won't use the sf-functions-python CLI directly, since they will"
+echo "instead use the sf CLI which wraps it - however, I'm including these for completeness."
+
+cli_args=(
+  "--help"
+  "check --help"
+  "serve --help"
+)
+
+for arg in "${cli_args[@]}"; do
+  command="sf-functions-python ${arg}"
+  echo -e "\n### ${command}\n"
+  echo '```term'
+  ${command} 2>&1
+  echo '```'
+done
+
+echo -e "\n## Checking/running a valid function"
 
 echo -e "\nIn the context of the buildpack self-check:\n"
 echo '```term'
@@ -23,7 +42,7 @@ echo '```'
 kill $!
 rm "${server_log}"
 
-echo -e "\n## Functions that fail the self-check"
+echo -e "\n## Checking/running functions that fail the self-check"
 
 echo -e "\nNote: The same base error message is used for both the self-check and the start command, however,"
 echo -e "the prefix is different ('Function failed validation:' vs 'Unable to load function: ' etc)."
