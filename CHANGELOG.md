@@ -7,19 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
 - The `testing.mock_event` function now generates a unique event ID each time it is called.
 
 ## [0.4.0] - 2023-01-25
 
-- Add example code snippets and attribute values to the docstrings for public APIs.
-- Add a `testing` module, containing `mock_event` and `mock_context` functions for simplifying unit testing of Python functions.
+### Added
+
+- Added a `testing` module, containing `mock_event` and `mock_context` functions for simplifying unit testing of Python functions.
+- Added example code snippets and attribute values to the docstrings for public APIs.
 
 ## [0.3.0] - 2023-01-17
+
+### Added
+
+- Invocation metadata is now set on the function response via the `x-extra-info` header.
+
+### Changed
 
 - All publicly exported `dataclass`es (such as `Context`, `InvocationEvent` and `Record`) now only accept their fields being passed as keyword arguments, rather than as positional arguments.
 - If an unhandled internal runtime error occurs, the log output now includes the full stack trace,
   and the function response's HTTP status code is now `503` rather than `500`.
-- Invocation metadata is now set on the function response via the `x-extra-info` header.
 - The docstrings for several public types and APIs have been improved.
 - The minimum version of the dependencies `orjson`, `starlette` and `structlog` have been raised.
 
