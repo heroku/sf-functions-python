@@ -81,7 +81,7 @@ the prefix is different ('Function failed validation:' vs 'Unable to load functi
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml.
+Function failed validation: A function named 'function' was not found in main.py.
 ```
 
 In the context of the CLI start command:
@@ -90,7 +90,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81710]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml.
+ERROR:    RuntimeError: Unable to load function: A function named 'function' was not found in main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -119,7 +119,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml.
+Function failed validation: A function named 'function' was not found in main.py.
 ```
 
 In the context of the CLI start command:
@@ -128,7 +128,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81714]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml.
+ERROR:    RuntimeError: Unable to load function: A function named 'function' was not found in main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -138,7 +138,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml.
+Function failed validation: The function named 'function' in main.py must be an async function. Change the function definition from 'def function' to 'async def function'.
 ```
 
 In the context of the CLI start command:
@@ -147,7 +147,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81716]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml.
+ERROR:    RuntimeError: Unable to load function: The function named 'function' in main.py must be an async function. Change the function definition from 'def function' to 'async def function'.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -157,7 +157,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml.
+Function failed validation: The function named 'function' in main.py has the wrong number of parameters (expected 2 but found 3).
 ```
 
 In the context of the CLI start command:
@@ -166,7 +166,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81718]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml.
+ERROR:    RuntimeError: Unable to load function: The function named 'function' in main.py has the wrong number of parameters (expected 2 but found 3).
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -176,7 +176,20 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml.
+Function failed validation: Couldn't import main.py:
+
+Traceback (most recent call last):
+  File "/Users/emorley/src/sf-functions-python/salesforce_functions/_internal/function_loader.py", line 57, in load_function
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/main.py", line 2
+    syntax error!
+           ^^^^^
+SyntaxError: invalid syntax
+
 ```
 
 In the context of the CLI start command:
@@ -185,7 +198,20 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81722]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml.
+ERROR:    RuntimeError: Unable to load function: Couldn't import main.py:
+
+Traceback (most recent call last):
+  File "/Users/emorley/src/sf-functions-python/salesforce_functions/_internal/function_loader.py", line 57, in load_function
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/main.py", line 2
+    syntax error!
+           ^^^^^
+SyntaxError: invalid syntax
+
 
 ERROR:    Application startup failed. Exiting.
 ```
