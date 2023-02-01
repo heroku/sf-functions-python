@@ -83,7 +83,7 @@ $"""
 
 def test_invalid_function_missing_function() -> None:
     fixture = Path("tests/fixtures/invalid_missing_function")
-    expected_message = r"A function named 'function' was not found in main\.py\.$"
+    expected_message = r"Didn't find a function named 'function' in main\.py\.$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -91,7 +91,7 @@ def test_invalid_function_missing_function() -> None:
 
 def test_invalid_function_not_a_function() -> None:
     fixture = Path("tests/fixtures/invalid_not_a_function")
-    expected_message = r"A function named 'function' was not found in main\.py\.$"
+    expected_message = r"Didn't find a function named 'function' in main\.py\.$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)

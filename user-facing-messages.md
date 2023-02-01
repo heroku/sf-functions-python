@@ -81,7 +81,7 @@ the prefix is different ('Function failed validation:' vs 'Unable to load functi
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A function named 'function' was not found in main.py.
+Function failed validation: Didn't find a function named 'function' in main.py.
 ```
 
 In the context of the CLI start command:
@@ -90,7 +90,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81710]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A function named 'function' was not found in main.py.
+ERROR:    RuntimeError: Unable to load function: Didn't find a function named 'function' in main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -119,7 +119,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A function named 'function' was not found in main.py.
+Function failed validation: Didn't find a function named 'function' in main.py.
 ```
 
 In the context of the CLI start command:
@@ -128,7 +128,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81714]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A function named 'function' was not found in main.py.
+ERROR:    RuntimeError: Unable to load function: Didn't find a function named 'function' in main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```

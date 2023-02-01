@@ -64,7 +64,7 @@ def load_function(project_path: Path) -> Function:
 
     if function is None or not inspect.isfunction(function):
         raise LoadFunctionError(
-            f"A function named '{FUNCTION_NAME}' was not found in {module_filename}."
+            f"Didn't find a function named '{FUNCTION_NAME}' in {module_filename}."
         )
 
     if not inspect.iscoroutinefunction(function):
