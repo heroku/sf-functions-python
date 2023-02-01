@@ -247,25 +247,6 @@ ERROR:    RuntimeError: Unable to load function: Salesforce REST API version '52
 ERROR:    Application startup failed. Exiting.
 ```
 
-### tests/fixtures/project_toml_api_version_triple_digits
-
-In the context of the production deploy self-check:
-
-```term
-Function failed validation: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py.
-```
-
-In the context of the CLI start command:
-
-```term
-Starting sf-functions-python v0.4.0 in single process mode.
-INFO:     Started server process [81730]
-INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py.
-
-ERROR:    Application startup failed. Exiting.
-```
-
 ### tests/fixtures/project_toml_api_version_wrong_type
 
 In the context of the production deploy self-check:

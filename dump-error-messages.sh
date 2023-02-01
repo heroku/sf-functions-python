@@ -57,7 +57,6 @@ functions_that_fail_self_check=(
   "tests/fixtures/project_toml_api_version_invalid"
   "tests/fixtures/project_toml_api_version_missing"
   "tests/fixtures/project_toml_api_version_too_old"
-  "tests/fixtures/project_toml_api_version_triple_digits"
   "tests/fixtures/project_toml_api_version_wrong_type"
   "tests/fixtures/project_toml_file_missing"
   "tests/fixtures/project_toml_invalid_toml"
