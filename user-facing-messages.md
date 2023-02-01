@@ -45,10 +45,10 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --host HOST           The host on which the web server should bind (default:
+  --host HOST           The host on which the web server binds (default:
                         localhost)
-  -p PORT, --port PORT  The port on which the web server should listen
-                        (default: 8080)
+  -p PORT, --port PORT  The port on which the web server listens (default:
+                        8080)
   -w WORKERS, --workers WORKERS
                         The number of worker processes (default: 1)
 ```
@@ -58,7 +58,7 @@ options:
 In the context of the buildpack self-check:
 
 ```term
-Function passed validation
+Function passed validation.
 ```
 
 In the context of the CLI start command:
@@ -81,7 +81,7 @@ the prefix is different ('Function failed validation:' vs 'Unable to load functi
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -90,7 +90,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81710]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_function/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -100,7 +100,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A main.py file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_main_py/main.py
+Function failed validation: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_main_py/main.py.
 ```
 
 In the context of the CLI start command:
@@ -109,7 +109,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81712]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A main.py file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_main_py/main.py
+ERROR:    RuntimeError: Unable to load function: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_missing_main_py/main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -119,7 +119,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -128,7 +128,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81714]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_a_function/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -138,7 +138,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -147,7 +147,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81716]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_not_async/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -157,7 +157,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -166,7 +166,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81718]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_number_of_args/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -176,7 +176,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -185,7 +185,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81722]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/invalid_syntax_error/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -195,7 +195,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: '55' is not a valid Salesforce REST API version. Update 'salesforce-api-version' in project.toml to a version of form 'X.Y'.
+Function failed validation: '55' isn't a valid Salesforce REST API version. Update the 'salesforce-api-version' key in project.toml to a version that uses the form 'X.Y', such as '56.0'.
 ```
 
 In the context of the CLI start command:
@@ -204,7 +204,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81724]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: '55' is not a valid Salesforce REST API version. Update 'salesforce-api-version' in project.toml to a version of form 'X.Y'.
+ERROR:    RuntimeError: Unable to load function: '55' isn't a valid Salesforce REST API version. Update the 'salesforce-api-version' key in project.toml to a version that uses the form 'X.Y', such as '56.0'.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -214,7 +214,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: project.toml is missing the required 'com.salesforce.salesforce-api-version' key.
+Function failed validation: The project.toml file is missing the required 'com.salesforce.salesforce-api-version' key.
 ```
 
 In the context of the CLI start command:
@@ -223,7 +223,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81726]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: project.toml is missing the required 'com.salesforce.salesforce-api-version' key.
+ERROR:    RuntimeError: Unable to load function: The project.toml file is missing the required 'com.salesforce.salesforce-api-version' key.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -233,7 +233,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Salesforce REST API version '52.1' is not supported. Update 'salesforce-api-version' in project.toml to '53.0' or newer.
+Function failed validation: Salesforce REST API version '52.1' isn't supported. Update the 'salesforce-api-version' key in project.toml to '53.0' or later.
 ```
 
 In the context of the CLI start command:
@@ -242,7 +242,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81728]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Salesforce REST API version '52.1' is not supported. Update 'salesforce-api-version' in project.toml to '53.0' or newer.
+ERROR:    RuntimeError: Unable to load function: Salesforce REST API version '52.1' isn't supported. Update the 'salesforce-api-version' key in project.toml to '53.0' or later.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -252,7 +252,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A main.py file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py
+Function failed validation: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py.
 ```
 
 In the context of the CLI start command:
@@ -261,7 +261,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81730]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A main.py file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py
+ERROR:    RuntimeError: Unable to load function: Didn't find a main.py file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_api_version_triple_digits/main.py.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -290,7 +290,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_file_missing/project.toml
+Function failed validation: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_file_missing/project.toml.
 ```
 
 In the context of the CLI start command:
@@ -299,7 +299,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81734]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_file_missing/project.toml
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at /Users/emorley/src/sf-functions-python/tests/fixtures/project_toml_file_missing/project.toml.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -309,7 +309,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: project.toml is not valid TOML: Expected '=' after a key in a key/value pair (at line 1, column 4)
+Function failed validation: The project.toml file isn't valid TOML: Expected '=' after a key in a key/value pair (at line 1, column 4)
 ```
 
 In the context of the CLI start command:
@@ -318,7 +318,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81736]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: project.toml is not valid TOML: Expected '=' after a key in a key/value pair (at line 1, column 4)
+ERROR:    RuntimeError: Unable to load function: The project.toml file isn't valid TOML: Expected '=' after a key in a key/value pair (at line 1, column 4)
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -328,7 +328,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: Could not read project.toml: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte
+Function failed validation: Couldn't read project.toml: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte
 ```
 
 In the context of the CLI start command:
@@ -337,7 +337,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81738]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: Could not read project.toml: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte
+ERROR:    RuntimeError: Unable to load function: Couldn't read project.toml: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 0: invalid start byte
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -347,7 +347,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: project.toml is missing the required '[com.salesforce]' table.
+Function failed validation: The project.toml file is missing the required '[com.salesforce]' table.
 ```
 
 In the context of the CLI start command:
@@ -356,7 +356,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81740]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: project.toml is missing the required '[com.salesforce]' table.
+ERROR:    RuntimeError: Unable to load function: The project.toml file is missing the required '[com.salesforce]' table.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -366,7 +366,7 @@ ERROR:    Application startup failed. Exiting.
 In the context of the production deploy self-check:
 
 ```term
-Function failed validation: project.toml is missing the required '[com.salesforce]' table.
+Function failed validation: The project.toml file is missing the required '[com.salesforce]' table.
 ```
 
 In the context of the CLI start command:
@@ -375,7 +375,7 @@ In the context of the CLI start command:
 Starting sf-functions-python v0.4.0 in single process mode.
 INFO:     Started server process [81742]
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: project.toml is missing the required '[com.salesforce]' table.
+ERROR:    RuntimeError: Unable to load function: The project.toml file is missing the required '[com.salesforce]' table.
 
 ERROR:    Application startup failed. Exiting.
 ```
@@ -402,7 +402,7 @@ Traceback (most recent call last):
     return 1 / 0
            ~~^~~
 ZeroDivisionError: division by zero
-invocationId=00DJS0000000123ABC-fa35b79dc4047411826d3c52071066b9 level=error msg="Exception occurred whilst executing function: ZeroDivisionError: division by zero"
+invocationId=00DJS0000000123ABC-11ae4dba887048af5afc4027b85b076d level=error msg="Exception occurred while executing function: ZeroDivisionError: division by zero"
 ```
 
 ### tests/fixtures/return_value_not_serializable
@@ -415,7 +415,7 @@ INFO:     Started server process [81754]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://localhost:8080 (Press CTRL+C to quit)
-invocationId=00DJS0000000123ABC-0baf07e3d0f724a9b944165a86e51f89 level=error msg="Function return value cannot be serialized: TypeError: Type is not JSON serializable: set"
+invocationId=00DJS0000000123ABC-41e01168ebecb8164c20369465fa6769 level=error msg="Function return value can't be serialized: TypeError: Type is not JSON serializable: set"
 ```
 
 ### Invalid CloudEvent payload (should not be possible to trigger this in practice)
@@ -428,5 +428,5 @@ INFO:     Started server process [81767]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://localhost:8080 (Press CTRL+C to quit)
-level=error msg="Could not parse CloudEvent: Data payload is not valid JSON: invalid literal: line 1 column 1 (char 0)"
+level=error msg="Couldn't parse CloudEvent: Data payload isn't valid JSON: invalid literal: line 1 column 1 (char 0)"
 ```

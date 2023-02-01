@@ -41,7 +41,7 @@ def test_template_config() -> None:
 def test_project_toml_file_missing() -> None:
     fixture = Path("tests/fixtures/project_toml_file_missing")
     absolute_project_toml_path = fixture.resolve().joinpath("project.toml")
-    expected_message = rf"A project\.toml file was not found at: {re.escape(str(absolute_project_toml_path))}$"
+    expected_message = rf"Didn't find a project\.toml file at {re.escape(str(absolute_project_toml_path))}\.$"
 
     with pytest.raises(ConfigError, match=expected_message):
         load_config(fixture)
@@ -49,7 +49,7 @@ def test_project_toml_file_missing() -> None:
 
 def test_project_toml_invalid_unicode() -> None:
     fixture = Path("tests/fixtures/project_toml_invalid_unicode")
-    expected_message = r"Could not read project\.toml: UnicodeDecodeError: .+"
+    expected_message = r"Couldn't read project\.toml: UnicodeDecodeError: .+"
 
     with pytest.raises(ConfigError, match=expected_message):
         load_config(fixture)
@@ -57,7 +57,9 @@ def test_project_toml_invalid_unicode() -> None:
 
 def test_project_toml_invalid_toml() -> None:
     fixture = Path("tests/fixtures/project_toml_invalid_toml")
-    expected_message = r"project\.toml is not valid TOML: Expected '=' after a key .+"
+    expected_message = (
+        r"The project\.toml file isn't valid TOML: Expected '=' after a key .+"
+    )
 
     with pytest.raises(ConfigError, match=expected_message):
         load_config(fixture)
@@ -66,7 +68,7 @@ def test_project_toml_invalid_toml() -> None:
 def test_project_toml_salesforce_table_missing() -> None:
     fixture = Path("tests/fixtures/project_toml_salesforce_table_missing")
     expected_message = (
-        r"project\.toml is missing the required '\[com\.salesforce\]' table\.$"
+        r"The project\.toml file is missing the required '\[com\.salesforce\]' table\.$"
     )
 
     with pytest.raises(ConfigError, match=expected_message):
@@ -76,7 +78,7 @@ def test_project_toml_salesforce_table_missing() -> None:
 def test_project_toml_salesforce_table_wrong_type() -> None:
     fixture = Path("tests/fixtures/project_toml_salesforce_table_wrong_type")
     expected_message = (
-        r"project\.toml is missing the required '\[com\.salesforce\]' table\.$"
+        r"The project\.toml file is missing the required '\[com\.salesforce\]' table\.$"
     )
 
     with pytest.raises(ConfigError, match=expected_message):
@@ -85,7 +87,10 @@ def test_project_toml_salesforce_table_wrong_type() -> None:
 
 def test_project_toml_api_version_missing() -> None:
     fixture = Path("tests/fixtures/project_toml_api_version_missing")
-    expected_message = r"project\.toml is missing the required 'com\.salesforce\.salesforce-api-version' key\.$"
+    expected_message = (
+        r"The project\.toml file is missing the required"
+        r" 'com\.salesforce\.salesforce-api-version' key\.$"
+    )
 
     with pytest.raises(ConfigError, match=expected_message):
         load_config(fixture)
@@ -102,8 +107,8 @@ def test_project_toml_api_version_wrong_type() -> None:
 def test_project_toml_api_version_invalid() -> None:
     fixture = Path("tests/fixtures/project_toml_api_version_invalid")
     expected_message = (
-        r"'55' is not a valid Salesforce REST API version\."
-        r" Update 'salesforce-api-version' in project\.toml to a version of form 'X\.Y'\.$"
+        r"'55' isn't a valid Salesforce REST API version\. Update the 'salesforce-api-version'"
+        r" key in project\.toml to a version that uses the form 'X\.Y', such as '56.0'\.$"
     )
 
     with pytest.raises(ConfigError, match=expected_message):
@@ -113,8 +118,8 @@ def test_project_toml_api_version_invalid() -> None:
 def test_project_toml_api_version_too_old() -> None:
     fixture = Path("tests/fixtures/project_toml_api_version_too_old")
     expected_message = (
-        r"Salesforce REST API version '52\.1' is not supported\."
-        r" Update 'salesforce-api-version' in project\.toml to '53\.0' or newer\.$"
+        r"Salesforce REST API version '52\.1' isn't supported\."
+        r" Update the 'salesforce-api-version' key in project\.toml to '53\.0' or later\.$"
     )
 
     with pytest.raises(ConfigError, match=expected_message):

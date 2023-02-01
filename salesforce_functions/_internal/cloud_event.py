@@ -35,9 +35,9 @@ class SalesforceContext:
         try:
             data = _parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise CloudEventError(f"sfcontext is not correctly encoded: {e}") from e
+            raise CloudEventError(f"sfcontext isn't correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"sfcontext is not valid JSON: {e}") from e
+            raise CloudEventError(f"sfcontext isn't valid JSON: {e}") from e
 
         try:
             user_context = data["userContext"]
@@ -77,9 +77,9 @@ class SalesforceFunctionContext:
         try:
             data = _parse_base64_json(base64_json)
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise CloudEventError(f"sffncontext is not correctly encoded: {e}") from e
+            raise CloudEventError(f"sffncontext isn't correctly encoded: {e}") from e
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"sffncontext is not valid JSON: {e}") from e
+            raise CloudEventError(f"sffncontext isn't valid JSON: {e}") from e
 
         try:
             return cls(
@@ -127,7 +127,7 @@ class SalesforceFunctionsCloudEvent:  # pylint: disable=too-many-instance-attrib
         try:
             data = orjson.loads(body) if body else None
         except orjson.JSONDecodeError as e:
-            raise CloudEventError(f"Data payload is not valid JSON: {e}") from e
+            raise CloudEventError(f"Data payload isn't valid JSON: {e}") from e
 
         try:
             return cls(

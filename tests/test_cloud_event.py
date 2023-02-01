@@ -119,7 +119,7 @@ def test_invalid_content_type_unsupported() -> None:
 def test_invalid_body_not_json() -> None:
     headers = generate_cloud_event_headers()
     body = b"Not json"
-    expected_message = r"Data payload is not valid JSON: unexpected character: .+"
+    expected_message = r"Data payload isn't valid JSON: unexpected character: .+"
 
     with pytest.raises(CloudEventError, match=expected_message):
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), body)
@@ -163,7 +163,7 @@ def test_invalid_cloud_event_extension_not_base64(extension_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers[f"ce-{extension_name}"] = "Not base64"
     expected_message = (
-        rf"{extension_name} is not correctly encoded: Invalid base64-encoded string: .+"
+        rf"{extension_name} isn't correctly encoded: Invalid base64-encoded string: .+"
     )
 
     with pytest.raises(CloudEventError, match=expected_message):
@@ -174,7 +174,7 @@ def test_invalid_cloud_event_extension_not_base64(extension_name: str) -> None:
 def test_invalid_cloud_event_extension_not_json(extension_name: str) -> None:
     headers = generate_cloud_event_headers()
     headers[f"ce-{extension_name}"] = binascii.b2a_base64(b"Not json").decode("ascii")
-    expected_message = rf"{extension_name} is not valid JSON: unexpected character: .+"
+    expected_message = rf"{extension_name} isn't valid JSON: unexpected character: .+"
 
     with pytest.raises(CloudEventError, match=expected_message):
         SalesforceFunctionsCloudEvent.from_http(Headers(headers), b"")

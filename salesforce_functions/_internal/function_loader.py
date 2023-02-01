@@ -31,7 +31,7 @@ def load_function(project_path: Path) -> Function:
 
     if not module_path.is_file():
         raise LoadFunctionError(
-            f"A {module_filename} file was not found at: {module_path}"
+            f"Didn't find a {module_filename} file at {module_path}."
         )
 
     # `submodule_search_locations` is set to ensure relative imports work within the imported module.
@@ -57,7 +57,7 @@ def load_function(project_path: Path) -> Function:
         spec.loader.exec_module(module)
     except Exception as e:  # e.g.: SyntaxError, ImportError, NameError.
         raise LoadFunctionError(
-            f"Could not import {module_filename}:\n\n{traceback.format_exc()}"
+            f"Couldn't import {module_filename}:\n\n{traceback.format_exc()}"
         ) from e
 
     function = getattr(module, FUNCTION_NAME, None)

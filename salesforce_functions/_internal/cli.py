@@ -50,14 +50,14 @@ def main(args: list[str] | None = None) -> int:
     parser_serve.add_argument(
         "--host",
         default="localhost",
-        help="The host on which the web server should bind (default: %(default)s)",
+        help="The host on which the web server binds (default: %(default)s)",
     )
     parser_serve.add_argument(
         "-p",
         "--port",
         default=8080,
         type=int,
-        help="The port on which the web server should listen (default: %(default)s)",
+        help="The port on which the web server listens (default: %(default)s)",
     )
     parser_serve.add_argument(
         "-w",
@@ -101,7 +101,7 @@ def _check_function(project_path: Path) -> int:
         print(f"Function failed validation: {e}", file=sys.stderr)
         return 1
 
-    print("Function passed validation")
+    print("Function passed validation.")
     return 0
 
 
