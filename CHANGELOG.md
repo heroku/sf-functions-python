@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated the user-facing error and CLI messages to align with the style guidelines.
+
 ### Fixed
 
 - The `testing.mock_event` function now generates a unique event ID each time it is called.
