@@ -27,16 +27,16 @@ def load_config(project_path: Path) -> Config:
     project_toml_path = project_path.joinpath("project.toml").resolve()
 
     if not project_toml_path.is_file():
-        raise ConfigError(f"A project.toml file was not found at: {project_toml_path}")
+        raise ConfigError(f"Didn't find a project.toml file at {project_toml_path}.")
 
     try:
         with project_toml_path.open(mode="rb") as file:
             project_toml = tomllib.load(file)
     except tomllib.TOMLDecodeError as e:
-        raise ConfigError(f"project.toml is not valid TOML: {e}") from e
+        raise ConfigError(f"The project.toml file isn't valid TOML: {e}") from e
     except Exception as e:  # e.g.: OSError, UnicodeDecodeError.
         raise ConfigError(
-            f"Could not read project.toml: {e.__class__.__name__}: {e}"
+            f"Couldn't read project.toml: {e.__class__.__name__}: {e}"
         ) from e
 
     try:
@@ -44,12 +44,12 @@ def load_config(project_path: Path) -> Config:
         salesforce_api_version = salesforce_table.get("salesforce-api-version")
     except (AttributeError, KeyError, ValueError) as e:
         raise ConfigError(
-            "project.toml is missing the required '[com.salesforce]' table."
+            "The project.toml file is missing the required '[com.salesforce]' table."
         ) from e
 
     if salesforce_api_version is None:
         raise ConfigError(
-            "project.toml is missing the required 'com.salesforce.salesforce-api-version' key."
+            "The project.toml file is missing the required 'com.salesforce.salesforce-api-version' key."
         )
 
     if not isinstance(salesforce_api_version, str):
@@ -61,14 +61,14 @@ def load_config(project_path: Path) -> Config:
 
     if not match:
         raise ConfigError(
-            f"'{salesforce_api_version}' is not a valid Salesforce REST API version. "
-            "Update 'salesforce-api-version' in project.toml to a version of form 'X.Y'."
+            f"'{salesforce_api_version}' isn't a valid Salesforce REST API version. Update the 'salesforce-api-version'"
+            " key in project.toml to a version that uses the form 'X.Y', such as '56.0'."
         )
 
     if int(match.group("major_version")) < MINIMUM_SALESFORCE_API_MAJOR_VERSION:
         raise ConfigError(
-            f"Salesforce REST API version '{salesforce_api_version}' is not supported. Update"
-            f" 'salesforce-api-version' in project.toml to '{MINIMUM_SALESFORCE_API_MAJOR_VERSION}.0' or newer."
+            f"Salesforce REST API version '{salesforce_api_version}' isn't supported. Update the"
+            f" 'salesforce-api-version' key in project.toml to '{MINIMUM_SALESFORCE_API_MAJOR_VERSION}.0' or later."
         )
 
     return Config(salesforce_api_version=salesforce_api_version)

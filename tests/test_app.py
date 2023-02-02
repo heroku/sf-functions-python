@@ -182,7 +182,7 @@ def test_template_function() -> None:
 
 def test_invalid_config() -> None:
     expected_message = (
-        r"Unable to load function: A project.toml file was not found at: .+$"
+        r"Unable to load function: Didn't find a project.toml file at .+\.$"
     )
 
     try:
@@ -201,7 +201,7 @@ def test_invalid_config() -> None:
 
 
 def test_invalid_function() -> None:
-    expected_message = r"Unable to load function: A main.py file was not found at: .+$"
+    expected_message = r"Unable to load function: Didn't find a main.py file at .+\.$"
 
     try:
         with pytest.raises(RuntimeError, match=expected_message):
@@ -222,7 +222,7 @@ def test_cloud_event_headers_missing(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/basic", headers={})
 
     expected_message = (
-        "Could not parse CloudEvent: Content-Type must be 'application/json' not ''"
+        "Couldn't parse CloudEvent: Content-Type must be 'application/json' not ''"
     )
     assert response.status_code == 400
     assert response.headers.get("Content-Type") == "application/json"
@@ -254,7 +254,7 @@ def test_cloud_event_body_not_json(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/basic", content="Not json")
 
     expected_message = (
-        "Could not parse CloudEvent: Data payload is not valid JSON:"
+        "Couldn't parse CloudEvent: Data payload isn't valid JSON:"
         " unexpected character: line 1 column 1 (char 0)"
     )
     assert response.status_code == 400
@@ -272,7 +272,7 @@ def test_cloud_event_body_not_json(capsys: CaptureFixture[str]) -> None:
     assert re.fullmatch(
         r"""Traceback \(most recent call last\):
   .+
-salesforce_functions._internal.cloud_event.CloudEventError: Data payload is not valid JSON: .+
+salesforce_functions._internal.cloud_event.CloudEventError: Data payload isn't valid JSON: .+
 """,
         stack,
         flags=re.DOTALL,
@@ -291,7 +291,7 @@ def test_function_raises_exception_at_runtime(capsys: CaptureFixture[str]) -> No
 
     response = invoke_function("tests/fixtures/raises_exception_at_runtime")
 
-    expected_message = "Exception occurred whilst executing function: ZeroDivisionError: division by zero"
+    expected_message = "Exception occurred while executing function: ZeroDivisionError: division by zero"
     assert response.status_code == 500
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message
@@ -335,7 +335,7 @@ invocationId=00DJS0000000123ABC-d75b3b6ece5011dcabbed4-3c6f7179 level=error msg=
 def test_return_value_not_serializable(capsys: CaptureFixture[str]) -> None:
     response = invoke_function("tests/fixtures/return_value_not_serializable")
 
-    expected_message = "Function return value cannot be serialized: TypeError: Type is not JSON serializable: set"
+    expected_message = "Function return value can't be serialized: TypeError: Type is not JSON serializable: set"
     assert response.status_code == 500
     assert response.headers.get("Content-Type") == "application/json"
     assert response.json() == expected_message

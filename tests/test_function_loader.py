@@ -45,7 +45,7 @@ def test_invalid_function_nonexistent_directory() -> None:
     fixture = Path("this_directory_does_not_exist")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = (
-        rf"A main\.py file was not found at: {re.escape(str(absolute_function_path))}$"
+        rf"Didn't find a main\.py file at {re.escape(str(absolute_function_path))}\.$"
     )
 
     with pytest.raises(LoadFunctionError, match=expected_message):
@@ -56,7 +56,7 @@ def test_invalid_function_missing_module() -> None:
     fixture = Path("tests/fixtures/invalid_missing_main_py")
     absolute_function_path = fixture.resolve().joinpath("main.py")
     expected_message = (
-        rf"A main\.py file was not found at: {re.escape(str(absolute_function_path))}$"
+        rf"Didn't find a main\.py file at {re.escape(str(absolute_function_path))}\.$"
     )
 
     with pytest.raises(LoadFunctionError, match=expected_message):
@@ -70,7 +70,7 @@ def test_invalid_function_syntax_error() -> None:
     )
 
     fixture = Path("tests/fixtures/invalid_syntax_error")
-    expected_message = r"""Could not import main\.py:
+    expected_message = r"""Couldn't import main\.py:
 
 Traceback \(most recent call last\):
 (?s:.+)
@@ -83,7 +83,7 @@ $"""
 
 def test_invalid_function_missing_function() -> None:
     fixture = Path("tests/fixtures/invalid_missing_function")
-    expected_message = r"A function named 'function' was not found in main\.py\.$"
+    expected_message = r"Didn't find a function named 'function' in main\.py\.$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)
@@ -91,7 +91,7 @@ def test_invalid_function_missing_function() -> None:
 
 def test_invalid_function_not_a_function() -> None:
     fixture = Path("tests/fixtures/invalid_not_a_function")
-    expected_message = r"A function named 'function' was not found in main\.py\.$"
+    expected_message = r"Didn't find a function named 'function' in main\.py\.$"
 
     with pytest.raises(LoadFunctionError, match=expected_message):
         load_function(fixture)

@@ -91,7 +91,7 @@ def test_check_subcommand_valid_function(capsys: CaptureFixture[str]) -> None:
 
     output = capsys.readouterr()
     assert output.err == ""
-    assert output.out == "Function passed validation\n"
+    assert output.out == "Function passed validation.\n"
 
 
 def test_check_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
@@ -105,7 +105,7 @@ def test_check_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
     assert output.out == ""
     assert (
         output.err
-        == f"Function failed validation: A project.toml file was not found at: {project_toml_path}\n"
+        == f"Function failed validation: Didn't find a project.toml file at {project_toml_path}.\n"
     )
 
 
@@ -120,7 +120,7 @@ def test_check_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     assert output.out == ""
     assert (
         output.err
-        == f"Function failed validation: A main.py file was not found at: {main_py_path}\n"
+        == f"Function failed validation: Didn't find a main.py file at {main_py_path}.\n"
     )
 
 
@@ -142,10 +142,10 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --host HOST           The host on which the web server should bind (default:
+  --host HOST           The host on which the web server binds (default:
                         localhost)
-  -p PORT, --port PORT  The port on which the web server should listen
-                        (default: 8080)
+  -p PORT, --port PORT  The port on which the web server listens (default:
+                        8080)
   -w WORKERS, --workers WORKERS
                         The number of worker processes (default: 1)
 """
@@ -299,7 +299,7 @@ def test_serve_subcommand_invalid_config(capsys: CaptureFixture[str]) -> None:
     assert output.err.endswith(
         rf"""
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A project.toml file was not found at: {project_toml_path}
+ERROR:    RuntimeError: Unable to load function: Didn't find a project.toml file at {project_toml_path}.
 
 ERROR:    Application startup failed. Exiting.
 """
@@ -335,7 +335,7 @@ def test_serve_subcommand_invalid_function(capsys: CaptureFixture[str]) -> None:
     assert output.err.endswith(
         rf"""
 INFO:     Waiting for application startup.
-ERROR:    RuntimeError: Unable to load function: A main.py file was not found at: {main_py_path}
+ERROR:    RuntimeError: Unable to load function: Didn't find a main.py file at {main_py_path}.
 
 ERROR:    Application startup failed. Exiting.
 """

@@ -39,7 +39,7 @@ async def _handle_function_invocation(request: Request) -> Response:
     try:
         cloudevent = SalesforceFunctionsCloudEvent.from_http(request.headers, body)
     except CloudEventError as e:
-        message = f"Could not parse CloudEvent: {e}"
+        message = f"Couldn't parse CloudEvent: {e}"
         logger.error(message)
         return _make_response(message, _StatusCode.REQUEST_ERROR, exception=e)
 
@@ -79,7 +79,7 @@ async def _handle_function_invocation(request: Request) -> Response:
         function_result = await function(event, context)
     except Exception as e:  # pylint: disable=broad-except
         message = (
-            f"Exception occurred whilst executing function: {e.__class__.__name__}: {e}"
+            f"Exception occurred while executing function: {e.__class__.__name__}: {e}"
         )
         logger.exception(message)
         return _make_response(
@@ -101,7 +101,7 @@ async def _handle_function_invocation(request: Request) -> Response:
         )
     except orjson.JSONEncodeError as e:
         message = (
-            f"Function return value cannot be serialized: {e.__class__.__name__}: {e}"
+            f"Function return value can't be serialized: {e.__class__.__name__}: {e}"
         )
         logger.error(message)
         return _make_response(
