@@ -24,7 +24,7 @@ class SalesforceRestApiError(DataApiError):
 
     def __str__(self) -> str:
         errors_list = "\n---\n".join(str(error) for error in self.api_errors)
-        return f"The Salesforce REST API reported the following error(s):\n---\n{errors_list}"
+        return f"Salesforce REST API reported the following error(s):\n---\n{errors_list}"
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -53,7 +53,7 @@ class MissingFieldError(DataApiError):
 
 
 class ClientError(DataApiError):
-    """Raised when the API request failed due to a connection error, timeout or malformed HTTP response."""
+    """Raised when the API request failed due to a connection error, timeout, or malformed HTTP response."""
 
 
 class UnexpectedRestApiResponsePayload(DataApiError):

@@ -97,7 +97,7 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
             return str(json_body["id"])
 
         raise UnexpectedRestApiResponsePayload(
-            "The create record API response payload does not match the expected structure."
+            "The create record API response payload doesn't match the expected structure."
         )  # pragma: no cover
 
 
@@ -105,7 +105,7 @@ class UpdateRecordRestApiRequest(RestApiRequest[str]):
     def __init__(self, record: Record):
         if "Id" not in record.fields:
             raise MissingFieldError(
-                "The 'Id' field is required, but is not present in the given Record."
+                "The 'Id' field is required, but isn't present in the given Record."
             )
 
         self._record = record
@@ -225,7 +225,7 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
             return result
 
         raise UnexpectedRestApiResponsePayload(
-            "The composite graph API response payload does not match the expected structure."
+            "The composite graph API response payload doesn't match the expected structure."
         )  # pragma: no cover
 
 
@@ -239,7 +239,7 @@ async def _process_records_response(
         return await _parse_record_query_result(json_body, download_file_fn)
 
     raise UnexpectedRestApiResponsePayload(
-        "The API response payload does not match the expected structure."
+        "The API response payload doesn't match the expected structure."
     )  # pragma: no cover
 
 
@@ -321,5 +321,5 @@ def _parse_errors(json_errors: Json | None) -> list[InnerSalesforceRestApiError]
         ]
 
     raise UnexpectedRestApiResponsePayload(
-        "The API response payload does not match the expected structure."
+        "The API response payload doesn't match the expected structure."
     )  # pragma: no cover
