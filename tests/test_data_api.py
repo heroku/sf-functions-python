@@ -471,7 +471,7 @@ async def test_update_with_binary_data_from_bytearray() -> None:
 async def test_update_without_id_field() -> None:
     data_api = new_data_api()
     expected_message = (
-        r"The 'Id' field is required, but is not present in the given Record\.$"
+        r"The 'Id' field is required, but isn't present in the given Record\.$"
     )
 
     with pytest.raises(MissingFieldError, match=expected_message):
@@ -736,7 +736,7 @@ async def test_salesforce_rest_api_error_string_representation() -> None:
     )
     assert (
         str(single_api_error)
-        == """The Salesforce REST API reported the following error(s):
+        == """Salesforce REST API reported the following error(s):
 ---
 MALFORMED_QUERY error:
 unexpected token: SELEKT"""
@@ -766,7 +766,7 @@ unexpected token: SELEKT"""
     )
     assert (
         str(multiple_api_errors)
-        == """The Salesforce REST API reported the following error(s):
+        == """Salesforce REST API reported the following error(s):
 ---
 NOT_FOUND error:
 The requested resource does not exist
