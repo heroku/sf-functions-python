@@ -1,7 +1,7 @@
 from typing import Any, TypeVar
 
+import aiohttp
 import orjson
-from aiohttp import ClientSession, DummyCookieJar
 from aiohttp.payload import BytesPayload
 
 from ..__version__ import __version__
@@ -46,7 +46,7 @@ class DataAPI:
         org_domain_url: str,
         api_version: str,
         access_token: str,
-        session: ClientSession | None = None,
+        session: aiohttp.ClientSession | None = None,
     ) -> None:
         self._api_version = api_version
         self._org_domain_url = org_domain_url
@@ -209,7 +209,7 @@ class DataAPI:
         method: str = rest_api_request.http_method()
         body = rest_api_request.request_body()
 
-        session = self._shared_session or ClientSession()
+        session = self._shared_session or _create_session()
 
         try:
             response = await session.request(
@@ -255,11 +255,11 @@ class DataAPI:
         }
 
 
-def _create_session() -> ClientSession:
+def _create_session() -> aiohttp.ClientSession:
     # Disable cookie storage using `DummyCookieJar`, given that:
     # - The same session will be used by multiple invocation events.
     # - We don't need cookie support.
-    return ClientSession(cookie_jar=DummyCookieJar())
+    return aiohttp.ClientSession(cookie_jar=aiohttp.DummyCookieJar())
 
 
 def _json_serialize(data: Any) -> BytesPayload:
