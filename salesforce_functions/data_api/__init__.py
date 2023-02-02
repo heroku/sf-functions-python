@@ -28,7 +28,8 @@ class DataAPI:
     """
     Data API client to interact with data in a Salesforce org.
 
-    A preconfigured instance of this client is provided at `context.org.data_api`.
+    We provide a preconfigured instance of this client at `context.org.data_api`
+    to make it easier for you to query, insert, and update records.
 
     For example:
 
@@ -66,8 +67,8 @@ class DataAPI:
             # ...
         ```
 
-        If the returned `RecordQueryResult`'s `done` attribute is `False`, then it indicates that
-        there are more records to be returned. To retrieve these, use `DataAPI.query_more()`.
+        If the returned `RecordQueryResult`'s `done` attribute is `False`, there are more
+        records to be returned. To retrieve these, use `DataAPI.query_more()`.
 
         For more information, see the [Query REST API documentation](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_query.htm).
         """  # noqa: E501 pylint: disable=line-too-long
@@ -151,7 +152,7 @@ class DataAPI:
 
     async def delete(self, object_type: str, record_id: str) -> str:
         """
-        Delete an existing record of the given type and id.
+        Delete an existing record of the given Salesforce object type and ID.
 
         Returns the ID of the record that was deleted.
 
@@ -167,7 +168,7 @@ class DataAPI:
         self, unit_of_work: UnitOfWork
     ) -> dict[ReferenceId, str]:
         """
-        Commit a `UnitOfWork`, executing all operations registered with it.
+        Commit a `UnitOfWork`, which executes all operations registered with it.
 
         If any of these operations fail, the whole unit is rolled back. To examine results for a
         single operation, inspect the returned dict (which is keyed with `ReferenceId` objects

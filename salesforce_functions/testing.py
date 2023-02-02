@@ -1,7 +1,12 @@
 """
 Testing utilities for Python Salesforce Functions.
 
-An example Python function unit test:
+This example shows how to create a Python unit test to test your function. To mimic
+access to the Salesforce org, it first creates a mock `InvocationEvent` (with an empty
+data payload) and a mock `Context`. Next, it builds a mock query that returns a single
+record from the `Account` Salesforce object. Using the mock event and context, it
+executes the function and finally asserts that the result equals the `QueriedRecord`
+that you expect.
 
 ```python
 from unittest.mock import patch
@@ -95,8 +100,8 @@ def mock_context(
     result = await function(event, context)
     ```
 
-    If the function uses `context.org.data_api`, it will need patching separately,
-    inside the unit test (see the `testing` module overview for more information).
+    If the function uses `context.org.data_api`, it will need patching separately, inside
+    the unit test. See the example in the `testing` module overview for more information.
     """
     return Context(
         org=Org(
