@@ -1,21 +1,13 @@
 from dataclasses import dataclass
 
+# The order in `__all__` is the in which pdoc3 will display the classes in the docs.
 __all__ = [
-    "InnerSalesforceRestApiError",
     "DataApiError",
-    "MissingIdFieldError",
     "SalesforceRestApiError",
+    "InnerSalesforceRestApiError",
+    "MissingIdFieldError",
     "UnexpectedRestApiResponsePayload",
 ]
-
-
-@dataclass(frozen=True, kw_only=True, slots=True)
-class InnerSalesforceRestApiError:
-    """An error returned from the Salesforce REST API."""
-
-    message: str
-    error_code: str
-    fields: list[str]
 
 
 class DataApiError(Exception):
@@ -26,7 +18,24 @@ class DataApiError(Exception):
 class SalesforceRestApiError(DataApiError):
     """Raised when the Salesforce REST API signalled error(s)."""
 
-    api_errors: list[InnerSalesforceRestApiError]
+    api_errors: list["InnerSalesforceRestApiError"]
+    """A list of one or more errors returned from the Salesforce REST API."""
+
+
+@dataclass(frozen=True, kw_only=True, slots=True)
+class InnerSalesforceRestApiError:
+    """An error returned from the Salesforce REST API."""
+
+    message: str
+    """The description of this error."""
+    error_code: str
+    """The error code for this error."""
+    fields: list[str]
+    """
+    The field names where the error occurred.
+
+    This will be empty for errors that are not related to a specific field.
+    """
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
