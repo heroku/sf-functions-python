@@ -9,12 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `DataAPI` now raises the new `data_api.exceptions.ClientError` exception when an exception in
+  the underlying HTTP library occurs, rather than exposing that library's exceptions directly.
+- `MissingIdFieldError` has been renamed to `MissingFieldError` and the name of the missing
+  field is now exposed in the exception value.
 - Added missing class attribute docstrings to `SalesforceRestApiError`, `InnerSalesforceRestApiError` and `ReferenceId`.
 - Updated the docstrings for the public APIs to align with the style guidelines.
 - Updated the user-facing error and CLI messages to align with the style guidelines.
 
 ### Fixed
 
+- All `DataAPI` exceptions now have suitable string representations, making it easier to diagnose
+  errors seen in function logs.
 - The `testing.mock_event` function now generates a unique event ID each time it is called.
 
 ## [0.4.0] - 2023-01-25

@@ -5,7 +5,8 @@ __all__ = [
     "DataApiError",
     "SalesforceRestApiError",
     "InnerSalesforceRestApiError",
-    "MissingIdFieldError",
+    "MissingFieldError",
+    "ClientError",
     "UnexpectedRestApiResponsePayload",
 ]
 
@@ -20,6 +21,10 @@ class SalesforceRestApiError(DataApiError):
 
     api_errors: list["InnerSalesforceRestApiError"]
     """A list of one or more errors returned from Salesforce REST API."""
+
+    def __str__(self) -> str:
+        errors_list = "\n---\n".join(str(error) for error in self.api_errors)
+        return f"The Salesforce REST API reported the following error(s):\n---\n{errors_list}"
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -37,12 +42,19 @@ class InnerSalesforceRestApiError:
     This will be empty for errors that aren't related to a specific field.
     """
 
+    def __str__(self) -> str:
+        # The error message includes the field names, so `self.fields` is intentionally not
+        # included, as the string representation is for human not programmatic consumption.
+        return f"{self.error_code} error:\n{self.message}"
 
-@dataclass(frozen=True, kw_only=True, slots=True)
-class MissingIdFieldError(DataApiError):
-    """Raised when the given Record must contain an `Id` field, but none was found."""
+
+class MissingFieldError(DataApiError):
+    """Raised when the given `Record` must contain a field, but no such field was found."""
 
 
-@dataclass(frozen=True, kw_only=True, slots=True)
+class ClientError(DataApiError):
+    """Raised when the API request failed due to a connection error, timeout or malformed HTTP response."""
+
+
 class UnexpectedRestApiResponsePayload(DataApiError):
     """Raised when the Salesforce REST API returned an unexpected payload."""

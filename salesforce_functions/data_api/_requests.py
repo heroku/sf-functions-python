@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from .exceptions import (
     InnerSalesforceRestApiError,
-    MissingIdFieldError,
+    MissingFieldError,
     SalesforceRestApiError,
     UnexpectedRestApiResponsePayload,
 )
@@ -96,13 +96,17 @@ class CreateRecordRestApiRequest(RestApiRequest[str]):
         if isinstance(json_body, dict):
             return str(json_body["id"])
 
-        raise UnexpectedRestApiResponsePayload()  # pragma: no cover
+        raise UnexpectedRestApiResponsePayload(
+            "The create record API response payload does not match the expected structure."
+        )  # pragma: no cover
 
 
 class UpdateRecordRestApiRequest(RestApiRequest[str]):
     def __init__(self, record: Record):
         if "Id" not in record.fields:
-            raise MissingIdFieldError()
+            raise MissingFieldError(
+                "The 'Id' field is required, but is not present in the given Record."
+            )
 
         self._record = record
 
@@ -220,7 +224,9 @@ class CompositeGraphRestApiRequest(RestApiRequest[dict[ReferenceId, str]]):
 
             return result
 
-        raise UnexpectedRestApiResponsePayload()  # pragma: no cover
+        raise UnexpectedRestApiResponsePayload(
+            "The composite graph API response payload does not match the expected structure."
+        )  # pragma: no cover
 
 
 async def _process_records_response(
@@ -232,7 +238,9 @@ async def _process_records_response(
     if isinstance(json_body, dict):
         return await _parse_record_query_result(json_body, download_file_fn)
 
-    raise UnexpectedRestApiResponsePayload()  # pragma: no cover
+    raise UnexpectedRestApiResponsePayload(
+        "The API response payload does not match the expected structure."
+    )  # pragma: no cover
 
 
 async def _parse_record_query_result(
@@ -312,4 +320,6 @@ def _parse_errors(json_errors: Json | None) -> list[InnerSalesforceRestApiError]
             for json_error in json_errors
         ]
 
-    raise UnexpectedRestApiResponsePayload()  # pragma: no cover
+    raise UnexpectedRestApiResponsePayload(
+        "The API response payload does not match the expected structure."
+    )  # pragma: no cover

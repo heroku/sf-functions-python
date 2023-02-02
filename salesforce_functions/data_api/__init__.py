@@ -14,7 +14,7 @@ from ._requests import (
     RestApiRequest,
     UpdateRecordRestApiRequest,
 )
-from .exceptions import UnexpectedRestApiResponsePayload
+from .exceptions import ClientError, UnexpectedRestApiResponsePayload
 from .record import Record, RecordQueryResult
 from .reference_id import ReferenceId
 from .unit_of_work import UnitOfWork
@@ -227,8 +227,15 @@ class DataAPI:
             # - Orjson's performance/memory usage is better if it is passed bytes directly instead of `str`.
             response_body = await response.read()
             json_body = orjson.loads(response_body) if response_body else None
+        except aiohttp.ClientError as e:
+            # https://docs.aiohttp.org/en/stable/client_reference.html#client-exceptions
+            raise ClientError(
+                f"An error occurred while making the request: {e.__class__.__name__}: {e}"
+            ) from e
         except orjson.JSONDecodeError as e:
-            raise UnexpectedRestApiResponsePayload() from e
+            raise UnexpectedRestApiResponsePayload(
+                f"The server didn't respond with valid JSON: {e.__class__.__name__}: {e}"
+            ) from e
         finally:
             if session != self._shared_session:
                 await session.close()
