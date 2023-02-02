@@ -19,7 +19,7 @@ class SalesforceRestApiError(DataApiError):
     """Raised when the Salesforce REST API signalled error(s)."""
 
     api_errors: list["InnerSalesforceRestApiError"]
-    """A list of one or more errors returned from the Salesforce REST API."""
+    """A list of one or more errors returned from Salesforce REST API."""
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -34,7 +34,7 @@ class InnerSalesforceRestApiError:
     """
     The field names where the error occurred.
 
-    This will be empty for errors that are not related to a specific field.
+    This will be empty for errors that aren't related to a specific field.
     """
 
 
