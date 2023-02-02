@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.5.0] - 2023-02-02
+
 ### Changed
 
 - `DataAPI` now raises the new `data_api.exceptions.ClientError` exception when an exception in
