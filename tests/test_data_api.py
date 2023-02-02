@@ -15,8 +15,9 @@ from salesforce_functions.data_api import (
 )
 from salesforce_functions.data_api import DataAPI
 from salesforce_functions.data_api.exceptions import (
+    ClientError,
     InnerSalesforceRestApiError,
-    MissingIdFieldError,
+    MissingFieldError,
     SalesforceRestApiError,
     UnexpectedRestApiResponsePayload,
 )
@@ -33,14 +34,23 @@ def new_data_api(session: ClientSession | None = None) -> DataAPI:
     )
 
 
+async def test_client_error() -> None:
+    data_api = DataAPI(org_domain_url="", api_version="", access_token="")
+    expected_message = r"An error occurred while making the request: InvalidURL: .+$"
+
+    with pytest.raises(ClientError, match=expected_message):
+        await data_api.query("SELECT Name FROM Account")
+
+
 @pytest.mark.requires_wiremock
 async def test_unexpected_response() -> None:
     data_api = new_data_api()
+    expected_message = (
+        r"The server didn't respond with valid JSON: JSONDecodeError: .+$"
+    )
 
-    with pytest.raises(UnexpectedRestApiResponsePayload) as exception_info:
+    with pytest.raises(UnexpectedRestApiResponsePayload, match=expected_message):
         await data_api.query("SELECT Name FROM FruitVendor__c")
-
-    assert exception_info.value == UnexpectedRestApiResponsePayload()
 
 
 @pytest.mark.requires_wiremock
@@ -460,13 +470,14 @@ async def test_update_with_binary_data_from_bytearray() -> None:
 @pytest.mark.requires_wiremock
 async def test_update_without_id_field() -> None:
     data_api = new_data_api()
+    expected_message = (
+        r"The 'Id' field is required, but isn't present in the given Record\.$"
+    )
 
-    with pytest.raises(MissingIdFieldError) as exception_info:
+    with pytest.raises(MissingFieldError, match=expected_message):
         await data_api.update(
             Record(type="Movie__c", fields={"ReleaseDate__c": "1980-05-21"})
         )
-
-    assert exception_info.value == MissingIdFieldError()
 
 
 @pytest.mark.requires_wiremock
@@ -711,3 +722,62 @@ async def test_session() -> None:
             "SELECT Id, VersionData FROM ContentVersion"
         )
         assert second_result.total_size == 1
+
+
+async def test_salesforce_rest_api_error_string_representation() -> None:
+    single_api_error = SalesforceRestApiError(
+        api_errors=[
+            InnerSalesforceRestApiError(
+                message="unexpected token: SELEKT",
+                error_code="MALFORMED_QUERY",
+                fields=[],
+            )
+        ]
+    )
+    assert (
+        str(single_api_error)
+        == """Salesforce REST API reported the following error(s):
+---
+MALFORMED_QUERY error:
+unexpected token: SELEKT"""
+    )
+
+    multiple_api_errors = SalesforceRestApiError(
+        api_errors=[
+            InnerSalesforceRestApiError(
+                message="The requested resource does not exist",
+                error_code="NOT_FOUND",
+                fields=[],
+            ),
+            InnerSalesforceRestApiError(
+                message="\nSELECT Bacon__c FROM Account LIMIT 2\n       ^\nERROR at Row:1:Column:8"
+                "\nNo such column 'Bacon__c' on entity 'Account'. If you are attempting to use a"
+                " custom field, be sure to append the '__c' after the custom field name. Please"
+                " reference your WSDL or the describe call for the appropriate names.",
+                error_code="INVALID_FIELD",
+                fields=[],
+            ),
+            InnerSalesforceRestApiError(
+                message="Rating: bad value for restricted picklist field: Terrible",
+                error_code="INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST",
+                fields=["Rating__c"],
+            ),
+        ]
+    )
+    assert (
+        str(multiple_api_errors)
+        == """Salesforce REST API reported the following error(s):
+---
+NOT_FOUND error:
+The requested resource does not exist
+---
+INVALID_FIELD error:
+
+SELECT Bacon__c FROM Account LIMIT 2
+       ^
+ERROR at Row:1:Column:8
+No such column 'Bacon__c' on entity 'Account'. If you are attempting to use a custom field, be sure to append the '__c' after the custom field name. Please reference your WSDL or the describe call for the appropriate names.
+---
+INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST error:
+Rating: bad value for restricted picklist field: Terrible"""  # noqa: E501
+    )
