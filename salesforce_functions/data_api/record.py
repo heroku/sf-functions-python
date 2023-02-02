@@ -6,7 +6,13 @@ __all__ = ["Record", "QueriedRecord", "RecordQueryResult"]
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class Record:
-    """A Salesforce record."""
+    """
+    A Salesforce record.
+
+    A record describes a particular occurrence of a Salesforce object, such as a
+    specific account "Acme Company" from the Account standard object. A record is
+    analogous to a row in a database table.
+    """
 
     type: str
     """
@@ -21,7 +27,7 @@ class Record:
 @dataclass(frozen=True, kw_only=True, slots=True)
 class QueriedRecord(Record):
     """
-    A Salesforce record that has been queried.
+    A Salesforce record that's the result of a SOQL query.
 
     Extends `Record` with potential sub query results that can only exist when
     a record was queried from the data API.
@@ -46,11 +52,11 @@ class RecordQueryResult:
     """
     The total number of records returned by the query.
 
-    This is not necessarily the same number of records found in `records`.
+    This number isn't necessarily the same as the number of records found in `records`.
     """
     records: list[QueriedRecord]
     """
-    The `Record`s in this query result.
+    The list of `Record`s in this query result.
 
     Use `done` to determine whether there are additional records to be
     queried with `queryMore`.

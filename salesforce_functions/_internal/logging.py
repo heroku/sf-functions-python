@@ -35,8 +35,8 @@ def get_logger() -> structlog.stdlib.BoundLogger:
     """
     Create a logger instance that outputs logs in logfmt style.
 
-    The logger's API matches the stdlib's `logger.Logger`, however the output
-    will be in the structured `logfmt` logging style.
+    The logger's API matches the stdlib's `logger.Logger`, but the output
+    is in the structured `logfmt` logging style.
 
     Example:
 

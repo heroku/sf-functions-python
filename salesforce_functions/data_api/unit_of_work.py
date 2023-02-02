@@ -14,7 +14,13 @@ class UnitOfWork:
     """
     Represents a `UnitOfWork`.
 
-    After registering all operations, it can be submitted via the `commit_unit_of_work` method of `DataAPI`.
+    A `UnitOfWork` encapsulates a set of one or more Salesforce operations that must be
+    performed as a single atomic operation. Single atomic operations reduce the number of
+    requests back to the org, and are more efficient when working with larger data volumes.
+
+    First register the create, update, or delete operations that make up the `UnitOfWork`
+    using their corresponding methods, such as `register_create`. Then submit the `UnitOfWork`
+    with the `commit_unit_of_work` method of `DataAPI`.
 
     For example:
 
@@ -59,7 +65,7 @@ class UnitOfWork:
         """
         Register a record creation for the `UnitOfWork`.
 
-        Returns a `ReferenceId` that can be used to refer to the created record in subsequent operations in this
+        Returns a `ReferenceId` that you can use to refer to the created record in subsequent operations in this
         `UnitOfWork`.
 
         For example:
@@ -87,7 +93,7 @@ class UnitOfWork:
 
         The given `Record` must contain an `Id` field.
 
-        Returns a `ReferenceId` that can be used to refer to the updated record in subsequent operations in this
+        Returns a `ReferenceId` that you can use to refer to the updated record in subsequent operations in this
         `UnitOfWork`.
 
         For example:
@@ -112,9 +118,9 @@ class UnitOfWork:
 
     def register_delete(self, object_type: str, record_id: str) -> ReferenceId:
         """
-        Register a deletion of an existing record of the given type and id.
+        Register a deletion of an existing record of the given type and ID.
 
-        Returns a `ReferenceId` that can be used to refer to the deleted record in subsequent operations in this
+        Returns a `ReferenceId` that you can use to refer to the deleted record in subsequent operations in this
         `UnitOfWork`.
 
         For example:

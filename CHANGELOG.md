@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Updated the docstrings for the public APIs to align with the style guidelines.
 - Updated the user-facing error and CLI messages to align with the style guidelines.
 
 ### Fixed

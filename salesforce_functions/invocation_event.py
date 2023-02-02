@@ -15,11 +15,11 @@ class InvocationEvent(Generic[T]):
     The `InvocationEvent` type accepts a single generic parameter, which represents
     the type of the input data payload present in the `data` field.
 
-    To improve IDE auto-completion and linting coverage, it's recommended to pass an
+    To improve IDE auto-completion and linting coverage, we recommend that you pass an
     explicit type in the type definition that represents the data payload the function
     expects to receive.
 
-    For example, if your function must accept JSON input like:
+    For example, if your function must accept JSON input like this:
 
     ```json
     {
@@ -28,7 +28,7 @@ class InvocationEvent(Generic[T]):
     }
     ```
 
-    You can use the following Python type annotations:
+    Then use these Python type annotations:
 
     ```python
     EventPayloadType = dict[str, Any]
@@ -56,8 +56,8 @@ class InvocationEvent(Generic[T]):
     """
     A URI which identifies the context in which an event happened.
 
-    Often this will include information such as the type of the event source, the
-    org publishing the event or the process that produced the event.
+    This URI often includes information such as the type of the event source, the
+    org publishing the event, or the process that produced the event.
 
     For example: `urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7`
     """
@@ -78,6 +78,6 @@ class InvocationEvent(Generic[T]):
     """
     The timestamp of when the occurrence happened.
 
-    If the time of the occurrence cannot be determined then this attribute
+    If the time of the occurrence can't be determined, then this attribute
     may be set to some other time (such as the current time).
     """
