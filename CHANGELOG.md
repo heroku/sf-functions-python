@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Added missing class attribute docstrings to `SalesforceRestApiError`, `InnerSalesforceRestApiError` and `ReferenceId`.
 - Updated the docstrings for the public APIs to align with the style guidelines.
 - Updated the user-facing error and CLI messages to align with the style guidelines.
 
