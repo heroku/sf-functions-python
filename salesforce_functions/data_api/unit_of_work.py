@@ -18,7 +18,7 @@ class UnitOfWork:
     performed as a single atomic operation. Single atomic operations reduce the number of
     requests back to the org, and are more efficient when working with larger data volumes.
 
-    First register the create, update, or delete operations that make up the `UnitOfWork`
+    First, register the create, update, or delete operations that make up the `UnitOfWork`
     using their corresponding methods, such as `register_create`. Then submit the `UnitOfWork`
     with the `commit_unit_of_work` method of `DataAPI`.
 
