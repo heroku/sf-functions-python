@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.5.1] - 2023-02-06
+
 ### Fixed
 
 - Requests made by `DataAPI` now use the correct `Content-Type`.
