@@ -199,12 +199,6 @@ Navigate to the `hellopython` folder.
 cd functions/hellopython
 ```
 
-Create a `.gitignore` file in the function directory that ignores changes to `.venv` and `__pycache__`.
-
-```sh
-echo -e ".venv\n__pycache__" > .gitignore
-```
-
 ### Create the Python [Virtual Environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) & Install Dependencies
 
 Create a "Virtual Environment" (venv) before installing the dependencies required to run the Python function locally.
