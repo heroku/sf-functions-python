@@ -228,7 +228,7 @@ On a **Microsoft Windows system**:
 Finally, install the dependencies into the virtual environment.
 
 ```sh
-pip3 install -r requirements.txt
+pip3 install --upgrade -r requirements.txt
 ```
 
 Using a virtual environment ensures your function has all required dependencies before you run it.  
