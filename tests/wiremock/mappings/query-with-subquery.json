@@ -9,9 +9,15 @@
         "equalTo": "SELECT Account.Name, (SELECT Contact.FirstName, Contact.LastName FROM Account.Contacts) FROM Account LIMIT 5"
       }
     },
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"

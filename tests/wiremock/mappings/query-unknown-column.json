@@ -9,9 +9,15 @@
         "equalTo": "SELECT Bacon__c FROM Account LIMIT 2"
       }
     },
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"

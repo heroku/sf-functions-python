@@ -8,6 +8,20 @@
       "q": {
         "equalTo": "SELECT Name, Owner.Name from Account LIMIT 1"
       }
+    },
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
+      },
+      "Sforce-Call-Options": {
+        "matches": "client=sf-functions-python:.*"
+      }
     }
   },
   "response" : {

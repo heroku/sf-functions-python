@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Requests made by `DataAPI` now use the correct `Content-Type`.
+- Requests made by `DataAPI` now correctly send an empty body for requests where no body is expected (such as `query` or `delete`).
 - The `testing.mock_event` function now generates a unique event time each time it is called.
 
 ## [0.5.0] - 2023-02-02

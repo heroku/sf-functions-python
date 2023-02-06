@@ -4,9 +4,15 @@
   "request" : {
     "url" : "/services/data/v53.0/sobjects/ContentVersion/0687S00000AX37OQAT/VersionData",
     "method" : "GET",
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"

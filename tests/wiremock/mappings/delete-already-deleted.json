@@ -4,9 +4,15 @@
   "request": {
     "url": "/services/data/v53.0/sobjects/Account/001B000001Lp1G2IAJ",
     "method": "DELETE",
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"
