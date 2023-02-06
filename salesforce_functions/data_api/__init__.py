@@ -216,7 +216,7 @@ class DataAPI:
                 method,
                 url,
                 headers=self._default_headers(),
-                data=_json_serialize(body),
+                data=None if body is None else _json_serialize(body),
             )
 
             # Using orjson for faster JSON deserialization over the stdlib.
@@ -284,5 +284,5 @@ def _json_serialize(data: Any) -> BytesPayload:
     https://github.com/aio-libs/aiohttp/blob/v3.8.3/aiohttp/payload.py#L386-L403
     """
     return BytesPayload(
-        orjson.dumps(data), content_type="utf-8", encoding="application/json"
+        orjson.dumps(data), encoding="utf-8", content_type="application/json"
     )

@@ -9,9 +9,15 @@
         "equalTo": "SELECT RANDOM_1__c, RANDOM_2__c FROM Random__c"
       }
     },
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"

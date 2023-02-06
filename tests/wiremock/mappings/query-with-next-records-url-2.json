@@ -4,9 +4,15 @@
   "request": {
     "urlPath": "/services/data/v53.0/query/01gB000003OCxSPIA1-2000",
     "method": "GET",
+    "bodyPatterns" : [ {
+      "absent": true
+    } ],
     "headers": {
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
+      },
+      "Content-Type": {
+        "absent": true
       },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"

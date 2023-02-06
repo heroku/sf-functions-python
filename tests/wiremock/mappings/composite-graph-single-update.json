@@ -13,6 +13,9 @@
       "Authorization": {
         "equalTo": "Bearer EXAMPLE-TOKEN"
       },
+      "Content-Type": {
+        "equalTo": "application/json"
+      },
       "Sforce-Call-Options": {
         "matches": "client=sf-functions-python:.*"
       }
