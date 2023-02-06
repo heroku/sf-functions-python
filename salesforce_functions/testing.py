@@ -56,7 +56,7 @@ def mock_event(
     id: str | None = None,  # pylint: disable=redefined-builtin
     type: str = "com.salesforce.function.invoke.sync",  # pylint: disable=redefined-builtin
     source: str = "urn:event:from:salesforce/JS/56.0/00DJS0000000123ABC/apex/ExampleClass:example_function():7",
-    time: datetime = datetime.today(),
+    time: datetime | None = None,
 ) -> InvocationEvent[T]:
     """
     Create an example `InvocationEvent` instance for use in unit tests.
@@ -76,7 +76,7 @@ def mock_event(
         type=type,
         source=source,
         data=data,
-        time=time,
+        time=time if time is not None else datetime.today(),
     )
 
 
