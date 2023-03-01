@@ -36,7 +36,7 @@ development = [
     "isort[colors]==5.12.0",
     # httpx is required for starlette's `TestClient`.
     "httpx==0.23.3",
-    "mypy==0.991",
+    "mypy==1.0.1",
     "pylint==2.16.1",
     "pytest==7.2.1",
     "pytest-asyncio==0.20.3",
