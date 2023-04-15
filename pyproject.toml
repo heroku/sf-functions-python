@@ -35,7 +35,7 @@ development = [
     "flake8==6.0.0",
     "isort[colors]==5.12.0",
     # httpx is required for starlette's `TestClient`.
-    "httpx==0.23.3",
+    "httpx==0.24.0",
     "mypy==1.2.0",
     "pylint==2.17.2",
     "pytest==7.3.1",
