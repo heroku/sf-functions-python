@@ -132,6 +132,10 @@ jobs:
   # - Using the package without the development-only dependencies installed (in case there was a mix up).
   integration-test-sf-cli:
     runs-on: ubuntu-latest
+    env:
+      SFDX_DISABLE_AUTOUPDATE: true
+      SFDX_DISABLE_TELEMETRY: true
+      SFDX_LOG_LEVEL: debug
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -142,6 +146,8 @@ jobs:
           echo "${HOME}/sfdx/bin" >> "${GITHUB_PATH}"
       - name: Output SF CLI version
         run: sf --version
+      - name: Trigger just in time install of the functions CLI plugin
+        run: sf run function start local || true
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -151,7 +157,7 @@ jobs:
       - name: Install the salesforce-functions package and its dependencies
         run: pip install --disable-pip-version-check --progress-bar off .
       - name: Start the template function locally
-        run: sf run function start local &> ../server-output.txt &
+        run: sf run function start local &> /tmp/server-output.txt &
         working-directory: tests/fixtures/template/
       - name: Test the template function's health check response
         # We're testing via the health check since the template function uses the data API,
@@ -161,6 +167,6 @@ jobs:
             echo "Successful response from function"
           else
             echo -e "Function did not respond successfully\n\nServer logs:\n"
-            cat server-output.txt
+            cat /tmp/server-output.txt
             exit 1
           fi
