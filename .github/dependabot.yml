@@ -4,14 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    # Setting a specific user to review at the time the PR is opened, prevents email
-    # notification noise for everyone else in the team alias in the `CODEOWNERS` file,
-    # since our teams have the "Only notify requested team members" option enabled.
-    reviewers:
-      - "edmorley"
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "monthly"
-    reviewers:
-      - "edmorley"
