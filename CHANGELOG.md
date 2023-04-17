@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The supported version of the dependency `uvicorn` has been raised from `0.20.*` to `0.21.*`.
 
 ## [0.5.1] - 2023-02-06
 
