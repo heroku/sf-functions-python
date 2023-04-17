@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The supported version of the dependency `uvicorn` has been raised from `0.20.*` to `0.21.*`.
+- The supported version of the dependency `uvicorn` has been raised from `>=0.20.0,<0.21` to `>=0.21.1,<0.22`.
+- The supported version of the dependency `starlette` has been raised from `>=0.23.1,<0.24` to `>=0.26.1,<0.27`.
 
 ## [0.5.1] - 2023-02-06
 
