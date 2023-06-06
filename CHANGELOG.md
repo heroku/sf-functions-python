@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The supported version of the dependency `uvicorn` has been raised from `>=0.20.0,<0.21` to `>=0.21.1,<0.22`.
-- The supported version of the dependency `starlette` has been raised from `>=0.23.1,<0.24` to `>=0.26.1,<0.27`.
+- The supported version of the dependency `starlette` has been raised from `>=0.23.1,<0.24` to `>=0.27.0,<0.28`.
 - The supported version of the dependency `structlog` has been raised from `>=22.3.0,<23` to `>=23.1.0,<24`.
 
 ## [0.5.1] - 2023-02-06
