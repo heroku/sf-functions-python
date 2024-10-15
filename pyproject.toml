@@ -32,7 +32,7 @@ dependencies = [
 development = [
     "black==23.3.0",
     "coverage-conditional-plugin==0.9.0",
-    "flake8==6.0.0",
+    "flake8==7.1.1",
     "isort[colors]==5.12.0",
     # httpx is required for starlette's `TestClient`.
     "httpx==0.24.1",
