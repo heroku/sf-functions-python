@@ -62,7 +62,7 @@ jobs:
         run: pip install --disable-pip-version-check --progress-bar off --editable .[development]
       - name: Set up Java 11 for WireMock (non-Windows only)
         if: runner.os != 'Windows'
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 11
